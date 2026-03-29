@@ -1645,6 +1645,13 @@ tbody tr { cursor: pointer; }
   letter-spacing: 0.03em;
 }
 
+.import-progress-percent.is-label {
+  min-width: 86px;
+  font-size: 0.78rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
 .import-progress-message {
   margin: 0;
   color: var(--text);
@@ -1687,9 +1694,42 @@ tbody tr { cursor: pointer; }
   animation: importProgressSweep 1.2s linear infinite;
 }
 
+.import-progress-track.is-indeterminate {
+  background: rgba(255,255,255,0.06);
+}
+
+.import-progress-fill.is-indeterminate {
+  width: 100% !important;
+  background: linear-gradient(90deg, rgba(57,255,20,0.08), rgba(57,255,20,0.16));
+  box-shadow: none;
+}
+
+.import-progress-fill.is-indeterminate::after {
+  display: none;
+}
+
+.import-progress-fill.is-indeterminate::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -36%;
+  width: 36%;
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(57,255,20,0.08), rgba(57,255,20,0.92), rgba(118,255,80,0.28));
+  box-shadow: 0 0 22px rgba(57,255,20,0.34);
+  animation: importProgressIndeterminate 1.05s ease-in-out infinite;
+}
+
 @keyframes importProgressSweep {
   from { transform: translateX(-100%); }
   to { transform: translateX(180%); }
+}
+
+@keyframes importProgressIndeterminate {
+  0% { transform: translateX(0) scaleX(0.82); }
+  50% { transform: translateX(170%) scaleX(1); }
+  100% { transform: translateX(350%) scaleX(0.84); }
 }
 
 .import-progress-footnote {
@@ -6033,6 +6073,8 @@ async function completeLogin(user) {
   document.getElementById('loginPassword').value = '';
   loginProgress.update({
     percent: 88,
+    indicatorText: 'Aplicando',
+    indeterminate: true,
     message: 'Aplicando seu perfil no sistema...',
     detail: currentUser && currentUser.userType === 'eps'
       ? 'Preparando sua visao de consulta e seus filtros.'
@@ -6063,6 +6105,8 @@ async function completeLogin(user) {
   const defaultTab = (currentUser.userType === 'eps') ? 'registros' : 'dashboard';
   loginProgress.update({
     percent: 95,
+    indicatorText: 'Finalizando',
+    indeterminate: true,
     message: 'Abrindo sua tela principal...',
     detail: defaultTab === 'dashboard'
       ? 'Carregando o dashboard inicial.'
@@ -9138,14 +9182,40 @@ function createImportProgressOverlay(options = {}) {
   const messageEl = overlay.querySelector('[data-import-progress-message]');
   const detailEl = overlay.querySelector('[data-import-progress-detail]');
   const percentEl = overlay.querySelector('[data-import-progress-percent]');
+  const trackEl = overlay.querySelector('.import-progress-track');
   const fillEl = overlay.querySelector('[data-import-progress-fill]');
   let currentPercent = 0;
   let driftTimer = null;
+  let indicatorText = '';
+  let isIndeterminate = false;
+
+  const syncIndicator = () => {
+    if (!percentEl) return;
+    if (indicatorText) {
+      percentEl.textContent = indicatorText;
+      percentEl.classList.add('is-label');
+    } else {
+      percentEl.textContent = `${Math.round(currentPercent)}%`;
+      percentEl.classList.remove('is-label');
+    }
+    if (trackEl) trackEl.classList.toggle('is-indeterminate', isIndeterminate);
+    if (fillEl) fillEl.classList.toggle('is-indeterminate', isIndeterminate);
+  };
 
   const setPercent = (value) => {
     currentPercent = clampProgressPercent(Number(value));
-    if (percentEl) percentEl.textContent = `${Math.round(currentPercent)}%`;
     if (fillEl) fillEl.style.width = `${currentPercent}%`;
+    syncIndicator();
+  };
+
+  const setIndicatorText = (value) => {
+    indicatorText = normalizeText(value);
+    syncIndicator();
+  };
+
+  const setIndeterminate = (value) => {
+    isIndeterminate = Boolean(value);
+    syncIndicator();
   };
 
   const update = (state = {}) => {
@@ -9153,6 +9223,8 @@ function createImportProgressOverlay(options = {}) {
     if (badgeEl && state.badge !== undefined) badgeEl.textContent = normalizeText(state.badge) || 'Processando';
     if (messageEl && state.message !== undefined) messageEl.textContent = normalizeText(state.message) || 'Preparando o arquivo para leitura...';
     if (detailEl && state.detail !== undefined) detailEl.textContent = normalizeText(state.detail);
+    if (state.indicatorText !== undefined) setIndicatorText(state.indicatorText);
+    if (state.indeterminate !== undefined) setIndeterminate(state.indeterminate);
     if (state.percent !== undefined) setPercent(state.percent);
   };
 
@@ -9185,15 +9257,28 @@ function createImportProgressOverlay(options = {}) {
     badge: options.badge,
     message: options.message,
     detail: options.detail,
-    percent: options.percent || 0
+    percent: options.percent || 0,
+    indicatorText: options.indicatorText || '',
+    indeterminate: options.indeterminate || false
   });
 
-  return { overlay, update, close, startDrift, stopDrift, getPercent: () => currentPercent };
+  return {
+    overlay,
+    update,
+    close,
+    startDrift,
+    stopDrift,
+    setIndicatorText,
+    setIndeterminate,
+    getPercent: () => currentPercent
+  };
 }
 
 async function finishImportProgress(progressOverlay, message, detail) {
   if (!progressOverlay) return;
   progressOverlay.update({
+    indeterminate: false,
+    indicatorText: '',
     percent: 100,
     message: message || 'Importacao concluida.',
     detail: detail || ''
@@ -9219,38 +9304,46 @@ function updateFoImportProgress(progressOverlay, state = {}) {
     progressOverlay.stopDrift();
     percent = 12;
     message = 'Organizando a leitura em segundo plano...';
+    progressOverlay.update({ indeterminate: true, indicatorText: 'Iniciando' });
   } else if (phase === 'reading-start') {
     percent = 18 + (completed / total) * 12;
     message = 'Lendo a planilha da F.O...';
-    progressOverlay.startDrift(52, 1.2, 150);
+    progressOverlay.stopDrift();
+    progressOverlay.update({ indeterminate: true, indicatorText: 'Lendo' });
   } else if (phase === 'reading-done') {
     progressOverlay.stopDrift();
-    percent = 34 + (completed / total) * 18;
+    progressOverlay.update({ indeterminate: false, indicatorText: '' });
+    percent = 52 + (completed / total) * 8;
     message = 'Planilha lida. Validando colunas e datas...';
     if (rowCount > 0) {
       detail = `${fileLabel}${fileLabel ? ' - ' : ''}${rowCount} linha(s) detectada(s)`;
     }
   } else if (phase === 'parsing') {
-    percent = 58 + (completed / total) * 14;
+    percent = 66 + (completed / total) * 6;
     message = 'Montando os registros importados...';
-    progressOverlay.startDrift(82, 1.1, 160);
+    progressOverlay.stopDrift();
+    progressOverlay.update({ indeterminate: true, indicatorText: 'Tratando' });
   } else if (phase === 'parsing-done') {
     progressOverlay.stopDrift();
-    percent = 74 + (completed / total) * 10;
+    progressOverlay.update({ indeterminate: false, indicatorText: '' });
+    percent = 84 + (completed / total) * 4;
     message = 'Registros montados. Conferindo depositos e materiais...';
     if (rowCount > 0) {
       detail = `${fileLabel}${fileLabel ? ' - ' : ''}${rowCount} linha(s) pronta(s) para integracao`;
     }
   } else if (phase === 'applying') {
     progressOverlay.stopDrift();
-    percent = 90;
+    progressOverlay.update({ indeterminate: false, indicatorText: '' });
+    percent = 92;
     message = 'Atualizando o painel com os novos dados...';
   } else if (phase === 'saving') {
     progressOverlay.stopDrift();
-    percent = 96;
+    progressOverlay.update({ indeterminate: false, indicatorText: '' });
+    percent = 97;
     message = 'Salvando e finalizando a importacao...';
   } else if (phase === 'done') {
     progressOverlay.stopDrift();
+    progressOverlay.update({ indeterminate: false, indicatorText: '' });
     percent = 100;
     message = 'Importacao concluida.';
   }
@@ -9265,27 +9358,37 @@ function createLoginProgressController(userName) {
     message: 'Validando seu perfil e preparando a sessao...',
     detail: userName ? `Usuario: ${userName}` : 'Preparando seu ambiente de trabalho.',
     percent: 10,
+    indicatorText: 'Entrando',
+    indeterminate: true,
     footnote: 'Estamos montando sua tela principal com os dados mais recentes.'
   });
 
   const stages = [
     {
       percent: 18,
+      indicatorText: 'Validando',
+      indeterminate: true,
       message: 'Validando suas credenciais...',
       detail: userName ? `Usuario: ${userName}` : 'Confirmando seus dados de acesso.'
     },
     {
       percent: 36,
+      indicatorText: 'Conectando',
+      indeterminate: true,
       message: 'Conectando sua sessao...',
       detail: 'Carregando permissoes, atalhos e configuracoes iniciais.'
     },
     {
       percent: 58,
+      indicatorText: 'Montando',
+      indeterminate: true,
       message: 'Montando a estrutura do aplicativo...',
       detail: 'Preparando as abas e os dados principais para uso.'
     },
     {
       percent: 78,
+      indicatorText: 'Abrindo',
+      indeterminate: true,
       message: 'Abrindo o painel principal...',
       detail: 'Falta bem pouco para concluir a entrada.'
     }
