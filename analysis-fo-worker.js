@@ -161,7 +161,29 @@ self.onmessage = async function onMessage(event) {
 
   try {
     const files = Array.isArray(data.files) ? data.files : [];
-    const payloads = (await Promise.all(files.map(extractFoPayload))).filter(Boolean);
+    const payloads = [];
+    for (let index = 0; index < files.length; index++) {
+      const file = files[index];
+      self.postMessage({
+        progress: {
+          phase: 'reading-start',
+          completed: index,
+          total: files.length,
+          currentFile: normalizeText(file && file.name)
+        }
+      });
+      const payload = await extractFoPayload(file);
+      if (payload) payloads.push(payload);
+      self.postMessage({
+        progress: {
+          phase: 'reading-done',
+          completed: index + 1,
+          total: files.length,
+          currentFile: normalizeText(file && file.name),
+          rowCount: Array.isArray(payload && payload.rows) ? payload.rows.length : 0
+        }
+      });
+    }
     self.postMessage({ files: payloads });
   } catch (error) {
     self.postMessage({ error: error && error.message ? error.message : String(error) });

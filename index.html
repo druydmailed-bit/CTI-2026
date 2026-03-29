@@ -1562,6 +1562,142 @@ tbody tr { cursor: pointer; }
 .modal-text { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 22px; line-height: 1.5; }
 .modal-actions { display: flex; gap: 10px; justify-content: flex-end; }
 
+.import-progress-overlay {
+  background: rgba(0,0,0,0.76);
+}
+
+.import-progress-modal {
+  width: min(460px, calc(100vw - 32px));
+  padding: 28px 28px 24px;
+  position: relative;
+  overflow: hidden;
+}
+
+.import-progress-modal::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at top right, rgba(57,255,20,0.15), transparent 42%),
+    linear-gradient(180deg, rgba(57,255,20,0.04), transparent 60%);
+  pointer-events: none;
+}
+
+.import-progress-content {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.import-progress-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  align-self: flex-start;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(57,255,20,0.22);
+  background: rgba(57,255,20,0.08);
+  color: var(--neon);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.import-progress-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: var(--neon);
+  box-shadow: 0 0 0 0 rgba(57,255,20,0.4);
+  animation: importProgressPulse 1.4s ease-in-out infinite;
+}
+
+@keyframes importProgressPulse {
+  0% { box-shadow: 0 0 0 0 rgba(57,255,20,0.45); opacity: 0.7; }
+  70% { box-shadow: 0 0 0 12px rgba(57,255,20,0); opacity: 1; }
+  100% { box-shadow: 0 0 0 0 rgba(57,255,20,0); opacity: 0.7; }
+}
+
+.import-progress-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.import-progress-title {
+  margin: 0;
+  color: var(--text);
+  font-size: 1.12rem;
+  font-weight: 700;
+}
+
+.import-progress-percent {
+  min-width: 52px;
+  text-align: right;
+  color: var(--neon);
+  font-size: 1.15rem;
+  font-weight: 800;
+  letter-spacing: 0.03em;
+}
+
+.import-progress-message {
+  margin: 0;
+  color: var(--text);
+  font-size: 0.92rem;
+  line-height: 1.5;
+}
+
+.import-progress-detail {
+  margin: -6px 0 0;
+  color: var(--text-dim);
+  font-size: 0.8rem;
+  min-height: 1.2em;
+}
+
+.import-progress-track {
+  position: relative;
+  height: 12px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: rgba(255,255,255,0.08);
+  border: 1px solid rgba(255,255,255,0.08);
+  box-shadow: inset 0 1px 4px rgba(0,0,0,0.45);
+}
+
+.import-progress-fill {
+  position: relative;
+  height: 100%;
+  width: 0;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(57,255,20,0.55), rgba(57,255,20,0.95) 55%, rgba(118,255,80,1));
+  box-shadow: 0 0 16px rgba(57,255,20,0.32);
+  transition: width 0.28s ease;
+}
+
+.import-progress-fill::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(120deg, transparent 0%, rgba(255,255,255,0.32) 30%, transparent 60%);
+  animation: importProgressSweep 1.2s linear infinite;
+}
+
+@keyframes importProgressSweep {
+  from { transform: translateX(-100%); }
+  to { transform: translateX(180%); }
+}
+
+.import-progress-footnote {
+  color: var(--text-dim);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+}
+
 /* Responsive */
 @media (max-width: 768px) {
   body { background-attachment: scroll; }
@@ -8931,6 +9067,143 @@ function showModal(title, text, onConfirm) {
   });
 }
 
+function waitForPaint(frames = 1) {
+  const totalFrames = Math.max(1, Number(frames) || 1);
+  return new Promise((resolve) => {
+    const step = (remaining) => {
+      if (remaining <= 0) {
+        resolve();
+        return;
+      }
+      requestAnimationFrame(() => step(remaining - 1));
+    };
+    step(totalFrames);
+  });
+}
+
+function clampProgressPercent(value) {
+  if (!Number.isFinite(value)) return 0;
+  return Math.max(0, Math.min(100, value));
+}
+
+function createImportProgressOverlay(options = {}) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay import-progress-overlay';
+  overlay.innerHTML = `
+    <div class="modal import-progress-modal">
+      <div class="import-progress-content">
+        <div class="import-progress-badge">
+          <span class="import-progress-dot"></span>
+          <span data-import-progress-badge>${escapeHtml(options.badge || 'Processando')}</span>
+        </div>
+        <div class="import-progress-header">
+          <div>
+            <h3 class="import-progress-title" data-import-progress-title>${escapeHtml(options.title || 'Importando arquivo')}</h3>
+          </div>
+          <div class="import-progress-percent" data-import-progress-percent>0%</div>
+        </div>
+        <p class="import-progress-message" data-import-progress-message>${escapeHtml(options.message || 'Preparando o arquivo para leitura...')}</p>
+        <p class="import-progress-detail" data-import-progress-detail>${escapeHtml(options.detail || '')}</p>
+        <div class="import-progress-track">
+          <div class="import-progress-fill" data-import-progress-fill></div>
+        </div>
+        <div class="import-progress-footnote">A importacao continua em segundo plano. Aguarde so mais um instante.</div>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const titleEl = overlay.querySelector('[data-import-progress-title]');
+  const badgeEl = overlay.querySelector('[data-import-progress-badge]');
+  const messageEl = overlay.querySelector('[data-import-progress-message]');
+  const detailEl = overlay.querySelector('[data-import-progress-detail]');
+  const percentEl = overlay.querySelector('[data-import-progress-percent]');
+  const fillEl = overlay.querySelector('[data-import-progress-fill]');
+
+  const update = (state = {}) => {
+    const percent = clampProgressPercent(Number(state.percent));
+    if (titleEl && state.title !== undefined) titleEl.textContent = normalizeText(state.title) || 'Importando arquivo';
+    if (badgeEl && state.badge !== undefined) badgeEl.textContent = normalizeText(state.badge) || 'Processando';
+    if (messageEl && state.message !== undefined) messageEl.textContent = normalizeText(state.message) || 'Preparando o arquivo para leitura...';
+    if (detailEl && state.detail !== undefined) detailEl.textContent = normalizeText(state.detail);
+    if (percentEl) percentEl.textContent = `${Math.round(percent)}%`;
+    if (fillEl) fillEl.style.width = `${percent}%`;
+  };
+
+  const close = () => {
+    overlay.remove();
+  };
+
+  update({
+    title: options.title,
+    badge: options.badge,
+    message: options.message,
+    detail: options.detail,
+    percent: options.percent || 0
+  });
+
+  return { overlay, update, close };
+}
+
+async function finishImportProgress(progressOverlay, message, detail) {
+  if (!progressOverlay) return;
+  progressOverlay.update({
+    percent: 100,
+    message: message || 'Importacao concluida.',
+    detail: detail || ''
+  });
+  await waitForPaint(2);
+  progressOverlay.close();
+}
+
+function updateFoImportProgress(progressOverlay, state = {}) {
+  if (!progressOverlay) return;
+  const phase = normalizeText(state.phase);
+  const total = Math.max(1, Number(state.total) || 1);
+  const completed = Math.max(0, Math.min(total, Number(state.completed) || 0));
+  const currentFile = normalizeText(state.currentFile);
+  const rowCount = Number(state.rowCount) || 0;
+  const fileLabel = currentFile ? `Arquivo: ${currentFile}` : '';
+
+  let percent = 10;
+  let message = 'Preparando a importacao da F.O...';
+  let detail = fileLabel || 'Separando o arquivo para leitura em segundo plano.';
+
+  if (phase === 'queued') {
+    percent = 12;
+    message = 'Organizando a leitura em segundo plano...';
+  } else if (phase === 'reading-start') {
+    percent = 18 + (completed / total) * 12;
+    message = 'Lendo a planilha da F.O...';
+  } else if (phase === 'reading-done') {
+    percent = 34 + (completed / total) * 18;
+    message = 'Planilha lida. Validando colunas e datas...';
+    if (rowCount > 0) {
+      detail = `${fileLabel}${fileLabel ? ' - ' : ''}${rowCount} linha(s) detectada(s)`;
+    }
+  } else if (phase === 'parsing') {
+    percent = 58 + (completed / total) * 14;
+    message = 'Montando os registros importados...';
+  } else if (phase === 'parsing-done') {
+    percent = 74 + (completed / total) * 10;
+    message = 'Registros montados. Conferindo depositos e materiais...';
+    if (rowCount > 0) {
+      detail = `${fileLabel}${fileLabel ? ' - ' : ''}${rowCount} linha(s) pronta(s) para integracao`;
+    }
+  } else if (phase === 'applying') {
+    percent = 90;
+    message = 'Atualizando o painel com os novos dados...';
+  } else if (phase === 'saving') {
+    percent = 96;
+    message = 'Salvando e finalizando a importacao...';
+  } else if (phase === 'done') {
+    percent = 100;
+    message = 'Importacao concluida.';
+  }
+
+  progressOverlay.update({ percent, message, detail });
+}
+
 // ==================== DETAIL MODAL ====================
 function showDetail(id) {
   const m = movimentos.find(x => x.id === id);
@@ -12230,7 +12503,7 @@ function extractFoPayloadFromSheet(sheet, fileName) {
   };
 }
 
-async function readFoPayloadInWorker(files) {
+async function readFoPayloadInWorker(files, progressCallback) {
   if (!window.Worker) return null;
   const payloadFiles = Array.isArray(files) ? files.filter(Boolean) : [];
   if (!payloadFiles.length) return [];
@@ -12247,8 +12520,12 @@ async function readFoPayloadInWorker(files) {
     };
 
     worker.onmessage = (event) => {
-      cleanup();
       const data = event && event.data ? event.data : {};
+      if (data.progress) {
+        if (typeof progressCallback === 'function') progressCallback(data.progress);
+        return;
+      }
+      cleanup();
       if (data.error) {
         reject(new Error(data.error));
         return;
@@ -12262,6 +12539,14 @@ async function readFoPayloadInWorker(files) {
     };
 
     try {
+      if (typeof progressCallback === 'function') {
+        progressCallback({
+          phase: 'queued',
+          completed: 0,
+          total: payloadFiles.length,
+          currentFile: payloadFiles.length === 1 ? payloadFiles[0].name : ''
+        });
+      }
       worker.postMessage({ type: 'parse-fo-files', files: payloadFiles });
     } catch (error) {
       cleanup();
@@ -12270,20 +12555,40 @@ async function readFoPayloadInWorker(files) {
   });
 }
 
-async function readFoPayloads(files) {
+async function readFoPayloads(files, progressCallback) {
   try {
-    const workerData = await readFoPayloadInWorker(files);
+    const workerData = await readFoPayloadInWorker(files, progressCallback);
     if (Array.isArray(workerData) && workerData.length) return workerData;
   } catch (error) {
     console.warn('Fallback para leitura local da F.O.:', error);
   }
 
   const payloads = [];
-  for (const file of Array.isArray(files) ? files : []) {
+  const payloadFiles = Array.isArray(files) ? files.filter(Boolean) : [];
+  for (let index = 0; index < payloadFiles.length; index++) {
+    const file = payloadFiles[index];
+    if (typeof progressCallback === 'function') {
+      progressCallback({
+        phase: 'reading-start',
+        completed: index,
+        total: payloadFiles.length,
+        currentFile: file && file.name
+      });
+    }
     const workbook = await readWorkbookFromFile(file);
     const sheet = findWorkbookSheet(workbook, 'fo', 0);
     if (!sheet) continue;
-    payloads.push(extractFoPayloadFromSheet(sheet, file.name));
+    const payload = extractFoPayloadFromSheet(sheet, file.name);
+    payloads.push(payload);
+    if (typeof progressCallback === 'function') {
+      progressCallback({
+        phase: 'reading-done',
+        completed: index + 1,
+        total: payloadFiles.length,
+        currentFile: file && file.name,
+        rowCount: Array.isArray(payload && payload.rows) ? payload.rows.length : 0
+      });
+    }
   }
   return payloads;
 }
@@ -12531,20 +12836,29 @@ async function parseAnalysisFoFiles(files) {
   };
 }
 
-async function parseAnalysisFoFilesOptimized(files) {
+async function parseAnalysisFoFilesOptimized(files, progressCallback) {
   const allRows = [];
   const warnings = [];
   const unresolved = [];
   const conversionWarnings = [];
   const mappingCache = new Map();
   const materialCache = new Map();
-  const payloads = await readFoPayloads(files);
+  const payloads = await readFoPayloads(files, progressCallback);
 
-  payloads.forEach((payload) => {
+  payloads.forEach((payload, payloadIndex) => {
     const fileName = normalizeText(payload && payload.fileName);
     const inferredPeriod = inferMonthYearFromText(payload && payload.titleText);
     const firstDateFromColJ = normalizeText(payload && payload.firstDateFromColJ);
     const rows = Array.isArray(payload && payload.rows) ? payload.rows : [];
+
+    if (typeof progressCallback === 'function') {
+      progressCallback({
+        phase: 'parsing',
+        completed: payloadIndex,
+        total: payloads.length,
+        currentFile: fileName
+      });
+    }
 
     rows.forEach((row) => {
       const epsText = normalizeText(row && row.epsText);
@@ -12634,6 +12948,16 @@ async function parseAnalysisFoFilesOptimized(files) {
         fileName
       });
     });
+
+    if (typeof progressCallback === 'function') {
+      progressCallback({
+        phase: 'parsing-done',
+        completed: payloadIndex + 1,
+        total: payloads.length,
+        currentFile: fileName,
+        rowCount: rows.length
+      });
+    }
   });
 
   return {
@@ -12698,8 +13022,19 @@ async function handleAnalysisFoImport(fileList) {
     document.getElementById('analysisFoFiles').value = '';
     return;
   }
+  const progress = createImportProgressOverlay({
+    title: 'Importando F.O.',
+    badge: 'F.O. em leitura',
+    message: 'Preparando os arquivos para importacao...',
+    detail: files.length === 1 ? `Arquivo selecionado: ${files[0].name}` : `${files.length} arquivos selecionados`,
+    percent: 8
+  });
   try {
-    const parsed = await parseAnalysisFoFilesOptimized(files);
+    const parsed = await parseAnalysisFoFilesOptimized(files, (state) => updateFoImportProgress(progress, state));
+    updateFoImportProgress(progress, {
+      phase: 'applying',
+      currentFile: files.length === 1 ? files[0].name : ''
+    });
 
     // Verificar se existem frentes (depositos) ja importadas anteriormente
     const existingDepositos = new Set((analysisState.foRows || []).map(r => normalizeText(r.deposito)).filter(Boolean));
@@ -12707,6 +13042,7 @@ async function handleAnalysisFoImport(fileList) {
     const frentesRepetidas = [...newDepositos].filter(d => existingDepositos.has(d));
 
     if (frentesRepetidas.length > 0) {
+      progress.close();
       const nomesFrentes = frentesRepetidas.map(d => {
         const row = parsed.rows.find(r => normalizeText(r.deposito) === d);
         return `${d} - ${row ? row.epsNome : d}`;
@@ -12755,9 +13091,14 @@ async function handleAnalysisFoImport(fileList) {
     analysisState.foWarnings = dedupeAnalysisItems([...(analysisState.foWarnings || []), ...parsed.warnings], item => `${item.source}|${item.raw}|${item.mappedTo}`);
     analysisState.foUnresolvedMappings = dedupeAnalysisItems([...(analysisState.foUnresolvedMappings || []), ...parsed.unresolvedMappings], item => `${item.source}|${item.raw}`);
     analysisState.foConversionWarnings = dedupeAnalysisItems([...(analysisState.foConversionWarnings || []), ...parsed.conversionWarnings], item => `${item.source}|${item.raw}|${item.reason}`);
+    updateFoImportProgress(progress, {
+      phase: 'saving',
+      currentFile: files.length === 1 ? files[0].name : ''
+    });
     rebuildAnalysisWarnings();
     saveAnalysisState();
     renderAnalysisTab();
+    await finishImportProgress(progress, 'F.O. importada com sucesso.', `${parsed.rows.length} linha(s) valida(s) adicionada(s).`);
     showToast(`F.O. importada: ${parsed.rows.length} linhas validas adicionadas.`);
 
     // Resetar input para permitir inserir nova F.O. na mesma sessao
@@ -12797,6 +13138,7 @@ async function handleAnalysisFoImport(fileList) {
       overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     }
   } catch (error) {
+    progress.close();
     showToast(`Falha ao importar F.O.: ${error.message || error}`, true);
   }
 }
@@ -12821,11 +13163,22 @@ async function handleFoImportForDeposit(fileList, deposito) {
 
   const epsItem = getDepositoByName(dep);
   const epsNome = epsItem ? normalizeText(epsItem.nome) : dep;
+  const progress = createImportProgressOverlay({
+    title: `Importando F.O. para ${dep}`,
+    badge: 'F.O. do deposito',
+    message: 'Preparando a planilha para leitura...',
+    detail: files[0] ? `Arquivo selecionado: ${files[0].name}` : '',
+    percent: 8
+  });
 
   try {
-    const payloads = await readFoPayloads([files[0]]);
+    const payloads = await readFoPayloads([files[0]], (state) => updateFoImportProgress(progress, state));
     const payload = payloads[0];
-    if (!payload) { showToast('Nao encontrei a aba da F.O. na planilha.', true); return; }
+    if (!payload) {
+      progress.close();
+      showToast('Nao encontrei a aba da F.O. na planilha.', true);
+      return;
+    }
 
     const rows = (Array.isArray(payload.rows) ? payload.rows : []).map((row) => ({
       PRODUTO: row && row.productText,
@@ -12850,6 +13203,7 @@ async function handleFoImportForDeposit(fileList, deposito) {
     const importedAt = new Date().toISOString();
     const newRows = [];
     const convWarnings = [];
+    updateFoImportProgress(progress, { phase: 'parsing', completed: 0, total: 1, currentFile: files[0] ? files[0].name : '' });
     rows.forEach((row, index) => {
       const productText = normalizeText(getObjectValueByKeys(row, ['PRODUTO', 'INSUMO']));
       const materialCode = normalizeText(getObjectValueByKeys(row, ['CÓDIGO SAP', 'CODIGO SAP', 'SAP']));
@@ -12891,8 +13245,10 @@ async function handleFoImportForDeposit(fileList, deposito) {
         fileName: files[0].name
       });
     });
+    updateFoImportProgress(progress, { phase: 'parsing-done', completed: 1, total: 1, currentFile: files[0] ? files[0].name : '', rowCount: newRows.length });
 
     if (newRows.length === 0) {
+      progress.close();
       showToast('Nenhuma linha valida encontrada na planilha.', true);
       return;
     }
@@ -12900,6 +13256,7 @@ async function handleFoImportForDeposit(fileList, deposito) {
     // Verificar se ja existe F.O. para este deposito
     const existingBatches = getFoBatchesForDeposit(dep);
     if (existingBatches.length > 0) {
+      progress.close();
       const batchListHtml = existingBatches.map((b, i) =>
         `<div style="padding:6px 10px;background:rgba(255,255,255,0.05);border-radius:6px;margin:4px 0;display:flex;justify-content:space-between;align-items:center;">
           <span style="color:var(--text);font-size:0.82rem;">${escapeHtml(b.fileName)} (${b.rows.length} linhas)</span>
@@ -12980,6 +13337,7 @@ async function handleFoImportForDeposit(fileList, deposito) {
     }
 
     // Adicionar novas linhas
+    updateFoImportProgress(progress, { phase: 'saving', currentFile: files[0] ? files[0].name : '' });
     analysisState.foRows = [...(analysisState.foRows || []), ...newRows];
     analysisState.foFileNames = [...new Set([...(analysisState.foFileNames || []), files[0].name])];
 
@@ -12993,6 +13351,7 @@ async function handleFoImportForDeposit(fileList, deposito) {
     rebuildAnalysisWarnings();
     saveAnalysisState();
     renderAnalysisTab();
+    await finishImportProgress(progress, 'F.O. integrada ao deposito.', `${newRows.length} linha(s) adicionada(s) para ${dep}.`);
     showToast(`F.O. de ${epsNome} (${dep}): ${newRows.length} linhas importadas.`);
 
     const materiaisNaoEncontrados = [...new Set(convWarnings.filter(w => w.reason === 'Material nao encontrado no cadastro').map(w => w.raw))];
@@ -13024,6 +13383,7 @@ async function handleFoImportForDeposit(fileList, deposito) {
       overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     }
   } catch (error) {
+    progress.close();
     showToast(`Falha ao importar F.O.: ${error.message || error}`, true);
   }
 }
