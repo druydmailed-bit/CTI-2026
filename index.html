@@ -14095,7 +14095,11 @@ function getCadastroItems(type = getCadastroType()) {
 let cadastroReviewItemsState = [];
 
 function getCadastroReviewMonthMeta() {
-  const month = normalizeText(getCurrentMonthValue ? getCurrentMonthValue() : new Date().toISOString().slice(0, 7)) || new Date().toISOString().slice(0, 7);
+  const movementMonths = movimentos
+    .map((mov) => getDashboardMovementDate(mov))
+    .filter(Boolean)
+    .sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const month = normalizeText(movementMonths.length ? movementMonths[0].slice(0, 7) : (getCurrentMonthValue ? getCurrentMonthValue() : new Date().toISOString().slice(0, 7))) || new Date().toISOString().slice(0, 7);
   const [year, monthNumber] = month.split('-').map(Number);
   const start = `${month}-01`;
   const end = new Date(year, monthNumber, 0).toISOString().slice(0, 10);
@@ -14110,6 +14114,7 @@ function getCadastroReviewMonthMeta() {
 
 function getCadastroReviewLabel(type) {
   if (type === 'tipos') return 'Tipo';
+  if (type === 'tipoNf') return 'Tipo NF';
   if (type === 'eps') return 'EPS';
   if (type === 'fazendas') return 'Fazenda / Centro';
   if (type === 'supervisores') return 'Supervisor';
@@ -14118,14 +14123,29 @@ function getCadastroReviewLabel(type) {
   return 'Cadastro';
 }
 
+function isCadastroReviewIgnoredValue(value) {
+  const text = normalizeText(value).toLowerCase();
+  return !text
+    || text === 'na'
+    || text === 'n/a'
+    || text === '-'
+    || text === 'cancelada'
+    || text === 'sem informação'
+    || text === 'sem informacao'
+    || text === 'sem dado'
+    || text === 'sem info';
+}
+
 function getCadastroReviewItemsByMonth() {
   const meta = getCadastroReviewMonthMeta();
   const map = new Map();
   const typeLookup = new Set((DATA.tipos || []).map(item => normalizeText(item.nome).toLowerCase()).filter(Boolean));
   const epsLookup = new Set(getDepositosList().map(item => normalizeText(item.deposito).toLowerCase()).filter(Boolean));
   const fazendaLookup = new Set((DATA.centros || []).map(item => normalizeText(item.centro).toLowerCase()).filter(Boolean));
+  const fazendaNameLookup = new Set((DATA.centros || []).map(item => normalizeText(item.nome).toLowerCase()).filter(Boolean));
   const supervisorLookup = new Set((DATA.supervisores || []).map(item => normalizeText(item).toLowerCase()).filter(Boolean));
   const writerLookup = new Set((Array.isArray(DATA.motivosWriter) ? DATA.motivosWriter : []).map(item => normalizeText(item).toLowerCase()).filter(Boolean));
+  const allowedNfTypes = new Set(['pedido', 'writer']);
 
   function register(type, rawKey, payload) {
     const normalizedKey = normalizeText(rawKey).toLowerCase();
@@ -14164,7 +14184,7 @@ function getCadastroReviewItemsByMonth() {
     if (!isDashboardDateWithin(movementDate, meta.start, meta.end)) return;
 
     const tipo = normalizeText(mov.tipo || '');
-    if (tipo && !typeLookup.has(tipo.toLowerCase())) {
+    if (!isCadastroReviewIgnoredValue(tipo) && !typeLookup.has(tipo.toLowerCase())) {
       register('tipos', tipo, {
         value: tipo,
         displayValue: tipo,
@@ -14174,10 +14194,20 @@ function getCadastroReviewItemsByMonth() {
       });
     }
 
+    const nfTipo = normalizeText(mov.nfTipo || '');
+    if (!allowedNfTypes.has(nfTipo.toLowerCase())) {
+      register('tipoNf', nfTipo || 'Sem informado', {
+        value: nfTipo,
+        displayValue: nfTipo || 'Sem informado',
+        detail: 'Tipo NF usado nos registros sem padronizacao.',
+        sampleDate: movementDate
+      });
+    }
+
     const route = getMovementRouteData(mov);
     [['origem', route.depositoOrigem, route.origem], ['destino', route.depositoDestino, route.destino]].forEach(([side, deposito, nome]) => {
       const depositoKey = normalizeText(deposito || '');
-      if (!depositoKey || epsLookup.has(depositoKey.toLowerCase())) return;
+      if (isCadastroReviewIgnoredValue(depositoKey) || epsLookup.has(depositoKey.toLowerCase())) return;
       register('eps', depositoKey, {
         deposito: depositoKey,
         nome: normalizeText(nome || depositoKey),
@@ -14189,18 +14219,33 @@ function getCadastroReviewItemsByMonth() {
 
     [['origem', route.centroOrigem, route.fazendaOrigem], ['destino', route.centroDestino, route.fazendaDestino]].forEach(([side, centro, nome]) => {
       const centroKey = normalizeText(centro || '');
-      if (!centroKey || fazendaLookup.has(centroKey.toLowerCase())) return;
-      register('fazendas', centroKey, {
-        centro: centroKey,
-        nome: normalizeText(nome || ''),
-        displayValue: [centroKey, normalizeText(nome || '')].filter(Boolean).join(' - '),
-        detail: `Encontrado no campo de ${side}.`,
-        sampleDate: movementDate
-      });
+      const fazendaNome = normalizeText(nome || '');
+      if (centroKey && !fazendaLookup.has(centroKey.toLowerCase())) {
+        register('fazendas', centroKey, {
+          centro: centroKey,
+          nome: fazendaNome,
+          displayValue: [centroKey, fazendaNome].filter(Boolean).join(' - '),
+          detail: `Encontrado no campo de ${side}.`,
+          sampleDate: movementDate
+        });
+        return;
+      }
+      if (!centroKey
+        && !isCadastroReviewIgnoredValue(fazendaNome)
+        && !fazendaNameLookup.has(fazendaNome.toLowerCase())
+        && !fazendaNome.toLowerCase().includes('almoxarifado')) {
+        register('fazendas', `nome|${fazendaNome.toLowerCase()}`, {
+          centro: '',
+          nome: fazendaNome,
+          displayValue: fazendaNome,
+          detail: `Nome de ${side} sem centro/fazenda vinculado.`,
+          sampleDate: movementDate
+        });
+      }
     });
 
     const supervisor = normalizeText(route.supervisor || mov.supervisor || '');
-    if (supervisor && !supervisorLookup.has(supervisor.toLowerCase())) {
+    if (!isCadastroReviewIgnoredValue(supervisor) && !supervisorLookup.has(supervisor.toLowerCase())) {
       register('supervisores', supervisor, {
         value: supervisor,
         displayValue: supervisor,
@@ -14210,7 +14255,7 @@ function getCadastroReviewItemsByMonth() {
     }
 
     const motivo = normalizeText(mov.motivo || '');
-    if (motivo && isWriterMovement(mov) && !writerLookup.has(motivo.toLowerCase())) {
+    if (!isCadastroReviewIgnoredValue(motivo) && !writerLookup.has(motivo.toLowerCase())) {
       register('motivosWriter', motivo, {
         value: motivo,
         displayValue: motivo,
@@ -14251,6 +14296,12 @@ function getCadastroReviewItemById(id) {
 function getCadastroReviewTargetOptions(type) {
   if (type === 'tipos') {
     return (DATA.tipos || []).map(item => ({ value: normalizeText(item.nome), label: normalizeText(item.nome) }));
+  }
+  if (type === 'tipoNf') {
+    return [
+      { value: 'pedido', label: 'Via Pedido' },
+      { value: 'writer', label: 'WRITER' }
+    ];
   }
   if (type === 'eps') {
     return getDepositosList().map(item => ({
@@ -14308,8 +14359,8 @@ function renderMarchMissingCadastrosReview() {
             <div class="hint-line" style="margin-top:6px;">${escapeHtml(item.detail || 'Sem detalhe adicional.')}</div>
             <div class="hint-line" style="margin-top:4px;">${escapeHtml(item.count)} ocorrencia(s) em março${item.sampleDate ? ` • primeiro em ${escapeHtml(formatDate(item.sampleDate))}` : ''}</div>
             <div class="cadastro-review-actions">
-              <button type="button" class="btn btn-primary" style="padding:8px 12px;font-size:0.76rem;" onclick="startCadastroFromReview('${escapeHtml(item.id)}')">Cadastrar</button>
-              <button type="button" class="btn btn-secondary" style="padding:8px 12px;font-size:0.76rem;" onclick="openCadastroReviewMapping('${escapeHtml(item.id)}')">Vincular</button>
+              ${item.type === 'tipoNf' ? '' : `<button type="button" class="btn btn-primary" style="padding:8px 12px;font-size:0.76rem;" onclick="startCadastroFromReview('${escapeHtml(item.id)}')">Cadastrar</button>`}
+              <button type="button" class="btn btn-secondary" style="padding:8px 12px;font-size:0.76rem;" onclick="openCadastroReviewMapping('${escapeHtml(item.id)}')">${item.type === 'tipoNf' ? 'Padronizar' : 'Vincular'}</button>
             </div>
           </div>
         `).join('')}
@@ -14327,6 +14378,10 @@ function startCadastroFromReview(reviewId) {
   const item = getCadastroReviewItemById(reviewId);
   const cadastroTipo = document.getElementById('cadastroTipo');
   if (!item || !cadastroTipo) return;
+  if (item.type === 'tipoNf') {
+    openCadastroReviewMapping(reviewId);
+    return;
+  }
 
   cadastroTipo.value = item.type;
   cadastroEditingIndex = null;
@@ -14388,6 +14443,16 @@ function applyCadastroReviewLink(reviewId, targetValue) {
       return;
     }
 
+    if (item.type === 'tipoNf') {
+      const currentNfTipo = normalizeText(mov.nfTipo || '');
+      if ((item.key === 'sem informado' && !currentNfTipo) || currentNfTipo.toLowerCase() === item.key) {
+        mov.nfTipo = targetValue;
+        if (targetValue === 'writer' && normalizeText(mov.pedido).toLowerCase() !== 'writer') mov.pedido = 'WRITER';
+        affected += 1;
+      }
+      return;
+    }
+
     if (item.type === 'supervisores') {
       const route = getMovementRouteData(mov);
       if (normalizeText(route.supervisor).toLowerCase() === item.key) {
@@ -14432,13 +14497,15 @@ function applyCadastroReviewLink(reviewId, targetValue) {
       if (!target) return;
       const route = getMovementRouteData(mov);
       let changed = false;
-      if (normalizeText(route.centroOrigem).toLowerCase() === item.key) {
+      const origemKey = item.centro ? normalizeText(route.centroOrigem).toLowerCase() : `nome|${normalizeText(route.fazendaOrigem).toLowerCase()}`;
+      const destinoKey = item.centro ? normalizeText(route.centroDestino).toLowerCase() : `nome|${normalizeText(route.fazendaDestino).toLowerCase()}`;
+      if (origemKey === item.key) {
         route.centroOrigem = target.centro;
         route.fazendaOrigem = target.nome;
         changed = true;
         affected += 1;
       }
-      if (normalizeText(route.centroDestino).toLowerCase() === item.key) {
+      if (destinoKey === item.key) {
         route.centroDestino = target.centro;
         route.fazendaDestino = target.nome;
         changed = true;
