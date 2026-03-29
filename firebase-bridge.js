@@ -58,6 +58,10 @@
     return "state__" + key.replace(/[^a-zA-Z0-9_-]/g, "_") + "__" + index;
   }
 
+  function getMetaDocId() {
+    return "state_meta";
+  }
+
   function chunkString(value, maxChunkSize) {
     var safeValue = typeof value === "string" ? value : "";
     var size = Number(maxChunkSize) || 300000;
@@ -143,7 +147,7 @@
         docs[doc.id] = doc.data();
       });
 
-      var meta = docs.__meta__;
+      var meta = docs[getMetaDocId()];
       if (!meta || !meta.keys) {
         state.meta = { keys: {} };
         state.lastSyncedAt = "";
@@ -222,7 +226,7 @@
         }
       });
 
-      batch.set(state.collection.doc("__meta__"), {
+      batch.set(state.collection.doc(getMetaDocId()), {
         kind: "meta",
         schemaVersion: 1,
         updatedAt: getServerTimestamp(),
