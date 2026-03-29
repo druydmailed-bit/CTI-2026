@@ -71,14 +71,62 @@ function findWorkbookSheet(workbook, matcher, fallbackIndex) {
   return sheetName ? workbook.Sheets[sheetName] : null;
 }
 
+function getSheetActualRange(sheet) {
+  let minRow = Infinity;
+  let minCol = Infinity;
+  let maxRow = -1;
+  let maxCol = -1;
+
+  const registerCell = (rowIndex, colIndex, value) => {
+    const hasValue = typeof value === 'string' ? value.trim() !== '' : value !== undefined && value !== null && value !== '';
+    if (!hasValue) return;
+    if (rowIndex < minRow) minRow = rowIndex;
+    if (colIndex < minCol) minCol = colIndex;
+    if (rowIndex > maxRow) maxRow = rowIndex;
+    if (colIndex > maxCol) maxCol = colIndex;
+  };
+
+  if (Array.isArray(sheet)) {
+    sheet.forEach((row, rowIndex) => {
+      if (!Array.isArray(row)) return;
+      row.forEach((cell, colIndex) => {
+        const value = cell && typeof cell === 'object' && 'v' in cell ? cell.v : cell;
+        registerCell(rowIndex, colIndex, value);
+      });
+    });
+  } else {
+    Object.keys(sheet).forEach((key) => {
+      if (!key || key[0] === '!') return;
+      const cell = sheet[key];
+      const value = cell && typeof cell === 'object' && 'v' in cell ? cell.v : cell;
+      const decoded = XLSX.utils.decode_cell(key);
+      registerCell(decoded.r, decoded.c, value);
+    });
+  }
+
+  if (maxRow < 0 || maxCol < 0) return null;
+  return {
+    s: { r: minRow, c: minCol },
+    e: { r: maxRow, c: maxCol }
+  };
+}
+
 async function extractFoPayload(file) {
   const data = await file.arrayBuffer();
   const workbook = XLSX.read(data, { type: 'array', cellDates: true, dense: true });
   const sheet = findWorkbookSheet(workbook, 'fo', 0);
   if (!sheet) return null;
 
-  const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: true });
-  const rawRows = XLSX.utils.sheet_to_json(sheet, { range: 2, defval: '', raw: true });
+  const actualRange = getSheetActualRange(sheet);
+  const maxCol = Math.max(actualRange ? actualRange.e.c : 11, 11);
+  const aoaRange = actualRange
+    ? XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: actualRange.e.r, c: maxCol } })
+    : undefined;
+  const rowRange = actualRange
+    ? XLSX.utils.encode_range({ s: { r: 2, c: 0 }, e: { r: actualRange.e.r, c: maxCol } })
+    : 2;
+  const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: true, range: aoaRange });
+  const rawRows = XLSX.utils.sheet_to_json(sheet, { range: rowRange, defval: '', raw: true });
 
   let firstDateFromColJ = '';
   for (let r = 2; r < aoa.length; r++) {
