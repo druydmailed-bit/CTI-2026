@@ -4278,6 +4278,13 @@ function loadFromStorage(targetKeys = null) {
       }
     } catch(e) { console.error('Erro ao carregar analise:', e); corruptedKeys.push('Analise'); }
   }
+  if (!normalizedTargetKeys || normalizedTargetKeys.some((key) => [
+    STORAGE_KEYS.movimentos,
+    STORAGE_KEYS.legacyOverlay,
+    STORAGE_KEYS.embalagens
+  ].includes(key))) {
+    invalidateAnalysisPackagingRowsCache();
+  }
   if (corruptedKeys.length > 0) {
     setTimeout(() => {
       showToast('Aviso: dados corrompidos detectados em ' + corruptedKeys.join(', ') + '. Os valores padrao foram aplicados. Considere exportar um backup.', true);
@@ -4286,6 +4293,7 @@ function loadFromStorage(targetKeys = null) {
 }
 
 function saveToStorage(reason = 'storage') {
+  invalidateAnalysisPackagingRowsCache();
   const snapshot = JSON.stringify({
     movimentos: movimentos,
     legacyOverlay: legacyOverlay,
@@ -4976,6 +4984,14 @@ function _rebuildMaterialMaps() {
 function invalidateMaterialMaps() { _materialNameMap = null; _materialCodeMap = null; }
 let _analysisDepositoCatalogCache = null;
 function invalidateAnalysisDepositoCatalog() { _analysisDepositoCatalogCache = null; }
+let _analysisPackagingRowsCache = null;
+function invalidateAnalysisPackagingRowsCache() { _analysisPackagingRowsCache = null; }
+function getAnalysisPackagingRows() {
+  if (!_analysisPackagingRowsCache) {
+    _analysisPackagingRowsCache = buildEmbalagemExtractRows();
+  }
+  return _analysisPackagingRowsCache;
+}
 
 function getMaterialMetaByName(name) {
   if (!_materialNameMap) _rebuildMaterialMaps();
@@ -12408,7 +12424,7 @@ async function handleAnalysisInventoryImport(fileList) {
     analysisState.inventoryWarnings = parsed.warnings;
     analysisState.inventoryUnresolvedMappings = parsed.unresolvedMappings;
     analysisState.inventoryConversionWarnings = parsed.conversionWarnings;
-    refreshAnalysisRowsMappings();
+    rebuildAnalysisWarnings();
     saveAnalysisState();
     syncAnalysisPeriodInputs();
     renderAnalysisTab();
@@ -12485,7 +12501,7 @@ async function handleAnalysisFoImport(fileList) {
     analysisState.foWarnings = dedupeAnalysisItems([...(analysisState.foWarnings || []), ...parsed.warnings], item => `${item.source}|${item.raw}|${item.mappedTo}`);
     analysisState.foUnresolvedMappings = dedupeAnalysisItems([...(analysisState.foUnresolvedMappings || []), ...parsed.unresolvedMappings], item => `${item.source}|${item.raw}`);
     analysisState.foConversionWarnings = dedupeAnalysisItems([...(analysisState.foConversionWarnings || []), ...parsed.conversionWarnings], item => `${item.source}|${item.raw}|${item.reason}`);
-    refreshAnalysisRowsMappings();
+    rebuildAnalysisWarnings();
     saveAnalysisState();
     renderAnalysisTab();
     showToast(`F.O. importada: ${parsed.rows.length} linhas validas adicionadas.`);
@@ -12716,7 +12732,7 @@ async function handleFoImportForDeposit(fileList, deposito) {
       );
     }
 
-    refreshAnalysisRowsMappings();
+    rebuildAnalysisWarnings();
     saveAnalysisState();
     renderAnalysisTab();
     showToast(`F.O. de ${epsNome} (${dep}): ${newRows.length} linhas importadas.`);
@@ -12790,20 +12806,20 @@ function clearFoForDeposit(deposito) {
         const idx = parseInt(btn.getAttribute('data-batch-idx'));
         analysisState.foRows = (analysisState.foRows || []).filter(r => r.foBatchId !== batches[idx].id);
         overlay.remove();
-        refreshAnalysisRowsMappings(); saveAnalysisState(); renderAnalysisTab();
+        rebuildAnalysisWarnings(); saveAnalysisState(); renderAnalysisTab();
         showToast(`F.O. "${batches[idx].fileName}" removida do deposito ${dep}.`);
       });
     });
     overlay.querySelector('#clearAllFoBatchesBtn').addEventListener('click', () => {
       analysisState.foRows = (analysisState.foRows || []).filter(r => normalizeText(r.deposito) !== dep);
       overlay.remove();
-      refreshAnalysisRowsMappings(); saveAnalysisState(); renderAnalysisTab();
+      rebuildAnalysisWarnings(); saveAnalysisState(); renderAnalysisTab();
       showToast(`Todas as F.O.s do deposito ${dep} removidas.`);
     });
     overlay.addEventListener('click', (e) => { if (e.target === overlay) overlay.remove(); });
     return;
   }
-  refreshAnalysisRowsMappings();
+  rebuildAnalysisWarnings();
   saveAnalysisState();
   renderAnalysisTab();
   showToast(`F.O. do deposito ${dep} removida.`);
@@ -12817,7 +12833,7 @@ function clearAnalysisInventory() {
   analysisState.inventoryWarnings = [];
   analysisState.inventoryUnresolvedMappings = [];
   analysisState.inventoryConversionWarnings = [];
-  refreshAnalysisRowsMappings();
+  rebuildAnalysisWarnings();
   saveAnalysisState();
   const input = document.getElementById('analysisInventoryFile');
   if (input) input.value = '';
@@ -12831,7 +12847,7 @@ function clearAnalysisFo() {
   analysisState.foWarnings = [];
   analysisState.foUnresolvedMappings = [];
   analysisState.foConversionWarnings = [];
-  refreshAnalysisRowsMappings();
+  rebuildAnalysisWarnings();
   saveAnalysisState();
   const input = document.getElementById('analysisFoFiles');
   if (input) input.value = '';
@@ -12848,7 +12864,7 @@ function isWithinAnalysisPeriod(dateValue) {
 }
 
 function buildAnalysisRows() {
-  const packagingRows = buildEmbalagemExtractRows();
+  const packagingRows = getAnalysisPackagingRows();
   const inventoryRows = (analysisState.inventoryRows || []).filter(row => isWithinAnalysisPeriod(row.date) && normalizeText(row.deposito));
   const foRows = (analysisState.foRows || []).filter(row => normalizeText(row.deposito));
   const depositMap = new Map();
