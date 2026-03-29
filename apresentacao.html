@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTI 2026 — Apresentação</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --neon: #39ff14;
+  --bg: #050505;
+  --bg2: #0d0d0d;
+  --bg3: #161616;
+  --text: #e8e8e8;
+  --text-dim: #777;
+  --red: #ff4757;
+  --blue: #18dcff;
+  --yellow: #ffd32a;
+  --border: #1a1a1a;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
+  height: 100vh;
+  width: 100vw;
+}
+
+/* ========== SLIDE CONTAINER ========== */
+.slides-container {
+  width: 100%;
+  height: 100%;
+  position: relative;
+}
+
+.slide {
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 60px 80px;
+  opacity: 0;
+  transform: translateX(60px);
+  transition: opacity 0.5s ease, transform 0.5s ease;
+  pointer-events: none;
+}
+
+.slide.active {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: all;
+}
+
+.slide.exit-left {
+  opacity: 0;
+  transform: translateX(-60px);
+}
+
+/* ========== NAVIGATION ========== */
+.nav-bar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(5,5,5,0.9);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--border);
+  padding: 12px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.nav-dots {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.nav-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: var(--border);
+  border: 1px solid #333;
+  cursor: pointer;
+  transition: all 0.3s;
+}
+
+.nav-dot.active {
+  background: var(--neon);
+  border-color: var(--neon);
+  box-shadow: 0 0 8px rgba(57,255,20,0.4);
+}
+
+.nav-dot:hover {
+  background: #444;
+}
+
+.nav-buttons {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-btn {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  color: var(--text);
+  padding: 8px 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-family: 'Inter', sans-serif;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: all 0.2s;
+}
+
+.nav-btn:hover {
+  background: rgba(57,255,20,0.1);
+  border-color: rgba(57,255,20,0.3);
+  color: var(--neon);
+}
+
+.nav-btn:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+.nav-counter {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--text-dim);
+}
+
+/* ========== SLIDE STYLES ========== */
+
+/* Title slide */
+.slide-title {
+  text-align: center;
+}
+
+.slide-title .logo {
+  font-size: 5rem;
+  font-weight: 900;
+  background: linear-gradient(135deg, var(--neon), #00ff88);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  line-height: 1;
+  margin-bottom: 16px;
+  letter-spacing: -3px;
+}
+
+.slide-title .subtitle {
+  font-size: 1.4rem;
+  color: var(--text-dim);
+  font-weight: 300;
+  letter-spacing: 2px;
+  margin-bottom: 40px;
+}
+
+.slide-title .version-badge {
+  display: inline-block;
+  background: rgba(57,255,20,0.1);
+  border: 1px solid rgba(57,255,20,0.2);
+  color: var(--neon);
+  padding: 6px 20px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  margin-bottom: 32px;
+}
+
+.slide-title .author {
+  font-size: 0.85rem;
+  color: var(--text-dim);
+}
+
+.slide-title .author strong {
+  color: var(--neon);
+}
+
+/* Section heading */
+.section-number {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.75rem;
+  color: var(--neon);
+  letter-spacing: 3px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+  opacity: 0.7;
+}
+
+.slide h2 {
+  font-size: 2.4rem;
+  font-weight: 800;
+  margin-bottom: 24px;
+  line-height: 1.2;
+}
+
+.slide h2 .accent {
+  color: var(--neon);
+}
+
+.slide p.desc {
+  font-size: 1rem;
+  color: var(--text-dim);
+  max-width: 700px;
+  text-align: center;
+  line-height: 1.7;
+  margin-bottom: 32px;
+}
+
+/* Feature cards */
+.feature-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  max-width: 900px;
+  width: 100%;
+}
+
+.feature-grid.two-col {
+  grid-template-columns: 1fr 1fr;
+}
+
+.feature-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 24px;
+  transition: all 0.3s;
+}
+
+.feature-card:hover {
+  border-color: rgba(57,255,20,0.2);
+  background: rgba(57,255,20,0.02);
+}
+
+.feature-card .icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 14px;
+  font-size: 1.3rem;
+}
+
+.feature-card .icon.green { background: rgba(57,255,20,0.1); }
+.feature-card .icon.blue { background: rgba(24,220,255,0.1); }
+.feature-card .icon.red { background: rgba(255,71,87,0.1); }
+.feature-card .icon.yellow { background: rgba(255,211,42,0.1); }
+
+.feature-card h3 {
+  font-size: 0.9rem;
+  font-weight: 700;
+  margin-bottom: 8px;
+  color: var(--text);
+}
+
+.feature-card p {
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+/* Stats */
+.stats-row {
+  display: flex;
+  gap: 40px;
+  margin-bottom: 32px;
+}
+
+.stat-item {
+  text-align: center;
+}
+
+.stat-item .value {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 2.5rem;
+  font-weight: 800;
+  color: var(--neon);
+}
+
+.stat-item .label {
+  font-size: 0.75rem;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  margin-top: 4px;
+}
+
+/* Permissions table */
+.perm-table {
+  border-collapse: collapse;
+  width: 100%;
+  max-width: 800px;
+  font-size: 0.8rem;
+}
+
+.perm-table th {
+  background: var(--bg3);
+  color: var(--neon);
+  padding: 10px 16px;
+  text-align: left;
+  font-weight: 700;
+  border: 1px solid var(--border);
+}
+
+.perm-table td {
+  padding: 10px 16px;
+  border: 1px solid var(--border);
+  color: var(--text-dim);
+}
+
+.perm-table tr:hover td {
+  background: rgba(57,255,20,0.02);
+}
+
+.check { color: var(--neon); font-weight: 700; }
+.cross { color: var(--red); }
+
+/* Flow diagram */
+.flow-steps {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  max-width: 900px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.flow-step {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 14px 20px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  text-align: center;
+  min-width: 140px;
+}
+
+.flow-arrow {
+  color: var(--neon);
+  font-size: 1.2rem;
+}
+
+/* Highlight box */
+.highlight-box {
+  background: rgba(57,255,20,0.05);
+  border: 1px solid rgba(57,255,20,0.15);
+  border-radius: 12px;
+  padding: 24px 32px;
+  max-width: 700px;
+  text-align: center;
+}
+
+.highlight-box .big {
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 8px;
+}
+
+.highlight-box .small {
+  font-size: 0.82rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+/* Keyboard hint */
+.keyboard-hint {
+  position: fixed;
+  top: 16px;
+  right: 24px;
+  z-index: 100;
+  font-size: 0.7rem;
+  color: var(--text-dim);
+  opacity: 0.5;
+}
+
+kbd {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+}
+</style>
+</head>
+<body>
+
+<div class="keyboard-hint">
+  <kbd>&larr;</kbd> <kbd>&rarr;</kbd> ou clique para navegar
+</div>
+
+<div class="slides-container" id="slidesContainer">
+
+  <!-- SLIDE 1: Title -->
+  <div class="slide slide-title active" data-slide="0">
+    <div class="logo">CTI</div>
+    <div class="subtitle">Controle de Transferencia de Insumos</div>
+    <div class="version-badge">Versao 2026</div>
+    <p class="desc" style="margin-bottom:24px;">
+      Sistema completo para gestao e rastreamento de movimentacoes de insumos e embalagens entre depositos, EPS e fazendas da MS Florestal e Celulose.
+    </p>
+    <div class="author">Elaborado por <strong>Lucas Marques</strong> — 2026</div>
+  </div>
+
+  <!-- SLIDE 2: Visão Geral -->
+  <div class="slide" data-slide="1">
+    <div class="section-number">01 — Visao Geral</div>
+    <h2>O que e o <span class="accent">CTI 2026</span>?</h2>
+    <p class="desc">
+      Uma aplicacao web single-page para controle total de transferencias de insumos, gerenciamento de embalagens e monitoramento de saldos entre EPS parceiras e a MS Florestal.
+    </p>
+    <div class="stats-row">
+      <div class="stat-item">
+        <div class="value">10+</div>
+        <div class="label">Modulos</div>
+      </div>
+      <div class="stat-item">
+        <div class="value">50+</div>
+        <div class="label">EPS Cadastradas</div>
+      </div>
+      <div class="stat-item">
+        <div class="value">100+</div>
+        <div class="label">Materiais</div>
+      </div>
+      <div class="stat-item">
+        <div class="value">3</div>
+        <div class="label">Niveis de Acesso</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="big">100% offline — dados no navegador</div>
+      <div class="small">Nao depende de servidor. Funciona localmente com backup/restauracao manual.</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 3: Módulos Principais -->
+  <div class="slide" data-slide="2">
+    <div class="section-number">02 — Modulos</div>
+    <h2>Modulos <span class="accent">Principais</span></h2>
+    <div class="feature-grid">
+      <div class="feature-card">
+        <div class="icon green">&#128202;</div>
+        <h3>Dashboard</h3>
+        <p>Visao consolidada com KPIs de movimentacoes, graficos mensais e indicadores de performance.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon blue">&#128221;</div>
+        <h3>Nova Movimentacao</h3>
+        <p>Registro de retiradas, devolucoes, transferencias entre EPS e movimentacoes internas MSFC.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon yellow">&#128203;</div>
+        <h3>Registros</h3>
+        <p>Tabela completa de todas as movimentacoes com filtros por data, tipo, status, EPS e busca livre.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon red">&#128230;</div>
+        <h3>Controle de Embalagens</h3>
+        <p>Monitoramento de embalagens por material com rastreio de retiradas, devolucoes e saldos pendentes.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon green">&#127970;</div>
+        <h3>Saldo EPS</h3>
+        <p>Painel detalhado por EPS com saldo, % retorno, bloqueio/desbloqueio e historico completo.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon blue">&#128200;</div>
+        <h3>Analise de Embalagens</h3>
+        <p>Importacao de inventario e F.O., analise cruzada, pendencias e regularizacao de dados.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 4: Módulos de Suporte -->
+  <div class="slide" data-slide="3">
+    <div class="section-number">03 — Suporte</div>
+    <h2>Modulos de <span class="accent">Gestao</span></h2>
+    <div class="feature-grid two-col" style="max-width:700px;">
+      <div class="feature-card">
+        <div class="icon yellow">&#9881;</div>
+        <h3>Cadastros Mestres</h3>
+        <p>Gestao de tipos de transacao, EPS, fazendas, supervisores, materiais, motivos de bloqueio/desbloqueio e limite de liberacao temporaria.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon red">&#128274;</div>
+        <h3>Controle de Acesso</h3>
+        <p>Cadastro de usuarios, aprovacao de solicitacoes, gestao de permissoes e backup/restauracao de dados.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon blue">&#128273;</div>
+        <h3>Configuracoes</h3>
+        <p>Alteracao de senha pessoal e visualizacao de dados da conta do usuario logado.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon green">&#128229;</div>
+        <h3>Backup e Restauracao</h3>
+        <p>Exportacao e importacao completa de todos os dados do sistema em formato JSON.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 5: Áreas de Acesso -->
+  <div class="slide" data-slide="4">
+    <div class="section-number">04 — Seguranca</div>
+    <h2>Areas de <span class="accent">Acesso</span></h2>
+    <p class="desc">O sistema possui duas areas distintas no login, garantindo seguranca e segregacao de funcoes.</p>
+    <div class="feature-grid two-col" style="max-width:650px;">
+      <div class="feature-card" style="border-color:rgba(57,255,20,0.2);">
+        <div class="icon green">&#128737;</div>
+        <h3 style="color:var(--neon);">Area Restrita</h3>
+        <p>Exclusiva para colaboradores MS Florestal. Acesso completo a Dashboard, movimentacoes, controle de embalagens, saldo EPS, analise e cadastros.</p>
+      </div>
+      <div class="feature-card" style="border-color:rgba(24,220,255,0.2);">
+        <div class="icon blue">&#128269;</div>
+        <h3 style="color:var(--blue);">Area de Consulta</h3>
+        <p>Para parceiros EPS. Acesso restrito a Registros (somente sua EPS), Saldo EPS proprio e configuracoes de senha. Solicitar acesso via key user.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 6: Permissões -->
+  <div class="slide" data-slide="5">
+    <div class="section-number">05 — Permissoes</div>
+    <h2>Niveis de <span class="accent">Permissao</span></h2>
+    <table class="perm-table">
+      <thead>
+        <tr>
+          <th>Funcionalidade</th>
+          <th>Admin</th>
+          <th>MSFC</th>
+          <th>EPS</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>Dashboard</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Nova Movimentacao</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Registros (todos)</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Registros (propria EPS)</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+        <tr><td>Controle de Embalagens</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Saldo EPS (todos)</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Saldo EPS (propria)</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+        <tr><td>Analise de Embalagens</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Cadastros Mestres</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Controle de Acesso</td><td class="check">&#10003;</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Bloquear / Desbloquear EPS</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="cross">&#10007;</td></tr>
+        <tr><td>Solicitar Desbloqueio</td><td class="cross">&#10007;</td><td class="cross">&#10007;</td><td class="check">&#10003;</td></tr>
+        <tr><td>Alterar Senha</td><td class="check">&#10003;</td><td class="check">&#10003;</td><td class="check">&#10003;</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- SLIDE 7: Fluxo de Bloqueio -->
+  <div class="slide" data-slide="6">
+    <div class="section-number">06 — Bloqueio EPS</div>
+    <h2>Fluxo de <span class="accent">Bloqueio e Desbloqueio</span></h2>
+    <p class="desc">Sistema completo de bloqueio com motivos, solicitacoes e historico rastreavel.</p>
+    <div class="flow-steps" style="margin-bottom:24px;">
+      <div class="flow-step" style="border-color:rgba(255,71,87,0.3);">&#128274; MSFC bloqueia EPS<br><small style="color:var(--text-dim);">com motivo obrigatorio</small></div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(255,211,42,0.3);">&#128276; EPS recebe aviso<br><small style="color:var(--text-dim);">popup + banner no saldo</small></div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(24,220,255,0.3);">&#128172; EPS solicita desbloqueio<br><small style="color:var(--text-dim);">com mensagem</small></div>
+    </div>
+    <div class="flow-steps">
+      <div class="flow-step" style="border-color:rgba(255,211,42,0.3);">&#128276; MSFC recebe solicitacao<br><small style="color:var(--text-dim);">badge + painel em Saldo EPS</small></div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(57,255,20,0.3);">&#9989; Aprova com motivo<br><small style="color:var(--text-dim);">ou rejeita com resposta</small></div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(57,255,20,0.3);">&#128172; EPS recebe retorno<br><small style="color:var(--text-dim);">popup no proximo login</small></div>
+    </div>
+    <div style="margin-top:24px;font-size:0.78rem;color:var(--text-dim);text-align:center;">
+      <strong style="color:var(--yellow);">Liberacao Temporaria</strong> possui limite configuravel por EPS (padrao: 3x)
+    </div>
+  </div>
+
+  <!-- SLIDE 8: Análise de Embalagens -->
+  <div class="slide" data-slide="7">
+    <div class="section-number">07 — Analise</div>
+    <h2>Analise de <span class="accent">Embalagens</span></h2>
+    <p class="desc">Modulo avancado para cruzamento de dados entre inventario fisico e fichas de operacao.</p>
+    <div class="feature-grid" style="max-width:800px;">
+      <div class="feature-card">
+        <div class="icon blue">&#128196;</div>
+        <h3>Importacao de Bases</h3>
+        <p>Importacao de planilhas de inventario e F.O. com intervalo de datas obrigatorio.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon yellow">&#9888;</div>
+        <h3>Pendencias de F.O.</h3>
+        <p>Identificacao automatica de EPS com fichas de operacao pendentes de envio.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon red">&#128269;</div>
+        <h3>Regularizacao de Dados</h3>
+        <p>Alertas de mapeamentos aproximados e divergencias que necessitam correcao manual.</p>
+      </div>
+    </div>
+    <div class="highlight-box" style="margin-top:24px;">
+      <div class="big">Painel EPS com Saldo Atual, Justificado e Devolucao</div>
+      <div class="small">Saldo Justificado = Em Campo + F.O. | Devolucao = embalagens usadas + saldo nao justificado</div>
+    </div>
+  </div>
+
+  <!-- SLIDE 9: Solicitação de Acesso -->
+  <div class="slide" data-slide="8">
+    <div class="section-number">08 — Acesso</div>
+    <h2>Solicitacao de <span class="accent">Acesso</span></h2>
+    <p class="desc">Fluxo completo de registro, aprovacao e envio de credenciais.</p>
+    <div class="flow-steps" style="margin-bottom:32px;">
+      <div class="flow-step">&#128221; Preenche formulario<br><small style="color:var(--text-dim);">tipo: MSFC ou EPS</small></div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(255,211,42,0.3);">&#128276; Key user recebe<br><small style="color:var(--text-dim);">badge na aba Controle</small></div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(57,255,20,0.3);">&#9989; Aprovacao<br><small style="color:var(--text-dim);">gera senha aleatoria</small></div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-step" style="border-color:rgba(24,220,255,0.3);">&#128231; Outlook<br><small style="color:var(--text-dim);">envia credenciais</small></div>
+    </div>
+    <div class="feature-grid two-col" style="max-width:600px;">
+      <div class="feature-card">
+        <h3>Colaborador MSFC</h3>
+        <p>Nome, Area, Contato e Email. Acesso a Registros, Embalagens, Saldo EPS e Configuracoes.</p>
+      </div>
+      <div class="feature-card">
+        <h3>Parceiro EPS</h3>
+        <p>Nome, EPS vinculada, Contato e Email. Acesso restrito a propria EPS em Registros e Saldo.</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 10: Tecnologia -->
+  <div class="slide" data-slide="9">
+    <div class="section-number">09 — Tecnologia</div>
+    <h2>Arquitetura <span class="accent">Tecnica</span></h2>
+    <div class="feature-grid" style="max-width:800px;">
+      <div class="feature-card">
+        <div class="icon green">&#128187;</div>
+        <h3>Single-Page App</h3>
+        <p>Aplicacao completa em um unico arquivo HTML. Sem dependencias de servidor, frameworks ou build tools.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon blue">&#128190;</div>
+        <h3>localStorage</h3>
+        <p>Todos os dados persistidos no navegador. Backup e restauracao via JSON para portabilidade.</p>
+      </div>
+      <div class="feature-card">
+        <div class="icon yellow">&#127912;</div>
+        <h3>Dark Theme Neon</h3>
+        <p>Interface moderna com tema escuro e acentos neon verde, otimizada para uso prolongado.</p>
+      </div>
+    </div>
+    <div style="margin-top:32px;text-align:center;">
+      <div style="font-size:0.78rem;color:var(--text-dim);margin-bottom:12px;">Tecnologias utilizadas:</div>
+      <div style="display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+        <span style="background:var(--bg3);border:1px solid var(--border);padding:6px 16px;border-radius:8px;font-size:0.78rem;font-weight:600;">HTML5</span>
+        <span style="background:var(--bg3);border:1px solid var(--border);padding:6px 16px;border-radius:8px;font-size:0.78rem;font-weight:600;">CSS3</span>
+        <span style="background:var(--bg3);border:1px solid var(--border);padding:6px 16px;border-radius:8px;font-size:0.78rem;font-weight:600;">JavaScript</span>
+        <span style="background:var(--bg3);border:1px solid var(--border);padding:6px 16px;border-radius:8px;font-size:0.78rem;font-weight:600;">SheetJS (xlsx)</span>
+        <span style="background:var(--bg3);border:1px solid var(--border);padding:6px 16px;border-radius:8px;font-size:0.78rem;font-weight:600;">localStorage API</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- SLIDE 11: Final -->
+  <div class="slide slide-title" data-slide="10">
+    <div class="logo" style="font-size:3.5rem;margin-bottom:20px;">CTI 2026</div>
+    <h2 style="font-size:1.6rem;font-weight:600;margin-bottom:24px;">Controle inteligente, seguro e <span class="accent">eficiente</span>.</h2>
+    <div class="stats-row" style="margin-bottom:32px;">
+      <div class="stat-item">
+        <div class="value" style="font-size:1.8rem;">&#128274;</div>
+        <div class="label">Seguranca</div>
+      </div>
+      <div class="stat-item">
+        <div class="value" style="font-size:1.8rem;">&#9889;</div>
+        <div class="label">Agilidade</div>
+      </div>
+      <div class="stat-item">
+        <div class="value" style="font-size:1.8rem;">&#128200;</div>
+        <div class="label">Rastreabilidade</div>
+      </div>
+      <div class="stat-item">
+        <div class="value" style="font-size:1.8rem;">&#127760;</div>
+        <div class="label">100% Web</div>
+      </div>
+    </div>
+    <div class="highlight-box">
+      <div class="big">Obrigado!</div>
+      <div class="small">Elaborado por <strong style="color:var(--neon);">Lucas Marques</strong> — 2026<br>MS Florestal e Celulose</div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Navigation Bar -->
+<div class="nav-bar">
+  <div class="nav-buttons">
+    <button class="nav-btn" id="btnPrev" onclick="prevSlide()">&larr; Anterior</button>
+  </div>
+  <div class="nav-dots" id="navDots"></div>
+  <div style="display:flex;align-items:center;gap:16px;">
+    <div class="nav-counter" id="navCounter">1 / 11</div>
+    <button class="nav-btn" id="btnNext" onclick="nextSlide()">Proximo &rarr;</button>
+  </div>
+</div>
+
+<script>
+const slides = document.querySelectorAll('.slide');
+const totalSlides = slides.length;
+let currentSlide = 0;
+
+// Build dots
+const dotsContainer = document.getElementById('navDots');
+for (let i = 0; i < totalSlides; i++) {
+  const dot = document.createElement('div');
+  dot.className = 'nav-dot' + (i === 0 ? ' active' : '');
+  dot.onclick = () => goToSlide(i);
+  dotsContainer.appendChild(dot);
+}
+
+function updateUI() {
+  slides.forEach((s, i) => {
+    s.classList.remove('active', 'exit-left');
+    if (i === currentSlide) s.classList.add('active');
+    else if (i < currentSlide) s.classList.add('exit-left');
+  });
+  document.querySelectorAll('.nav-dot').forEach((d, i) => {
+    d.classList.toggle('active', i === currentSlide);
+  });
+  document.getElementById('navCounter').textContent = (currentSlide + 1) + ' / ' + totalSlides;
+  document.getElementById('btnPrev').disabled = currentSlide === 0;
+  document.getElementById('btnNext').disabled = currentSlide === totalSlides - 1;
+}
+
+function nextSlide() {
+  if (currentSlide < totalSlides - 1) { currentSlide++; updateUI(); }
+}
+
+function prevSlide() {
+  if (currentSlide > 0) { currentSlide--; updateUI(); }
+}
+
+function goToSlide(n) {
+  currentSlide = n;
+  updateUI();
+}
+
+document.addEventListener('keydown', (e) => {
+  if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+  if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+  if (e.key === 'Home') { e.preventDefault(); goToSlide(0); }
+  if (e.key === 'End') { e.preventDefault(); goToSlide(totalSlides - 1); }
+});
+
+updateUI();
+</script>
+</body>
+</html>

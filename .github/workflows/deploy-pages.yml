@@ -1,0 +1,58 @@
+name: Deploy GitHub Pages
+
+on:
+  push:
+    branches: ["main", "master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Configure Pages
+        uses: actions/configure-pages@v5
+
+      - name: Assemble static site
+        run: |
+          mkdir -p dist vendor
+          cp index.html dist/
+          cp firebase-config.js dist/
+          cp firebase-bridge.js dist/
+          cp seed_master_data.js dist/
+          cp seed_base_data.js dist/
+          cp seed_legacy_data.js dist/
+          cp base_data.json dist/
+          cp legacy_data.json dist/
+          cp tutorial.html dist/
+          cp apresentacao.html dist/
+          cp firestore.rules dist/
+          cp vendor/xlsx.full.min.js dist/vendor/
+          touch dist/.nojekyll
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist
+
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

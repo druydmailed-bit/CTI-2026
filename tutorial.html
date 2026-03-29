@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTI 2026 — Tutorial</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --neon: #39ff14;
+  --bg: #050505;
+  --bg2: #0d0d0d;
+  --bg3: #161616;
+  --text: #e8e8e8;
+  --text-dim: #777;
+  --red: #ff4757;
+  --blue: #18dcff;
+  --yellow: #ffd32a;
+  --border: #1a1a1a;
+  --radius: 12px;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.7;
+  overflow-x: hidden;
+}
+
+/* ========== HEADER ========== */
+.tutorial-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background: rgba(5,5,5,0.92);
+  backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--border);
+  padding: 14px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.tutorial-header .logo {
+  font-size: 1.2rem;
+  font-weight: 900;
+  color: var(--neon);
+  letter-spacing: -1px;
+}
+
+.tutorial-header .logo span {
+  font-weight: 400;
+  color: var(--text-dim);
+  font-size: 0.85rem;
+  margin-left: 8px;
+}
+
+.header-nav {
+  display: flex;
+  gap: 6px;
+  align-items: center;
+}
+
+.header-nav a {
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.75rem;
+  padding: 6px 14px;
+  border-radius: 6px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.header-nav a:hover, .header-nav a.active {
+  background: rgba(57,255,20,0.08);
+  color: var(--neon);
+}
+
+/* ========== SIDEBAR ========== */
+.layout {
+  display: flex;
+  margin-top: 56px;
+}
+
+.sidebar {
+  position: fixed;
+  top: 56px;
+  left: 0;
+  bottom: 0;
+  width: 260px;
+  background: var(--bg2);
+  border-right: 1px solid var(--border);
+  overflow-y: auto;
+  padding: 20px 0;
+  z-index: 50;
+}
+
+.sidebar::-webkit-scrollbar { width: 4px; }
+.sidebar::-webkit-scrollbar-thumb { background: #333; border-radius: 4px; }
+
+.sidebar-section {
+  padding: 0 16px;
+  margin-bottom: 8px;
+}
+
+.sidebar-section-title {
+  font-size: 0.6rem;
+  font-weight: 700;
+  color: var(--text-dim);
+  text-transform: uppercase;
+  letter-spacing: 2px;
+  padding: 8px 0;
+}
+
+.sidebar-link {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 8px 12px;
+  color: var(--text-dim);
+  text-decoration: none;
+  font-size: 0.8rem;
+  border-radius: 8px;
+  transition: all 0.2s;
+  font-weight: 500;
+}
+
+.sidebar-link:hover {
+  background: rgba(57,255,20,0.05);
+  color: var(--text);
+}
+
+.sidebar-link.active {
+  background: rgba(57,255,20,0.08);
+  color: var(--neon);
+}
+
+.sidebar-link .num {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--text-dim);
+  min-width: 20px;
+}
+
+/* ========== MAIN CONTENT ========== */
+.main-content {
+  margin-left: 260px;
+  padding: 40px 60px 80px;
+  max-width: 900px;
+}
+
+/* ========== SECTIONS ========== */
+.tutorial-section {
+  margin-bottom: 64px;
+  scroll-margin-top: 80px;
+}
+
+.section-badge {
+  display: inline-block;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.65rem;
+  color: var(--neon);
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  background: rgba(57,255,20,0.06);
+  padding: 4px 12px;
+  border-radius: 4px;
+  margin-bottom: 12px;
+}
+
+.tutorial-section h2 {
+  font-size: 1.6rem;
+  font-weight: 800;
+  margin-bottom: 16px;
+  line-height: 1.3;
+}
+
+.tutorial-section h3 {
+  font-size: 1.1rem;
+  font-weight: 700;
+  margin: 28px 0 12px;
+  color: var(--text);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tutorial-section h3 .step-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: rgba(57,255,20,0.1);
+  color: var(--neon);
+  font-size: 0.75rem;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+  flex-shrink: 0;
+}
+
+.tutorial-section p {
+  font-size: 0.88rem;
+  color: var(--text-dim);
+  margin-bottom: 14px;
+}
+
+/* ========== COMPONENTS ========== */
+.info-box {
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px 22px;
+  margin: 16px 0;
+  font-size: 0.84rem;
+}
+
+.info-box.tip {
+  border-left: 3px solid var(--neon);
+  background: rgba(57,255,20,0.03);
+}
+
+.info-box.warning {
+  border-left: 3px solid var(--yellow);
+  background: rgba(255,211,42,0.03);
+}
+
+.info-box.danger {
+  border-left: 3px solid var(--red);
+  background: rgba(255,71,87,0.03);
+}
+
+.info-box .box-title {
+  font-weight: 700;
+  font-size: 0.8rem;
+  margin-bottom: 6px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.info-box.tip .box-title { color: var(--neon); }
+.info-box.warning .box-title { color: var(--yellow); }
+.info-box.danger .box-title { color: var(--red); }
+
+.info-box p { margin-bottom: 0; color: var(--text-dim); }
+
+.step-list {
+  list-style: none;
+  margin: 16px 0;
+}
+
+.step-list li {
+  position: relative;
+  padding: 12px 16px 12px 48px;
+  margin-bottom: 8px;
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-size: 0.84rem;
+  color: var(--text-dim);
+}
+
+.step-list li::before {
+  content: attr(data-step);
+  position: absolute;
+  left: 14px;
+  top: 12px;
+  width: 22px;
+  height: 22px;
+  background: rgba(57,255,20,0.1);
+  color: var(--neon);
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.7rem;
+  font-weight: 800;
+  font-family: 'JetBrains Mono', monospace;
+}
+
+.step-list li strong {
+  color: var(--text);
+}
+
+.path-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 3px 10px;
+  border-radius: 6px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--blue);
+  margin: 0 2px;
+}
+
+.path-indicator .sep {
+  color: var(--text-dim);
+}
+
+.key-badge {
+  display: inline-block;
+  background: var(--bg3);
+  border: 1px solid var(--border);
+  padding: 2px 8px;
+  border-radius: 4px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--neon);
+}
+
+.role-badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 4px;
+  font-size: 0.7rem;
+  font-weight: 700;
+}
+
+.role-badge.admin { background: rgba(57,255,20,0.1); color: var(--neon); }
+.role-badge.msfc { background: rgba(24,220,255,0.1); color: var(--blue); }
+.role-badge.eps { background: rgba(255,211,42,0.1); color: var(--yellow); }
+
+.comparison-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin: 16px 0;
+}
+
+.comparison-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 18px;
+}
+
+.comparison-card h4 {
+  font-size: 0.85rem;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.comparison-card ul {
+  list-style: none;
+  font-size: 0.8rem;
+  color: var(--text-dim);
+}
+
+.comparison-card ul li {
+  padding: 3px 0;
+}
+
+.comparison-card ul li::before {
+  content: '→ ';
+  color: var(--neon);
+}
+
+.flow-diagram {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 16px 0;
+  flex-wrap: wrap;
+}
+
+.flow-box {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  text-align: center;
+}
+
+.flow-arrow {
+  color: var(--neon);
+  font-size: 1rem;
+}
+
+/* ========== FOOTER ========== */
+.tutorial-footer {
+  text-align: center;
+  padding: 32px 0;
+  margin-left: 260px;
+  border-top: 1px solid var(--border);
+  font-size: 0.7rem;
+  color: var(--text-dim);
+}
+
+.tutorial-footer strong { color: var(--neon); }
+
+/* ========== SCROLL PROGRESS ========== */
+.scroll-progress {
+  position: fixed;
+  top: 55px;
+  left: 260px;
+  right: 0;
+  height: 2px;
+  background: var(--border);
+  z-index: 99;
+}
+
+.scroll-progress-bar {
+  height: 100%;
+  background: var(--neon);
+  width: 0%;
+  transition: width 0.1s;
+}
+
+/* ========== RESPONSIVE ========== */
+@media (max-width: 900px) {
+  .sidebar { display: none; }
+  .main-content, .tutorial-footer { margin-left: 0; }
+  .scroll-progress { left: 0; }
+  .main-content { padding: 32px 24px 60px; }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header class="tutorial-header">
+  <div class="logo">CTI <span>Tutorial Completo</span></div>
+  <nav class="header-nav">
+    <a href="index.html">Abrir Aplicativo</a>
+    <a href="apresentacao.html">Apresentacao</a>
+  </nav>
+</header>
+
+<!-- Progress Bar -->
+<div class="scroll-progress"><div class="scroll-progress-bar" id="progressBar"></div></div>
+
+<div class="layout">
+
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Primeiros Passos</div>
+    <a href="#login" class="sidebar-link"><span class="num">01</span> Login e Areas de Acesso</a>
+    <a href="#primeiro-acesso" class="sidebar-link"><span class="num">02</span> Primeiro Acesso</a>
+    <a href="#solicitar-acesso" class="sidebar-link"><span class="num">03</span> Solicitar Acesso</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Operacoes</div>
+    <a href="#dashboard" class="sidebar-link"><span class="num">04</span> Dashboard</a>
+    <a href="#nova-movimentacao" class="sidebar-link"><span class="num">05</span> Nova Movimentacao</a>
+    <a href="#registros" class="sidebar-link"><span class="num">06</span> Registros</a>
+    <a href="#embalagens" class="sidebar-link"><span class="num">07</span> Controle de Embalagens</a>
+    <a href="#saldo-eps" class="sidebar-link"><span class="num">08</span> Saldo EPS</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Analise</div>
+    <a href="#analise" class="sidebar-link"><span class="num">09</span> Analise de Embalagens</a>
+  </div>
+  <div class="sidebar-section">
+    <div class="sidebar-section-title">Gestao</div>
+    <a href="#bloqueio-eps" class="sidebar-link"><span class="num">10</span> Bloqueio e Desbloqueio</a>
+    <a href="#cadastros" class="sidebar-link"><span class="num">11</span> Cadastros Mestres</a>
+    <a href="#controle-acesso" class="sidebar-link"><span class="num">12</span> Controle de Acesso</a>
+    <a href="#configuracoes" class="sidebar-link"><span class="num">13</span> Configuracoes</a>
+    <a href="#backup" class="sidebar-link"><span class="num">14</span> Backup e Restauracao</a>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main-content">
+
+  <!-- ==================== 01 LOGIN ==================== -->
+  <section class="tutorial-section" id="login">
+    <div class="section-badge">01 — Primeiros Passos</div>
+    <h2>Login e Areas de Acesso</h2>
+    <p>Ao abrir o aplicativo, voce vera a tela de selecao de area. O sistema possui duas areas de acesso distintas.</p>
+
+    <div class="comparison-grid">
+      <div class="comparison-card" style="border-color:rgba(57,255,20,0.2);">
+        <h4 style="color:var(--neon);">&#128737; Area Restrita</h4>
+        <ul>
+          <li>Exclusiva para colaboradores MS Florestal</li>
+          <li>Acesso a todas as funcionalidades operacionais</li>
+          <li>Tipos de usuario: <span class="role-badge admin">Admin</span> e <span class="role-badge msfc">MSFC</span></li>
+        </ul>
+      </div>
+      <div class="comparison-card" style="border-color:rgba(24,220,255,0.2);">
+        <h4 style="color:var(--blue);">&#128269; Area de Consulta</h4>
+        <ul>
+          <li>Para parceiros EPS</li>
+          <li>Acesso restrito a sua propria EPS</li>
+          <li>Tipo de usuario: <span class="role-badge eps">EPS</span></li>
+          <li>Solicitar acesso via key user</li>
+        </ul>
+      </div>
+    </div>
+
+    <h3><span class="step-num">1</span> Como fazer login</h3>
+    <ol class="step-list">
+      <li data-step="1">Selecione <strong>Area Restrita</strong> (colaboradores) ou <strong>Area de Consulta</strong> (EPS)</li>
+      <li data-step="2">Escolha seu nome no campo <strong>Usuario</strong></li>
+      <li data-step="3">Digite sua <strong>senha</strong></li>
+      <li data-step="4">Clique em <strong>Entrar</strong></li>
+    </ol>
+
+    <div class="info-box tip">
+      <div class="box-title">&#128161; Dica</div>
+      <p>Se for seu primeiro acesso, a senha padrao sera fornecida pelo key user. O sistema pedira para voce criar uma nova senha.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 02 PRIMEIRO ACESSO ==================== -->
+  <section class="tutorial-section" id="primeiro-acesso">
+    <div class="section-badge">02 — Primeiros Passos</div>
+    <h2>Primeiro Acesso</h2>
+    <p>No primeiro login, o sistema exigira que voce defina uma nova senha pessoal.</p>
+
+    <ol class="step-list">
+      <li data-step="1">Faca login com a <strong>senha temporaria</strong> fornecida pelo administrador</li>
+      <li data-step="2">O sistema abrira automaticamente o formulario de <strong>troca de senha</strong></li>
+      <li data-step="3">Digite sua <strong>nova senha</strong> (minimo 4 caracteres)</li>
+      <li data-step="4">Confirme a nova senha e clique em <strong>Salvar senha</strong></li>
+      <li data-step="5">Faca login novamente com a <strong>nova senha</strong></li>
+    </ol>
+
+    <div class="info-box warning">
+      <div class="box-title">&#9888; Importante</div>
+      <p>Memorize sua nova senha. Caso esqueca, solicite ao administrador a redefinicao.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 03 SOLICITAR ACESSO ==================== -->
+  <section class="tutorial-section" id="solicitar-acesso">
+    <div class="section-badge">03 — Primeiros Passos</div>
+    <h2>Solicitar Acesso ao Sistema</h2>
+    <p>Se voce ainda nao tem cadastro, pode solicitar acesso diretamente pela tela de login.</p>
+
+    <ol class="step-list">
+      <li data-step="1">Na tela de login, selecione a area desejada (<strong>Restrita</strong> ou <strong>Consulta</strong>)</li>
+      <li data-step="2">Clique no botao <strong>Solicitar Acesso</strong></li>
+      <li data-step="3">Selecione o tipo de usuario: <strong>MS Florestal</strong> ou <strong>EPS</strong></li>
+      <li data-step="4">Preencha os campos do formulario:
+        <br>&bull; <strong>MS Florestal:</strong> Nome, Area, Contato, Email (opcional)
+        <br>&bull; <strong>EPS:</strong> Nome, EPS vinculada, Contato, Email
+      </li>
+      <li data-step="5">Clique em <strong>Enviar Solicitacao</strong></li>
+      <li data-step="6">Aguarde a aprovacao do key user. Voce recebera as credenciais por email.</li>
+    </ol>
+
+    <div class="info-box tip">
+      <div class="box-title">&#128161; Dica</div>
+      <p>O administrador vera sua solicitacao na aba "Controle de Acesso" e, ao aprovar, uma senha aleatoria sera gerada e enviada automaticamente por email via Outlook.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 04 DASHBOARD ==================== -->
+  <section class="tutorial-section" id="dashboard">
+    <div class="section-badge">04 — Operacoes</div>
+    <h2>Dashboard</h2>
+    <p>O Dashboard apresenta uma visao consolidada de todas as movimentacoes do periodo.</p>
+    <p><span class="role-badge admin">Admin</span> <span class="role-badge msfc">MSFC</span></p>
+
+    <h3><span class="step-num">1</span> KPIs Principais</h3>
+    <p>No topo do Dashboard voce encontra 4 indicadores:</p>
+    <ul class="step-list">
+      <li data-step="&#10003;"><strong>Total de Movimentacoes</strong> — quantidade de registros no periodo</li>
+      <li data-step="&#10003;"><strong>Retiradas</strong> — total de insumos retirados pelas EPS</li>
+      <li data-step="&#10003;"><strong>Devolucoes</strong> — total de insumos devolvidos</li>
+      <li data-step="&#10003;"><strong>Saldo Pendente</strong> — diferenca entre retiradas e devolucoes</li>
+    </ul>
+
+    <h3><span class="step-num">2</span> Periodo</h3>
+    <p>Use o seletor de periodo para alternar entre <strong>visao mensal</strong> ou <strong>acumulado anual</strong>.</p>
+  </section>
+
+  <!-- ==================== 05 NOVA MOVIMENTACAO ==================== -->
+  <section class="tutorial-section" id="nova-movimentacao">
+    <div class="section-badge">05 — Operacoes</div>
+    <h2>Nova Movimentacao</h2>
+    <p>Registre retiradas, devolucoes, transferencias entre EPS e movimentacoes internas.</p>
+    <p><span class="role-badge admin">Admin</span></p>
+
+    <ol class="step-list">
+      <li data-step="1">Acesse a aba <strong>Nova Movimentacao</strong></li>
+      <li data-step="2">Preencha a <strong>Data Fisico</strong> — data em que a movimentacao ocorreu</li>
+      <li data-step="3">Selecione o <strong>Tipo</strong> de movimentacao (Retirada, Devolucao, Transferencia, etc.)</li>
+      <li data-step="4">Preencha <strong>Origem</strong> e <strong>Destino</strong></li>
+      <li data-step="5">Adicione os <strong>materiais</strong> com quantidades</li>
+      <li data-step="6">Preencha <strong>NF</strong> (nota fiscal), <strong>Supervisor</strong> e demais campos</li>
+      <li data-step="7">Clique em <strong>Salvar Movimentacao</strong></li>
+    </ol>
+
+    <div class="info-box tip">
+      <div class="box-title">&#128161; Dica</div>
+      <p>Ao selecionar o material, o sistema preenche automaticamente o codigo do produto e a unidade de medida conforme o cadastro mestre.</p>
+    </div>
+
+    <div class="info-box warning">
+      <div class="box-title">&#9888; Atencao</div>
+      <p>Se a EPS de destino estiver <strong>bloqueada</strong>, o sistema impedira a movimentacao e exibira um aviso.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 06 REGISTROS ==================== -->
+  <section class="tutorial-section" id="registros">
+    <div class="section-badge">06 — Operacoes</div>
+    <h2>Registros</h2>
+    <p>Tabela completa de todas as movimentacoes com filtros avancados.</p>
+    <p><span class="role-badge admin">Admin</span> <span class="role-badge msfc">MSFC</span> <span class="role-badge eps">EPS (somente propria)</span></p>
+
+    <h3><span class="step-num">1</span> Filtros disponiveis</h3>
+    <ul class="step-list">
+      <li data-step="&#127381;"><strong>Busca livre</strong> — pesquise por qualquer campo (NF, material, EPS, etc.)</li>
+      <li data-step="&#128197;"><strong>Intervalo de datas</strong> — campos "De" e "Ate" para filtrar por periodo</li>
+      <li data-step="&#128196;"><strong>Tipo</strong> — filtre por tipo de movimentacao (Retirada, Devolucao, etc.)</li>
+      <li data-step="&#127760;"><strong>Status</strong> — filtre por status (Normal, Pendente, Writer, Finalizado)</li>
+    </ul>
+
+    <h3><span class="step-num">2</span> Colunas da tabela</h3>
+    <p>A tabela exibe: <strong>#</strong>, <strong>Data</strong>, <strong>Tipo</strong>, <strong>Status</strong>, <strong>NF</strong>, <strong>Origem</strong>, <strong>Destino</strong>, <strong>Material</strong>, <strong>Qtd</strong>, <strong>Debito em</strong>, <strong>Un</strong>, <strong>Data Lancamento</strong>, <strong>Inserido por</strong> e <strong>Acoes</strong>.</p>
+
+    <div class="info-box tip">
+      <div class="box-title">&#128161; Data de Lancamento</div>
+      <p>Se a movimentacao <strong>nao for WRITER</strong>, mostra a data em que o registro foi inserido. Se for <strong>WRITER</strong>, a data so aparece apos a finalizacao da pendencia.</p>
+    </div>
+
+    <h3><span class="step-num">3</span> Acoes por registro</h3>
+    <p>Cada registro possui botoes para <strong>Editar</strong>, <strong>Visualizar detalhes</strong> e <strong>Excluir</strong> (conforme permissao do usuario).</p>
+  </section>
+
+  <!-- ==================== 07 CONTROLE EMBALAGENS ==================== -->
+  <section class="tutorial-section" id="embalagens">
+    <div class="section-badge">07 — Operacoes</div>
+    <h2>Controle de Embalagens</h2>
+    <p>Monitoramento de embalagens por material com rastreio de retiradas, devolucoes e saldos pendentes.</p>
+    <p><span class="role-badge admin">Admin</span> <span class="role-badge msfc">MSFC</span></p>
+
+    <p>Este modulo exibe automaticamente os materiais que possuem a flag <strong>"Controla Embalagem = SIM"</strong> no cadastro de materiais. Para cada material, voce visualiza:</p>
+
+    <ul class="step-list">
+      <li data-step="&#10003;"><strong>Total retirado</strong> — quantidade de embalagens enviadas</li>
+      <li data-step="&#10003;"><strong>Total devolvido</strong> — quantidade de embalagens retornadas</li>
+      <li data-step="&#10003;"><strong>Saldo pendente</strong> — embalagens que ainda nao foram devolvidas</li>
+      <li data-step="&#10003;"><strong>% Retorno</strong> — percentual de retorno por material</li>
+    </ul>
+  </section>
+
+  <!-- ==================== 08 SALDO EPS ==================== -->
+  <section class="tutorial-section" id="saldo-eps">
+    <div class="section-badge">08 — Operacoes</div>
+    <h2>Saldo EPS</h2>
+    <p>Painel detalhado com saldo de embalagens por EPS, percentual de retorno, bloqueio e historico.</p>
+    <p><span class="role-badge admin">Admin</span> <span class="role-badge msfc">MSFC</span> <span class="role-badge eps">EPS (somente propria)</span></p>
+
+    <h3><span class="step-num">1</span> KPIs</h3>
+    <p>No topo: <strong>Total Pendente</strong>, <strong>Total Devolvido</strong>, <strong>EPS Devedoras</strong> e <strong>EPS Quitadas</strong>.</p>
+
+    <h3><span class="step-num">2</span> Tabela de EPS</h3>
+    <p>Lista todas as EPS com: Deposito, Nome, Retiradas, Devolucoes, Transferencias, Saldo, Saldo Devolucao, % Retorno e Status.</p>
+    <p>Clique em uma linha para abrir o <strong>detalhamento completo</strong> com:</p>
+    <ul class="step-list">
+      <li data-step="&#10003;"><strong>KPIs individuais</strong> — retiradas, devolucoes, transferencias in/out, saldo e % retorno</li>
+      <li data-step="&#10003;"><strong>Materiais detalhados</strong> — tabela com saldo por material</li>
+      <li data-step="&#10003;"><strong>Historico de movimentacoes</strong> — todas as movimentacoes da EPS</li>
+      <li data-step="&#10003;"><strong>Historico de bloqueio/desbloqueio</strong> — registro com data, tipo, motivo e usuario</li>
+    </ul>
+
+    <h3><span class="step-num">3</span> Filtros</h3>
+    <p>Filtre por: <strong>busca livre</strong>, <strong>todas</strong>, <strong>devedoras</strong>, <strong>quitadas</strong> ou <strong>bloqueadas</strong>.</p>
+
+    <div class="info-box tip">
+      <div class="box-title">&#128161; Para usuarios EPS</div>
+      <p>Se sua EPS estiver bloqueada, um banner vermelho aparecera com o motivo do bloqueio, a data e um botao para <strong>Solicitar Desbloqueio</strong>. Apos enviar a solicitacao, o banner mostra o status "Aguardando retorno".</p>
+    </div>
+  </section>
+
+  <!-- ==================== 09 ANALISE EMBALAGENS ==================== -->
+  <section class="tutorial-section" id="analise">
+    <div class="section-badge">09 — Analise</div>
+    <h2>Analise de Embalagens</h2>
+    <p>Modulo avancado para cruzamento de dados entre inventario fisico e fichas de operacao (F.O.).</p>
+    <p><span class="role-badge admin">Admin</span></p>
+
+    <h3><span class="step-num">1</span> Definir periodo</h3>
+    <p>Antes de importar qualquer base, <strong>defina o intervalo de datas</strong> (Data Inicio e Data Fim). O sistema bloqueara a importacao se o periodo nao estiver definido.</p>
+
+    <h3><span class="step-num">2</span> Importar bases</h3>
+    <ol class="step-list">
+      <li data-step="1"><strong>Importar Inventario</strong> — planilha com dados de estoque fisico de embalagens</li>
+      <li data-step="2"><strong>Importar F.O.</strong> — planilha com fichas de operacao das EPS</li>
+    </ol>
+
+    <h3><span class="step-num">3</span> Paineis de analise</h3>
+    <ul class="step-list">
+      <li data-step="&#128196;"><strong>Pendencias de F.O.</strong> — EPS com fichas de operacao pendentes de envio (exibido em largura total)</li>
+      <li data-step="&#9888;"><strong>Regularizacao de Dados</strong> — alertas de mapeamentos aproximados e divergencias (exibido em largura total)</li>
+    </ul>
+
+    <h3><span class="step-num">4</span> Painel EPS</h3>
+    <p>Tabela consolidada por EPS com:</p>
+    <ul class="step-list">
+      <li data-step="&#10003;"><strong>Saldo Atual</strong> — quantidade de embalagens em posse da EPS</li>
+      <li data-step="&#10003;"><strong>Saldo Justificado</strong> — embalagens em campo + fichas de operacao</li>
+      <li data-step="&#10003;"><strong>Devolucao</strong> — embalagens usadas + saldo nao justificado</li>
+    </ul>
+  </section>
+
+  <!-- ==================== 10 BLOQUEIO EPS ==================== -->
+  <section class="tutorial-section" id="bloqueio-eps">
+    <div class="section-badge">10 — Gestao</div>
+    <h2>Bloqueio e Desbloqueio de EPS</h2>
+    <p>O sistema permite bloquear EPS com pendencias, impedindo novas movimentacoes ate a regularizacao.</p>
+    <p><span class="role-badge admin">Admin</span> <span class="role-badge msfc">MSFC</span></p>
+
+    <h3><span class="step-num">1</span> Bloquear uma EPS</h3>
+    <ol class="step-list">
+      <li data-step="1">Acesse <strong>Saldo EPS</strong> e clique na EPS desejada</li>
+      <li data-step="2">Clique no botao <strong>Bloquear EPS</strong></li>
+      <li data-step="3">Selecione o <strong>motivo do bloqueio</strong> (obrigatorio)</li>
+      <li data-step="4">Confirme o bloqueio</li>
+    </ol>
+
+    <div class="info-box danger">
+      <div class="box-title">&#128274; Efeitos do bloqueio</div>
+      <p>A EPS bloqueada ficara com status "BLOQ" na tabela e novas movimentacoes serao impedidas. O usuario EPS vera um aviso ao fazer login e um banner permanente na aba Saldo EPS.</p>
+    </div>
+
+    <h3><span class="step-num">2</span> Desbloquear uma EPS</h3>
+    <ol class="step-list">
+      <li data-step="1">No detalhamento da EPS, clique em <strong>Desbloquear EPS</strong></li>
+      <li data-step="2">Selecione o <strong>motivo do desbloqueio</strong> (obrigatorio):
+        <br>&bull; <strong>Pendencia Regularizada</strong> — a EPS resolveu a pendencia
+        <br>&bull; <strong>Liberacao Temporaria</strong> — liberacao com limite (padrao: 3x por EPS)
+        <br>&bull; <strong>Autorizado pela gestao MSFC</strong> — aprovacao especial
+      </li>
+      <li data-step="3">Confirme o desbloqueio</li>
+    </ol>
+
+    <div class="info-box warning">
+      <div class="box-title">&#9888; Liberacao Temporaria</div>
+      <p>O numero maximo de liberacoes temporarias por EPS e configuravel em <strong>Cadastros > Limite Liberacao Temporaria</strong> (padrao: 3). Ao atingir o limite, a opcao ficara desabilitada.</p>
+    </div>
+
+    <h3><span class="step-num">3</span> Solicitacao de desbloqueio (EPS)</h3>
+    <p>Usuarios EPS podem solicitar desbloqueio de duas formas:</p>
+    <ol class="step-list">
+      <li data-step="1">No <strong>popup de EPS Bloqueada</strong> que aparece ao fazer login</li>
+      <li data-step="2">Pelo <strong>banner na aba Saldo EPS</strong>, clicando em "Solicitar Desbloqueio"</li>
+    </ol>
+
+    <div class="flow-diagram">
+      <div class="flow-box" style="border-color:rgba(255,211,42,0.3);">EPS envia solicitacao</div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-box" style="border-color:rgba(24,220,255,0.3);">MSFC recebe na aba Saldo EPS</div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-box" style="border-color:rgba(57,255,20,0.3);">Aprova (com motivo) ou Rejeita (com resposta)</div>
+      <div class="flow-arrow">&#10132;</div>
+      <div class="flow-box" style="border-color:rgba(24,220,255,0.3);">EPS recebe retorno no login</div>
+    </div>
+  </section>
+
+  <!-- ==================== 11 CADASTROS ==================== -->
+  <section class="tutorial-section" id="cadastros">
+    <div class="section-badge">11 — Gestao</div>
+    <h2>Cadastros Mestres</h2>
+    <p>Gerencie todas as tabelas de referencia do sistema.</p>
+    <p><span class="role-badge admin">Admin</span></p>
+
+    <h3><span class="step-num">1</span> Categorias disponiveis</h3>
+    <ul class="step-list">
+      <li data-step="&#9881;"><strong>Tipos de transacao</strong> — Retirada, Devolucao, Transferencia, etc.</li>
+      <li data-step="&#127970;"><strong>EPS</strong> — deposito, nome e classificacao de cada EPS</li>
+      <li data-step="&#127969;"><strong>Fazendas e Centros</strong> — ID do projeto, centro, nome e municipio</li>
+      <li data-step="&#128101;"><strong>Supervisores</strong> — lista de supervisores de campo</li>
+      <li data-step="&#128221;"><strong>Motivos WRITER</strong> — motivos para classificacao de pendencias</li>
+      <li data-step="&#128230;"><strong>Materiais</strong> — descricao, codigo, grupo, unidade e flag de embalagem</li>
+      <li data-step="&#128274;"><strong>Motivos de Bloqueio EPS</strong> — motivos para bloquear EPS</li>
+      <li data-step="&#128275;"><strong>Motivos de Desbloqueio EPS</strong> — motivos para desbloquear EPS</li>
+      <li data-step="&#9200;"><strong>Lead Time Embalagens</strong> — prazo em dias para retorno</li>
+      <li data-step="&#128290;"><strong>Limite Liberacao Temporaria</strong> — quantidade maxima de liberacoes por EPS</li>
+    </ul>
+
+    <h3><span class="step-num">2</span> Como gerenciar</h3>
+    <ol class="step-list">
+      <li data-step="1">Selecione a <strong>Categoria</strong> no dropdown</li>
+      <li data-step="2">Preencha o formulario de <strong>Cadastro Rapido</strong></li>
+      <li data-step="3">Clique em <strong>Adicionar Item</strong></li>
+      <li data-step="4">Para editar ou excluir, use os botoes de acao na tabela</li>
+    </ol>
+
+    <div class="info-box tip">
+      <div class="box-title">&#128161; Dica</div>
+      <p>Alteracoes em cadastros sao automaticamente propagadas para os registros existentes. Ex: renomear uma EPS atualiza todas as movimentacoes vinculadas.</p>
+    </div>
+  </section>
+
+  <!-- ==================== 12 CONTROLE ACESSO ==================== -->
+  <section class="tutorial-section" id="controle-acesso">
+    <div class="section-badge">12 — Gestao</div>
+    <h2>Controle de Acesso</h2>
+    <p>Gerencie usuarios, aprovacoes de acesso e permissoes do sistema.</p>
+    <p><span class="role-badge admin">Admin</span></p>
+
+    <h3><span class="step-num">1</span> Solicitacoes pendentes</h3>
+    <p>No topo da aba, um painel amarelo exibe as <strong>solicitacoes de acesso pendentes</strong>. A aba tambem exibe um badge com a quantidade.</p>
+    <ol class="step-list">
+      <li data-step="1">Revise os dados do solicitante (nome, tipo, contato, email)</li>
+      <li data-step="2">Clique em <strong>Aprovar</strong> — o sistema gera uma senha aleatoria e abre o Outlook para envio</li>
+      <li data-step="3">Ou clique em <strong>Rejeitar</strong> para recusar a solicitacao</li>
+    </ol>
+
+    <h3><span class="step-num">2</span> Cadastrar usuario manualmente</h3>
+    <ol class="step-list">
+      <li data-step="1">Preencha o <strong>nome</strong> e opcionalmente uma <strong>senha temporaria</strong></li>
+      <li data-step="2">Clique em <strong>Cadastrar Usuario</strong></li>
+      <li data-step="3">Um painel aparecera com opcoes de <strong>Copiar Senha</strong> e <strong>Enviar por Email (Outlook)</strong></li>
+    </ol>
+
+    <h3><span class="step-num">3</span> Gerenciar usuarios existentes</h3>
+    <p>Na tabela de usuarios, voce pode: editar permissoes, alterar tipo de usuario, resetar senha ou excluir o usuario.</p>
+  </section>
+
+  <!-- ==================== 13 CONFIGURACOES ==================== -->
+  <section class="tutorial-section" id="configuracoes">
+    <div class="section-badge">13 — Gestao</div>
+    <h2>Configuracoes</h2>
+    <p>Aba disponivel para todos os usuarios para gerenciamento da conta pessoal.</p>
+    <p><span class="role-badge admin">Admin</span> <span class="role-badge msfc">MSFC</span> <span class="role-badge eps">EPS</span></p>
+
+    <h3><span class="step-num">1</span> Alterar senha</h3>
+    <ol class="step-list">
+      <li data-step="1">Acesse a aba <strong>Configuracoes</strong></li>
+      <li data-step="2">Digite sua <strong>senha atual</strong></li>
+      <li data-step="3">Digite a <strong>nova senha</strong> (minimo 4 caracteres)</li>
+      <li data-step="4">Confirme e clique em <strong>Salvar Nova Senha</strong></li>
+    </ol>
+
+    <p>A aba tambem exibe os dados da sua conta: nome, tipo de usuario, area e permissoes.</p>
+  </section>
+
+  <!-- ==================== 14 BACKUP ==================== -->
+  <section class="tutorial-section" id="backup">
+    <div class="section-badge">14 — Gestao</div>
+    <h2>Backup e Restauracao</h2>
+    <p>Proteja seus dados com backups regulares e restaure quando necessario.</p>
+    <p><span class="role-badge admin">Admin</span></p>
+
+    <div class="info-box danger">
+      <div class="box-title">&#128680; Muito Importante</div>
+      <p>Todos os dados sao armazenados no navegador (localStorage). Se voce limpar os dados do navegador, <strong>tudo sera perdido</strong>. Faca backups regulares!</p>
+    </div>
+
+    <h3><span class="step-num">1</span> Fazer backup</h3>
+    <ol class="step-list">
+      <li data-step="1">Clique no botao <strong>Backup</strong> no cabecalho do aplicativo</li>
+      <li data-step="2">Um arquivo <strong>.json</strong> sera baixado com todos os dados</li>
+      <li data-step="3">Guarde o arquivo em local seguro</li>
+    </ol>
+
+    <h3><span class="step-num">2</span> Restaurar backup</h3>
+    <ol class="step-list">
+      <li data-step="1">Clique no botao <strong>Restaurar</strong> no cabecalho</li>
+      <li data-step="2">Selecione o arquivo <strong>.json</strong> de backup</li>
+      <li data-step="3">Confirme a restauracao — os dados atuais serao <strong>substituidos</strong></li>
+    </ol>
+
+    <div class="info-box warning">
+      <div class="box-title">&#9888; Atencao</div>
+      <p>A restauracao <strong>substitui</strong> todos os dados atuais. Faca um backup antes de restaurar para evitar perda de dados recentes.</p>
+    </div>
+  </section>
+
+</main>
+</div>
+
+<!-- Footer -->
+<footer class="tutorial-footer">
+  Elaborado por <strong>Lucas Marques</strong> — 2026 | MS Florestal e Celulose
+</footer>
+
+<script>
+// Scroll progress bar
+window.addEventListener('scroll', () => {
+  const winScroll = document.documentElement.scrollTop;
+  const height = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+  const scrolled = height > 0 ? (winScroll / height) * 100 : 0;
+  document.getElementById('progressBar').style.width = scrolled + '%';
+});
+
+// Active sidebar link on scroll
+const sections = document.querySelectorAll('.tutorial-section');
+const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+const observer = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      sidebarLinks.forEach(link => link.classList.remove('active'));
+      const activeLink = document.querySelector('.sidebar-link[href="#' + entry.target.id + '"]');
+      if (activeLink) activeLink.classList.add('active');
+    }
+  });
+}, { rootMargin: '-80px 0px -70% 0px', threshold: 0 });
+
+sections.forEach(section => observer.observe(section));
+</script>
+</body>
+</html>

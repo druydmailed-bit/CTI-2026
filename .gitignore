@@ -1,0 +1,9 @@
+node_modules/
+.claude/
+~$*
+*.xls
+*.xlsx
+*.xlsm
+*.xlsb
+CTI_2026_Export_*.csv
+Nova pasta/
