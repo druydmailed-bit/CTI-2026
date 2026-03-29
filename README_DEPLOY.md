@@ -3,7 +3,7 @@
 ## O que foi preparado
 
 - `index.html` continua funcionando no modo desktop/local.
-- `firebase-config.js` ativa a sincronizacao web com o projeto Firebase `cti-2026`.
+- `firebase-config.js` ativa a sincronizacao web com o projeto Firebase `almoxarifado-insumos`.
 - `firebase-bridge.js` espelha os dados do `localStorage` no Firestore quando o app roda em `http(s)`.
 - `.github/workflows/deploy-pages.yml` publica os arquivos estaticos no GitHub Pages.
 
@@ -17,7 +17,7 @@
 
 ## Como ativar o Firestore
 
-1. No Firebase Console, abra o projeto `cti-2026`.
+1. No Firebase Console, abra o projeto `almoxarifado-insumos`.
 2. Ative `Authentication > Sign-in method > Anonymous`.
 3. Ative o Cloud Firestore em modo producao ou teste.
 4. Publique as regras do arquivo `firestore.rules`.
