@@ -1,11 +1,11 @@
 window.CTI_FIREBASE_CONFIG = {
-  apiKey: "AIzaSyAPJs2OInWZejrHGZmc43KiJ2sS5hQqcDY",
-  authDomain: "almoxarifado-insumos.firebaseapp.com",
-  projectId: "almoxarifado-insumos",
-  storageBucket: "almoxarifado-insumos.firebasestorage.app",
-  messagingSenderId: "112524958029",
-  appId: "1:112524958029:web:fb87d0e391c7d48d96bf04",
-  measurementId: "G-695JWVFLYY"
+  apiKey: "AIzaSyAagPnVmhn2asJIC7B9BoM854BC3iWyi-k",
+  authDomain: "cti-2026.firebaseapp.com",
+  projectId: "cti-2026",
+  storageBucket: "cti-2026.firebasestorage.app",
+  messagingSenderId: "696291792626",
+  appId: "1:696291792626:web:895d645676dab95326226b",
+  measurementId: "G-16ZZNBNYRY"
 };
 
 window.CTI_FIREBASE_OPTIONS = {
