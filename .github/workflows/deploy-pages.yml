@@ -26,7 +26,7 @@ jobs:
 
       - name: Assemble static site
         run: |
-          mkdir -p dist vendor
+          mkdir -p dist dist/vendor
           cp index.html dist/
           cp firebase-config.js dist/
           cp firebase-bridge.js dist/
