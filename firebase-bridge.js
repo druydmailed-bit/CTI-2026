@@ -13,11 +13,12 @@
     lastSyncedAt: "",
     clientId: "",
     cache: {},
+    docCache: {},
     syncTimer: null,
     syncPromise: null,
     listeners: [],
     remoteListeners: [],
-    unsubscribeMeta: null,
+    unsubscribeCollection: null,
     lastMetaToken: ""
   };
 
@@ -117,13 +118,52 @@
       : "";
   }
 
-  function startMetaListener() {
-    if (!state.collection || state.unsubscribeMeta) return;
+  function applyDocsToLocalStorage(docs, meta) {
+    var sourceDocs = docs && typeof docs === "object" ? docs : {};
+    var sourceMeta = meta && typeof meta === "object" ? meta : sourceDocs[getMetaDocId()];
+    if (!sourceMeta || !sourceMeta.keys) {
+      state.meta = { keys: {} };
+      state.cache = {};
+      state.lastSyncedAt = "";
+      notify();
+      return { ok: true, empty: true, mode: state.mode };
+    }
 
-    state.unsubscribeMeta = state.collection.doc(getMetaDocId()).onSnapshot(async function (doc) {
-      if (!doc.exists) return;
+    syncMetaState(sourceMeta);
+    state.cache = {};
+    Object.keys(sourceMeta.keys).forEach(function (key) {
+      var info = sourceMeta.keys[key] || {};
+      var total = Number(info.chunks) || 0;
+      var raw = "";
+      for (var index = 0; index < total; index += 1) {
+        var chunk = sourceDocs[getChunkDocId(key, index)];
+        if (chunk && typeof chunk.data === "string") raw += chunk.data;
+      }
+      if (typeof raw === "string") {
+        localStorage.setItem(key, raw);
+        state.cache[key] = raw;
+      }
+    });
 
-      var meta = doc.data() || {};
+    notify();
+    return { ok: true, empty: false, mode: state.mode };
+  }
+
+  function startCollectionListener() {
+    if (!state.collection || state.unsubscribeCollection) return;
+
+    state.unsubscribeCollection = state.collection.onSnapshot(function (snapshot) {
+      snapshot.docChanges().forEach(function (change) {
+        if (change.type === "removed") {
+          delete state.docCache[change.doc.id];
+          return;
+        }
+        state.docCache[change.doc.id] = change.doc.data();
+      });
+
+      var meta = state.docCache[getMetaDocId()];
+      if (!meta || !meta.keys) return;
+
       var token = getMetaToken(meta);
       if (token && token === state.lastMetaToken) return;
 
@@ -133,7 +173,7 @@
       if (meta.updatedByClientId && meta.updatedByClientId === getClientId()) return;
 
       try {
-        var result = await hydrateLocalStorage();
+        var result = applyDocsToLocalStorage(state.docCache, meta);
         if (result && (result.ok || result.empty)) {
           notifyRemote({
             meta: meta,
@@ -207,7 +247,7 @@
         state.enabled = true;
         state.initialized = true;
         getClientId();
-        startMetaListener();
+        startCollectionListener();
         setMode("web-cloud", "Sincronizacao Firebase ativa.");
         return true;
       } catch (error) {
@@ -234,33 +274,8 @@
       snapshot.forEach(function (doc) {
         docs[doc.id] = doc.data();
       });
-
-      var meta = docs[getMetaDocId()];
-      if (!meta || !meta.keys) {
-        state.meta = { keys: {} };
-        state.lastSyncedAt = "";
-        notify();
-        return { ok: true, empty: true, mode: state.mode };
-      }
-
-      syncMetaState(meta);
-      state.cache = {};
-      Object.keys(meta.keys).forEach(function (key) {
-        var info = meta.keys[key] || {};
-        var total = Number(info.chunks) || 0;
-        var raw = "";
-        for (var index = 0; index < total; index += 1) {
-          var chunk = docs[getChunkDocId(key, index)];
-          if (chunk && typeof chunk.data === "string") raw += chunk.data;
-        }
-        if (typeof raw === "string") {
-          localStorage.setItem(key, raw);
-          state.cache[key] = raw;
-        }
-      });
-
-      notify();
-      return { ok: true, empty: false, mode: state.mode };
+      state.docCache = docs;
+      return applyDocsToLocalStorage(docs);
     } catch (error) {
       console.error("Falha ao baixar estado da nuvem:", error);
       setMode("web-local-fallback", "Falha ao carregar dados do Firebase. Seguindo com o cache local.");
@@ -268,11 +283,15 @@
     }
   }
 
-  async function uploadState(rawState, reason) {
+  async function uploadState(rawState, reason, options) {
     var ready = await init();
     if (!ready || !state.collection) return { ok: false, mode: state.mode };
 
-    var payload = rawState && typeof rawState === "object" ? rawState : {};
+    var uploadOptions = options && typeof options === "object" ? options : {};
+    var incomingPayload = rawState && typeof rawState === "object" ? rawState : {};
+    var payload = uploadOptions.partial
+      ? Object.assign({}, state.cache || {}, incomingPayload)
+      : incomingPayload;
     var options = globalScope.CTI_FIREBASE_OPTIONS || {};
     var previousMeta = state.meta && state.meta.keys ? state.meta.keys : {};
     var nextMeta = {};
@@ -337,32 +356,32 @@
     }
   }
 
-  function queueUpload(getter, reason) {
+  function queueUpload(getter, reason, options) {
     if (state.syncTimer) {
       clearTimeout(state.syncTimer);
       state.syncTimer = null;
     }
 
-    var options = globalScope.CTI_FIREBASE_OPTIONS || {};
-    var wait = Number(options.syncDebounceMs) || 1200;
+    var configOptions = globalScope.CTI_FIREBASE_OPTIONS || {};
+    var wait = Number(configOptions.syncDebounceMs) || 1200;
     state.syncPromise = new Promise(function (resolve) {
       state.syncTimer = setTimeout(async function () {
         state.syncTimer = null;
         var payload = typeof getter === "function" ? getter() : getter;
-        resolve(await uploadState(payload, reason || "auto"));
+        resolve(await uploadState(payload, reason || "auto", options));
       }, wait);
     });
 
     return state.syncPromise;
   }
 
-  async function flushUpload(getter, reason) {
+  async function flushUpload(getter, reason, options) {
     if (state.syncTimer) {
       clearTimeout(state.syncTimer);
       state.syncTimer = null;
     }
     var payload = typeof getter === "function" ? getter() : getter;
-    state.syncPromise = uploadState(payload, reason || "manual");
+    state.syncPromise = uploadState(payload, reason || "manual", options);
     return state.syncPromise;
   }
 

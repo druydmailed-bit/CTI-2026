@@ -3409,14 +3409,42 @@ let cloudSyncPauseDepth = 0;
 let appReady = false;
 let appInitPromise = null;
 let appInterfacePrepared = false;
+const IMMEDIATE_CLOUD_SYNC_REASONS = new Set([
+  'storage',
+  'users',
+  'master-data',
+  'access-requests',
+  'saldo-devolucao',
+  'blocked-eps',
+  'desbloqueio-requests',
+  'desbloqueio-history'
+]);
 
 function getCloudSyncableStorageKeys() {
   return [...new Set([...Object.values(STORAGE_KEYS), ...CLOUD_SYNC_EXTRA_KEYS])];
 }
 
-function buildCloudSyncPayload() {
+function getCloudSyncKeysForReason(reason = 'auto') {
+  if (reason === 'master-data') return [STORAGE_KEYS.master];
+  if (reason === 'users') return [STORAGE_KEYS.users];
+  if (reason === 'access-requests') return [STORAGE_KEYS.accessRequests];
+  if (reason === 'saldo-devolucao') return [STORAGE_KEYS.saldoDevolucao];
+  if (reason === 'movimentos') return [STORAGE_KEYS.movimentos];
+  if (reason === 'legacy-overlay') return [STORAGE_KEYS.legacyOverlay];
+  if (reason === 'embalagens') return [STORAGE_KEYS.embalagens];
+  if (reason === 'storage') return [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise];
+  if (reason === 'analysis') return [STORAGE_KEYS.analise];
+  if (reason === 'blocked-eps') return ['cti_blockedEps'];
+  if (reason === 'desbloqueio-requests') return ['cti_desbloqueio_requests'];
+  if (reason === 'desbloqueio-history') return ['cti_desbloqueio_history'];
+  if (reason === 'backup-export') return ['cti_lastBackup'];
+  return getCloudSyncableStorageKeys();
+}
+
+function buildCloudSyncPayload(targetKeys = null) {
   const payload = {};
-  getCloudSyncableStorageKeys().forEach((key) => {
+  const keys = Array.isArray(targetKeys) && targetKeys.length ? targetKeys : getCloudSyncableStorageKeys();
+  keys.forEach((key) => {
     const raw = localStorage.getItem(key);
     if (raw !== null) payload[key] = raw;
   });
@@ -3498,7 +3526,12 @@ async function runWithCloudSyncPaused(task) {
 function scheduleCloudSync(reason = 'auto') {
   if (!window.CTICloudSync) return Promise.resolve({ ok: false, mode: 'local-only' });
   if (isCloudSyncPaused()) return Promise.resolve({ ok: false, mode: 'paused', paused: true });
-  return window.CTICloudSync.queueUpload(buildCloudSyncPayload, reason);
+  const syncKeys = getCloudSyncKeysForReason(reason);
+  const isPartial = syncKeys.length < getCloudSyncableStorageKeys().length;
+  if (IMMEDIATE_CLOUD_SYNC_REASONS.has(reason) && window.CTICloudSync.flushUpload) {
+    return window.CTICloudSync.flushUpload(() => buildCloudSyncPayload(syncKeys), reason, { partial: isPartial });
+  }
+  return window.CTICloudSync.queueUpload(() => buildCloudSyncPayload(syncKeys), reason, { partial: isPartial });
 }
 
 async function flushCloudSync(reason = 'manual-sync') {
@@ -3587,17 +3620,39 @@ function syncCurrentUserSessionState() {
   if (roleEl) roleEl.textContent = getUserRoleLabel(activeUser);
 }
 
-function applyLoadedApplicationState() {
+function getActiveTabName() {
+  const activePanel = document.querySelector('.tab-panel.active');
+  if (!activePanel || !activePanel.id) return currentUser && currentUser.userType === 'eps' ? 'registros' : 'dashboard';
+  return activePanel.id.replace(/^tab-/, '') || 'dashboard';
+}
+
+function refreshVisibleAppState() {
+  const activeTab = getActiveTabName();
+
+  updateAccessRequestBadge();
+  updateDesbloqueioRequestBadge();
+
+  if (activeTab === 'dashboard') updateDashboard();
+  if (activeTab === 'registros' || activeTab === 'nova') renderTable();
+  if (activeTab === 'legado') renderLegacyTable();
+  if (activeTab === 'embalagens') renderPackagingControlTable();
+  if (activeTab === 'saldoEps') renderSaldoEpsTab();
+  if (activeTab === 'analise') renderAnalysisTab();
+  if (activeTab === 'cadastros') onCadastroTipoChange();
+  if (activeTab === 'controle') {
+    renderUserManagementTable();
+    renderPendingAccessRequests();
+    updateBackupPanel();
+  }
+  if (activeTab === 'config') renderConfigTab();
+}
+
+function applyLoadedApplicationState({ visibleOnly = false } = {}) {
   refreshAnalysisRowsMappings();
   movimentos.forEach(syncLegacyMovementFields);
   legacyMovements.forEach(syncLegacyMovementFields);
   populateSelects();
   populateLegacyFilters();
-  onCadastroTipoChange();
-  renderUserManagementTable();
-  renderPendingAccessRequests();
-  renderExtratoTab();
-  renderAnalysisTab();
 
   const today = new Date().toISOString().split('T')[0];
   if (document.getElementById('fDataFisico')) document.getElementById('fDataFisico').value = today;
@@ -3609,6 +3664,16 @@ function applyLoadedApplicationState() {
     updateDesbloqueioRequestBadge();
   }
 
+  if (visibleOnly) {
+    refreshVisibleAppState();
+    return;
+  }
+
+  onCadastroTipoChange();
+  renderUserManagementTable();
+  renderPendingAccessRequests();
+  renderExtratoTab();
+  renderAnalysisTab();
   updateDashboard();
   renderTable();
   renderLegacyTable();
@@ -3640,7 +3705,7 @@ async function reloadApplicationState({
   });
 
   if (persistAfterLoad) saveToStorage();
-  applyLoadedApplicationState();
+  applyLoadedApplicationState({ visibleOnly: reason === 'remote-sync' });
   renderLoginUserOptions(getLoginAreaAllowedTypes());
 
   if (!silent) {
@@ -4065,7 +4130,7 @@ function loadFromStorage() {
   }
 }
 
-function saveToStorage() {
+function saveToStorage(reason = 'storage') {
   const snapshot = JSON.stringify({
     movimentos: movimentos,
     legacyOverlay: legacyOverlay,
@@ -4078,7 +4143,7 @@ function saveToStorage() {
   localStorage.setItem(STORAGE_KEYS.legacyOverlay, JSON.stringify(parsed.legacyOverlay));
   localStorage.setItem(STORAGE_KEYS.embalagens, JSON.stringify(parsed.embalagens));
   localStorage.setItem(STORAGE_KEYS.analise, JSON.stringify(parsed.analise));
-  scheduleCloudSync('storage');
+  scheduleCloudSync(reason);
 }
 
 function saveAnalysisState() {
@@ -4310,7 +4375,7 @@ function clearAllData() {
   legacyMovements = [];
   embalagemDevolucoes = [];
   analysisState = { inventoryRows:[], foRows:[], inventoryFileName:'', foFileNames:[], periodStart:'', periodEnd:'', inventoryWarnings:[], inventoryUnresolvedMappings:[], inventoryConversionWarnings:[], foWarnings:[], foUnresolvedMappings:[], foConversionWarnings:[], mappingOverrides:{}, acknowledgedWarnings:[], warnings:[], unresolvedMappings:[], conversionWarnings:[] };
-  saveToStorage();
+  saveToStorage('storage');
   showToast('Todos os dados de movimentações foram removidos. Recarregando...');
   setTimeout(() => location.reload(), 1500);
 }
@@ -7005,7 +7070,7 @@ function saveMovimento(e) {
       : 'Movimentação registrada com sucesso!');
   }
 
-  saveToStorage();
+  saveToStorage('movimentos');
   resetForm();
   updateDashboard();
   renderTable();
@@ -7065,7 +7130,7 @@ function finalizarWriter(id) {
     mov.finalizadoPor = getCurrentUserName();
     mov.finalizadoEm = new Date().toISOString();
 
-    saveToStorage();
+    saveToStorage('movimentos');
     updateDashboard();
     renderTable();
     overlay.remove();
@@ -7138,7 +7203,7 @@ function deleteMov(id) {
     'Deseja realmente excluir esta movimentação? Esta ação não pode ser desfeita.',
     () => {
       movimentos = movimentos.filter(m => m.id !== id);
-      saveToStorage();
+      saveToStorage('movimentos');
       updateDashboard();
       renderTable();
       showToast('Movimentação excluída.');
@@ -7599,7 +7664,7 @@ function renameUser(userId) {
     }
 
     saveUsers();
-    saveToStorage();
+    saveToStorage('movimentos');
     populateSelects();
     renderUserManagementTable();
     updateDashboard();
@@ -7976,7 +8041,7 @@ function saveCadastroItem(event) {
   sortCadastroCollection(type);
   cadastroEditingIndex = null;
   saveMasterData();
-  saveToStorage();
+  saveToStorage('movimentos');
   populateSelects();
   updateDashboard();
   renderTable();
@@ -9621,7 +9686,7 @@ function saveMovimento(e) {
       : 'Movimentacao registrada com sucesso!');
   }
 
-  saveToStorage();
+  saveToStorage('movimentos');
   resetForm();
   updateDashboard();
   renderTable();
@@ -9727,7 +9792,7 @@ function finalizarWriter(id) {
     mov.finalizadoPor = getCurrentUserName();
     mov.finalizadoEm = new Date().toISOString();
 
-    saveToStorage();
+    saveToStorage('movimentos');
     updateDashboard();
     renderTable();
     overlay.remove();
@@ -10568,7 +10633,7 @@ function openPackagingReturnModal(prefill) {
       inseridoEm: new Date().toISOString()
     }));
 
-    saveToStorage();
+    saveToStorage('embalagens');
     updateDashboard();
     renderPackagingControlTable();
     overlay.remove();
@@ -13803,7 +13868,7 @@ function saveCadastroItem(event) {
   sortCadastroCollection(type);
   cadastroEditingIndex = null;
   saveMasterData();
-  saveToStorage();
+  saveToStorage('movimentos');
   populateSelects();
   updateDashboard();
   renderTable();

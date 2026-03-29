@@ -15,5 +15,5 @@ window.CTI_FIREBASE_OPTIONS = {
   webOnly: true,
   collection: "cti_app_state",
   maxChunkSize: 300000,
-  syncDebounceMs: 250
+  syncDebounceMs: 80
 };
