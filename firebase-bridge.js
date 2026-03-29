@@ -11,10 +11,14 @@
     collection: null,
     meta: null,
     lastSyncedAt: "",
+    clientId: "",
     cache: {},
     syncTimer: null,
     syncPromise: null,
-    listeners: []
+    listeners: [],
+    remoteListeners: [],
+    unsubscribeMeta: null,
+    lastMetaToken: ""
   };
 
   function cloneStatus() {
@@ -40,6 +44,16 @@
     });
   }
 
+  function notifyRemote(payload) {
+    state.remoteListeners.forEach(function (listener) {
+      try {
+        listener(payload);
+      } catch (error) {
+        console.error("Falha ao notificar atualizacao remota:", error);
+      }
+    });
+  }
+
   function setMode(mode, reason) {
     state.mode = mode;
     state.reason = reason;
@@ -60,6 +74,78 @@
 
   function getMetaDocId() {
     return "state_meta";
+  }
+
+  function getClientId() {
+    if (state.clientId) return state.clientId;
+    try {
+      var existing = globalScope.sessionStorage.getItem("cti_cloud_client_id");
+      if (existing) {
+        state.clientId = existing;
+        return existing;
+      }
+      var generated = "client_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+      globalScope.sessionStorage.setItem("cti_cloud_client_id", generated);
+      state.clientId = generated;
+      return generated;
+    } catch (error) {
+      state.clientId = "client_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 10);
+      return state.clientId;
+    }
+  }
+
+  function getMetaToken(meta) {
+    if (!meta || typeof meta !== "object") return "";
+    var updatedAt = "";
+    if (meta.updatedAt && typeof meta.updatedAt.toMillis === "function") {
+      updatedAt = String(meta.updatedAt.toMillis());
+    } else if (meta.updatedAt && typeof meta.updatedAt === "string") {
+      updatedAt = meta.updatedAt;
+    }
+    return [
+      updatedAt,
+      meta.updatedByClientId || "",
+      meta.updatedBy || ""
+    ].join("|");
+  }
+
+  function syncMetaState(meta) {
+    state.meta = meta && typeof meta === "object" ? meta : { keys: {} };
+    state.lastMetaToken = getMetaToken(meta);
+    state.lastSyncedAt = meta && meta.updatedAt && meta.updatedAt.toDate
+      ? meta.updatedAt.toDate().toISOString()
+      : "";
+  }
+
+  function startMetaListener() {
+    if (!state.collection || state.unsubscribeMeta) return;
+
+    state.unsubscribeMeta = state.collection.doc(getMetaDocId()).onSnapshot(async function (doc) {
+      if (!doc.exists) return;
+
+      var meta = doc.data() || {};
+      var token = getMetaToken(meta);
+      if (token && token === state.lastMetaToken) return;
+
+      syncMetaState(meta);
+      notify();
+
+      if (meta.updatedByClientId && meta.updatedByClientId === getClientId()) return;
+
+      try {
+        var result = await hydrateLocalStorage();
+        if (result && (result.ok || result.empty)) {
+          notifyRemote({
+            meta: meta,
+            result: result
+          });
+        }
+      } catch (error) {
+        console.error("Falha ao aplicar atualizacao remota do Firebase:", error);
+      }
+    }, function (error) {
+      console.error("Falha no listener em tempo real do Firebase:", error);
+    });
   }
 
   function chunkString(value, maxChunkSize) {
@@ -120,6 +206,8 @@
         state.collection = state.db.collection(options.collection || "cti_app_state");
         state.enabled = true;
         state.initialized = true;
+        getClientId();
+        startMetaListener();
         setMode("web-cloud", "Sincronizacao Firebase ativa.");
         return true;
       } catch (error) {
@@ -155,7 +243,7 @@
         return { ok: true, empty: true, mode: state.mode };
       }
 
-      state.meta = meta;
+      syncMetaState(meta);
       state.cache = {};
       Object.keys(meta.keys).forEach(function (key) {
         var info = meta.keys[key] || {};
@@ -171,9 +259,6 @@
         }
       });
 
-      state.lastSyncedAt = meta.updatedAt && meta.updatedAt.toDate
-        ? meta.updatedAt.toDate().toISOString()
-        : "";
       notify();
       return { ok: true, empty: false, mode: state.mode };
     } catch (error) {
@@ -231,11 +316,16 @@
         schemaVersion: 1,
         updatedAt: getServerTimestamp(),
         updatedBy: reason || "app",
+        updatedByClientId: getClientId(),
         keys: nextMeta
       }, { merge: true });
 
       await batch.commit();
-      state.meta = { keys: nextMeta };
+      state.meta = {
+        keys: nextMeta,
+        updatedBy: reason || "app",
+        updatedByClientId: getClientId()
+      };
       state.cache = { ...payload };
       state.lastSyncedAt = new Date().toISOString();
       setMode("web-cloud", "Sincronizacao Firebase ativa.");
@@ -285,12 +375,21 @@
     };
   }
 
+  function onRemoteChange(listener) {
+    if (typeof listener !== "function") return function () {};
+    state.remoteListeners.push(listener);
+    return function () {
+      state.remoteListeners = state.remoteListeners.filter(function (item) { return item !== listener; });
+    };
+  }
+
   globalScope.CTICloudSync = {
     init: init,
     hydrateLocalStorage: hydrateLocalStorage,
     queueUpload: queueUpload,
     flushUpload: flushUpload,
     getStatus: cloneStatus,
-    onStatusChange: onStatusChange
+    onStatusChange: onStatusChange,
+    onRemoteChange: onRemoteChange
   };
 })();

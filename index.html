@@ -3405,6 +3405,10 @@ let cloudSyncState = window.CTICloudSync
       reason: 'Sincronizacao web indisponivel.',
       lastSyncedAt: ''
     };
+let cloudSyncPauseDepth = 0;
+let appReady = false;
+let appInitPromise = null;
+let appInterfacePrepared = false;
 
 function getCloudSyncableStorageKeys() {
   return [...new Set([...Object.values(STORAGE_KEYS), ...CLOUD_SYNC_EXTRA_KEYS])];
@@ -3478,8 +3482,22 @@ function renderCloudSyncCard() {
     '</div>';
 }
 
+function isCloudSyncPaused() {
+  return cloudSyncPauseDepth > 0;
+}
+
+async function runWithCloudSyncPaused(task) {
+  cloudSyncPauseDepth += 1;
+  try {
+    return await task();
+  } finally {
+    cloudSyncPauseDepth = Math.max(0, cloudSyncPauseDepth - 1);
+  }
+}
+
 function scheduleCloudSync(reason = 'auto') {
   if (!window.CTICloudSync) return Promise.resolve({ ok: false, mode: 'local-only' });
+  if (isCloudSyncPaused()) return Promise.resolve({ ok: false, mode: 'paused', paused: true });
   return window.CTICloudSync.queueUpload(buildCloudSyncPayload, reason);
 }
 
@@ -3504,6 +3522,164 @@ async function hydrateCloudStorageIfAvailable() {
   cloudSyncState = window.CTICloudSync.getStatus();
   renderCloudSyncCard();
   return result;
+}
+
+function prepareAppInterfaceOnce() {
+  if (appInterfacePrepared) return;
+  injectRoutingAndCadastroStyles();
+  upgradeMovementRoutingSection();
+  upgradeMaterialSection();
+  upgradeCadastroSection();
+  setupSearchableSelects();
+  appInterfacePrepared = true;
+}
+
+function renderLoginUserOptions(allowedTypes = null) {
+  const sel = document.getElementById('loginUser');
+  if (!sel) return;
+
+  const currentVal = normalizeText(sel.value);
+  const filteredUsers = users
+    .filter((user) => {
+      if (!Array.isArray(allowedTypes) || allowedTypes.length === 0) return true;
+      const userType = user.userType || (user.isAdmin ? 'admin' : 'msfc');
+      return allowedTypes.includes(userType);
+    })
+    .sort((a, b) => a.name.localeCompare(b.name, 'pt-BR'));
+
+  sel.innerHTML = '<option value="">Selecione seu nome...</option>';
+  filteredUsers.forEach((user) => {
+    const opt = document.createElement('option');
+    opt.value = user.name;
+    opt.textContent = user.name;
+    sel.appendChild(opt);
+  });
+
+  if (currentVal && filteredUsers.some((user) => user.name === currentVal)) {
+    sel.value = currentVal;
+  }
+  updateLoginButtonState();
+}
+
+function getLoginAreaAllowedTypes() {
+  if (loginArea === 'restrita') return ['admin', 'msfc'];
+  if (loginArea === 'consulta') return ['eps'];
+  return null;
+}
+
+function syncCurrentUserSessionState() {
+  if (!currentUser) return;
+
+  const refreshed = users.find((user) => user.id === currentUser.id)
+    || users.find((user) => user.name === currentUser.name);
+
+  if (refreshed) currentUser = refreshed;
+
+  const activeUser = currentUser;
+  if (!activeUser) return;
+
+  const nameEl = document.getElementById('userName');
+  const avatarEl = document.getElementById('userAvatar');
+  const roleEl = document.getElementById('userRole');
+
+  if (nameEl) nameEl.textContent = activeUser.name;
+  if (avatarEl) avatarEl.textContent = activeUser.name.charAt(0).toUpperCase();
+  if (roleEl) roleEl.textContent = getUserRoleLabel(activeUser);
+}
+
+function applyLoadedApplicationState() {
+  refreshAnalysisRowsMappings();
+  movimentos.forEach(syncLegacyMovementFields);
+  legacyMovements.forEach(syncLegacyMovementFields);
+  populateSelects();
+  populateLegacyFilters();
+  onCadastroTipoChange();
+  renderUserManagementTable();
+  renderExtratoTab();
+  renderAnalysisTab();
+
+  const today = new Date().toISOString().split('T')[0];
+  if (document.getElementById('fDataFisico')) document.getElementById('fDataFisico').value = today;
+
+  syncCurrentUserSessionState();
+  if (currentUser) {
+    applyPermissionsUI();
+    updateAccessRequestBadge();
+    updateDesbloqueioRequestBadge();
+  }
+
+  updateDashboard();
+  renderTable();
+  renderLegacyTable();
+  renderPackagingControlTable();
+  updateBackupPanel();
+  renderConfigTab();
+}
+
+async function reloadApplicationState({
+  hydrateCloud = true,
+  persistAfterLoad = false,
+  silent = false,
+  reason = 'manual-reload'
+} = {}) {
+  if (hydrateCloud) {
+    const cloudResult = await hydrateCloudStorageIfAvailable();
+    if (!cloudResult || (!cloudResult.ok && !cloudResult.empty)) {
+      if (!silent) showToast('Nao foi possivel recarregar os dados da nuvem.', true);
+      return cloudResult;
+    }
+  }
+
+  await runWithCloudSyncPaused(async () => {
+    loadMasterData();
+    loadUsers();
+    loadFromStorage();
+    await syncHistoricalSeedData();
+  });
+
+  if (persistAfterLoad) saveToStorage();
+  applyLoadedApplicationState();
+  renderLoginUserOptions(getLoginAreaAllowedTypes());
+
+  if (!silent) {
+    const toastMessage = reason === 'remote-sync'
+      ? 'Atualizacao recebida da nuvem.'
+      : 'Dados atualizados a partir da nuvem.';
+    showToast(toastMessage);
+  }
+
+  return { ok: true, mode: cloudSyncState.mode };
+}
+
+async function ensureApplicationReady() {
+  if (appReady) return { ok: true };
+  if (appInitPromise) return appInitPromise;
+
+  prepareAppInterfaceOnce();
+  appInitPromise = (async () => {
+    const result = await reloadApplicationState({
+      hydrateCloud: true,
+      persistAfterLoad: true,
+      silent: true,
+      reason: 'boot'
+    });
+    appReady = true;
+    return result;
+  })();
+
+  try {
+    return await appInitPromise;
+  } finally {
+    appInitPromise = null;
+  }
+}
+
+function bootstrapLoginExperience() {
+  return runWithCloudSyncPaused(async () => {
+    loadUsers();
+    renderLoginUserOptions();
+    updateLoginButtonState();
+  });
 }
 
 const DEFAULT_TEMP_PASSWORD = '123456';
@@ -5137,16 +5313,14 @@ function selectLoginArea(area) {
     badge.style.color = 'var(--neon)';
     desc.textContent = 'Acesso exclusivo para colaboradores MS Florestal e administradores.';
     solicitarDiv.style.display = 'none';
-    // Filter login dropdown to only admin/msfc users
-    filterLoginDropdown(['admin', 'msfc']);
+    renderLoginUserOptions(['admin', 'msfc']);
   } else {
     badge.textContent = 'AREA DE CONSULTA';
     badge.style.background = 'rgba(24,220,255,0.15)';
     badge.style.color = 'var(--blue)';
     desc.textContent = 'Consulta para parceiros EPS. Solicite acesso ao key user se ainda nao possui.';
     solicitarDiv.style.display = 'block';
-    // Filter login dropdown to only eps users
-    filterLoginDropdown(['eps']);
+    renderLoginUserOptions(['eps']);
   }
   updateLoginButtonState();
 }
@@ -5156,24 +5330,11 @@ function backToAreaSelector() {
   document.getElementById('loginAreaSelector').style.display = 'block';
   document.getElementById('loginFormBox').style.display = 'none';
   document.getElementById('loginPassword').value = '';
-  // Restore full dropdown
-  populateSelects();
+  renderLoginUserOptions();
 }
 
 function filterLoginDropdown(allowedTypes) {
-  const sel = document.getElementById('loginUser');
-  const currentVal = sel.value;
-  sel.innerHTML = '<option value="">Selecione seu nome...</option>';
-  users.filter(u => {
-    const ut = u.userType || (u.isAdmin ? 'admin' : 'msfc');
-    return allowedTypes.includes(ut);
-  }).sort((a, b) => a.name.localeCompare(b.name, 'pt-BR')).forEach(u => {
-    const opt = document.createElement('option');
-    opt.value = u.name;
-    opt.textContent = u.name;
-    sel.appendChild(opt);
-  });
-  if (currentVal) sel.value = currentVal;
+  renderLoginUserOptions(allowedTypes);
 }
 
 function updateLoginButtonState() {
@@ -5181,18 +5342,35 @@ function updateLoginButtonState() {
   document.getElementById('loginBtn').disabled = !user;
 }
 
-function completeLogin(user) {
-  currentUser = user;
+async function completeLogin(user) {
+  const loginBtn = document.getElementById('loginBtn');
+  const originalLabel = loginBtn ? loginBtn.textContent : '';
+  if (loginBtn) {
+    loginBtn.disabled = true;
+    loginBtn.textContent = 'Carregando...';
+  }
+
+  try {
+    await ensureApplicationReady();
+  } catch (error) {
+    console.error('Falha ao preparar aplicacao apos o login:', error);
+    showToast('Nao foi possivel carregar os dados do sistema.', true);
+    if (loginBtn) {
+      loginBtn.disabled = false;
+      loginBtn.textContent = originalLabel || 'Entrar no Sistema';
+    }
+    return;
+  }
+
+  currentUser = users.find((item) => item.id === user.id) || findUserByName(user.name) || user;
   document.getElementById('loginPassword').value = '';
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
-  document.getElementById('userName').textContent = user.name;
-  document.getElementById('userAvatar').textContent = user.name.charAt(0).toUpperCase();
-  document.getElementById('userRole').textContent = getUserRoleLabel(user);
+  syncCurrentUserSessionState();
   // Show area badge in header
   const areaBadge = document.getElementById('areaBadgeHeader');
   if (areaBadge) {
-    if (loginArea === 'consulta' || user.userType === 'eps') {
+    if (loginArea === 'consulta' || currentUser.userType === 'eps') {
       areaBadge.textContent = 'CONSULTA';
       areaBadge.style.background = 'rgba(24,220,255,0.15)';
       areaBadge.style.color = 'var(--blue)';
@@ -5205,26 +5383,26 @@ function completeLogin(user) {
     }
   }
   applyPermissionsUI();
-  renderUserManagementTable();
-  onCadastroTipoChange();
+  renderConfigTab();
   updateAccessRequestBadge();
   updateDesbloqueioRequestBadge();
-  const defaultTab = (user.userType === 'eps') ? 'registros' : 'dashboard';
+  const defaultTab = (currentUser.userType === 'eps') ? 'registros' : 'dashboard';
   switchTab(defaultTab);
   if (defaultTab === 'dashboard') updateDashboard();
   renderTable();
+  if (loginBtn) loginBtn.textContent = originalLabel || 'Entrar no Sistema';
 
   // Check if EPS user's EPS is blocked
-  if (user.userType === 'eps' && user.epsVinculada) {
+  if (currentUser.userType === 'eps' && currentUser.epsVinculada) {
     const blocked = getBlockedEps();
-    const blockedInfo = blocked[user.epsVinculada];
+    const blockedInfo = blocked[currentUser.epsVinculada];
     if (blockedInfo) {
-      showEpsBloqueadaPopup(user, blockedInfo);
+      showEpsBloqueadaPopup(currentUser, blockedInfo);
     }
     // Show any resolved request responses
     const allReqs = loadDesbloqueioRequests().filter(r =>
-      r.deposito === user.epsVinculada &&
-      r.usuario === user.name &&
+      r.deposito === currentUser.epsVinculada &&
+      r.usuario === currentUser.name &&
       (r.status === 'aprovado' || r.status === 'rejeitado') &&
       r.resposta && !r._visto
     );
@@ -5388,7 +5566,7 @@ function openFirstAccessModal(user) {
   `;
   document.body.appendChild(overlay);
 
-  overlay.querySelector('#firstAccessConfirm').addEventListener('click', () => {
+  overlay.querySelector('#firstAccessConfirm').addEventListener('click', async () => {
     const pass1 = overlay.querySelector('#firstAccessPass1').value;
     const pass2 = overlay.querySelector('#firstAccessPass2').value;
     if (pass1.length < 4) {
@@ -5404,7 +5582,7 @@ function openFirstAccessModal(user) {
     saveUsers();
     overlay.remove();
     showToast('Senha atualizada com sucesso!');
-    completeLogin(user);
+    await completeLogin(user);
   });
 
   overlay.addEventListener('click', (e) => {
@@ -5412,7 +5590,7 @@ function openFirstAccessModal(user) {
   });
 }
 
-function doLogin() {
+async function doLogin() {
   const userName = normalizeText(document.getElementById('loginUser').value);
   const password = document.getElementById('loginPassword').value;
   if (!userName) {
@@ -5440,7 +5618,7 @@ function doLogin() {
     return;
   }
 
-  completeLogin(user);
+  await completeLogin(user);
 }
 
 function doLogout() {
@@ -5603,34 +5781,40 @@ if (window.CTICloudSync) {
     cloudSyncState = status;
     renderCloudSyncCard();
   });
+  if (window.CTICloudSync.onRemoteChange) {
+    window.CTICloudSync.onRemoteChange(async () => {
+      try {
+        if (appInitPromise) return;
+
+        if (!currentUser) {
+          await runWithCloudSyncPaused(async () => {
+            loadUsers();
+          });
+          renderLoginUserOptions(getLoginAreaAllowedTypes());
+          return;
+        }
+
+        await reloadApplicationState({
+          hydrateCloud: false,
+          persistAfterLoad: false,
+          silent: true,
+          reason: 'remote-sync'
+        });
+        showToast('Dados atualizados automaticamente pela nuvem.');
+      } catch (error) {
+        console.error('Falha ao aplicar atualizacao automatica da nuvem:', error);
+      }
+    });
+  }
 }
 
 async function reloadFromCloudState() {
-  const result = await hydrateCloudStorageIfAvailable();
-  if (!result || (!result.ok && !result.empty)) {
-    showToast('Nao foi possivel recarregar os dados da nuvem.', true);
-    return;
-  }
-
-  loadMasterData();
-  loadUsers();
-  loadFromStorage();
-  await syncHistoricalSeedData();
-  refreshAnalysisRowsMappings();
-  movimentos.forEach(syncLegacyMovementFields);
-  legacyMovements.forEach(syncLegacyMovementFields);
-  populateSelects();
-  populateLegacyFilters();
-  renderUserManagementTable();
-  renderExtratoTab();
-  renderAnalysisTab();
-  updateDashboard();
-  renderTable();
-  renderLegacyTable();
-  renderPackagingControlTable();
-  updateBackupPanel();
-  renderConfigTab();
-  showToast('Dados atualizados a partir da nuvem.');
+  await reloadApplicationState({
+    hydrateCloud: true,
+    persistAfterLoad: false,
+    silent: false,
+    reason: 'manual-reload'
+  });
 }
 
 function renderConfigTab() {
@@ -13914,39 +14098,23 @@ function showDetail(id) {
 }
 
 async function init() {
-  injectRoutingAndCadastroStyles();
-  await hydrateCloudStorageIfAvailable();
-  loadMasterData();
-  loadUsers();
-  loadFromStorage();
-  await syncHistoricalSeedData();
-  refreshAnalysisRowsMappings();
-  movimentos.forEach(syncLegacyMovementFields);
-  legacyMovements.forEach(syncLegacyMovementFields);
-  upgradeMovementRoutingSection();
-  upgradeMaterialSection();
-  upgradeCadastroSection();
-  populateSelects();
-  populateLegacyFilters();
-  setupSearchableSelects();
-  onCadastroTipoChange();
-  renderUserManagementTable();
-  renderExtratoTab();
-  renderAnalysisTab();
-  updateLoginButtonState();
+  await bootstrapLoginExperience();
+  renderCloudSyncCard();
+  const warmupCloud = () => {
+    if (!window.CTICloudSync || !window.CTICloudSync.init) return;
+    window.CTICloudSync.init().then(() => {
+      cloudSyncState = window.CTICloudSync.getStatus();
+      renderCloudSyncCard();
+    }).catch((error) => {
+      console.warn('Falha ao preaquecer conexao com a nuvem:', error);
+    });
+  };
 
-  const today = new Date().toISOString().split('T')[0];
-  if (document.getElementById('fDataFisico')) document.getElementById('fDataFisico').value = today;
-
-  saveToStorage();
-  updateDashboard();
-  renderTable();
-  renderLegacyTable();
-  renderPackagingControlTable();
-  renderExtratoTab();
-  renderAnalysisTab();
-  updateBackupPanel();
-  renderConfigTab();
+  if (typeof window.requestIdleCallback === 'function') {
+    window.requestIdleCallback(warmupCloud, { timeout: 1500 });
+  } else {
+    setTimeout(warmupCloud, 800);
+  }
 }
 
 // ==================== START ====================
