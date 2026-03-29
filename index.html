@@ -3595,6 +3595,7 @@ function applyLoadedApplicationState() {
   populateLegacyFilters();
   onCadastroTipoChange();
   renderUserManagementTable();
+  renderPendingAccessRequests();
   renderExtratoTab();
   renderAnalysisTab();
 
@@ -3612,6 +3613,7 @@ function applyLoadedApplicationState() {
   renderTable();
   renderLegacyTable();
   renderPackagingControlTable();
+  renderSaldoEpsTab();
   updateBackupPanel();
   renderConfigTab();
 }
@@ -5786,7 +5788,7 @@ if (window.CTICloudSync) {
       try {
         if (appInitPromise) return;
 
-        if (!currentUser) {
+        if (!appReady && !currentUser) {
           await runWithCloudSyncPaused(async () => {
             loadUsers();
           });
