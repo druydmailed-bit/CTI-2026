@@ -3451,6 +3451,16 @@ function buildCloudSyncPayload(targetKeys = null) {
   return payload;
 }
 
+function normalizeCloudChangedKeys(changedKeys = null) {
+  if (!Array.isArray(changedKeys) || !changedKeys.length) return null;
+  return [...new Set(changedKeys.map(key => normalizeText(key)).filter(Boolean))];
+}
+
+function cloudKeysChanged(changedKeys, keys) {
+  if (!Array.isArray(changedKeys) || !changedKeys.length) return true;
+  return keys.some(key => changedKeys.includes(key));
+}
+
 function renderCloudOnlineIndicator() {
   const badge = document.getElementById('cloudOnlineBadge');
   const text = document.getElementById('cloudOnlineBadgeText');
@@ -3626,46 +3636,75 @@ function getActiveTabName() {
   return activePanel.id.replace(/^tab-/, '') || 'dashboard';
 }
 
-function refreshVisibleAppState() {
+function refreshVisibleAppState(changedKeys = null) {
   const activeTab = getActiveTabName();
+  const normalizedChangedKeys = normalizeCloudChangedKeys(changedKeys);
+  const badgeKeys = [STORAGE_KEYS.accessRequests, 'cti_desbloqueio_requests'];
+  const dashboardKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise, STORAGE_KEYS.saldoDevolucao, 'cti_blockedEps', 'cti_desbloqueio_requests', 'cti_desbloqueio_history'];
+  const movementKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay];
+  const packagingKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.embalagens];
+  const saldoKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.embalagens, STORAGE_KEYS.saldoDevolucao, 'cti_blockedEps', 'cti_desbloqueio_requests', 'cti_desbloqueio_history'];
+  const analysisKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.analise];
+  const controlKeys = [STORAGE_KEYS.users, STORAGE_KEYS.accessRequests];
 
-  updateAccessRequestBadge();
-  updateDesbloqueioRequestBadge();
-
-  if (activeTab === 'dashboard') updateDashboard();
-  if (activeTab === 'registros' || activeTab === 'nova') renderTable();
-  if (activeTab === 'legado') renderLegacyTable();
-  if (activeTab === 'embalagens') renderPackagingControlTable();
-  if (activeTab === 'saldoEps') renderSaldoEpsTab();
-  if (activeTab === 'analise') renderAnalysisTab();
-  if (activeTab === 'cadastros') onCadastroTipoChange();
-  if (activeTab === 'controle') {
-    renderUserManagementTable();
-    renderPendingAccessRequests();
-    updateBackupPanel();
-  }
-  if (activeTab === 'config') renderConfigTab();
-}
-
-function applyLoadedApplicationState({ visibleOnly = false } = {}) {
-  refreshAnalysisRowsMappings();
-  movimentos.forEach(syncLegacyMovementFields);
-  legacyMovements.forEach(syncLegacyMovementFields);
-  populateSelects();
-  populateLegacyFilters();
-
-  const today = new Date().toISOString().split('T')[0];
-  if (document.getElementById('fDataFisico')) document.getElementById('fDataFisico').value = today;
-
-  syncCurrentUserSessionState();
-  if (currentUser) {
-    applyPermissionsUI();
+  if (cloudKeysChanged(normalizedChangedKeys, badgeKeys)) {
     updateAccessRequestBadge();
     updateDesbloqueioRequestBadge();
   }
 
+  if (activeTab === 'dashboard' && cloudKeysChanged(normalizedChangedKeys, dashboardKeys)) updateDashboard();
+  if ((activeTab === 'registros' || activeTab === 'nova') && cloudKeysChanged(normalizedChangedKeys, movementKeys)) renderTable();
+  if (activeTab === 'legado' && cloudKeysChanged(normalizedChangedKeys, movementKeys)) renderLegacyTable();
+  if (activeTab === 'embalagens' && cloudKeysChanged(normalizedChangedKeys, packagingKeys)) renderPackagingControlTable();
+  if (activeTab === 'saldoEps' && cloudKeysChanged(normalizedChangedKeys, saldoKeys)) renderSaldoEpsTab();
+  if (activeTab === 'analise' && cloudKeysChanged(normalizedChangedKeys, analysisKeys)) renderAnalysisTab();
+  if (activeTab === 'cadastros' && cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.master])) onCadastroTipoChange();
+  if (activeTab === 'controle') {
+    if (cloudKeysChanged(normalizedChangedKeys, controlKeys)) {
+      renderUserManagementTable();
+      renderPendingAccessRequests();
+    }
+    if (cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.users])) {
+      updateBackupPanel();
+    }
+  }
+  if (activeTab === 'config') renderConfigTab();
+}
+
+function applyLoadedApplicationState({ visibleOnly = false, changedKeys = null } = {}) {
+  const normalizedChangedKeys = normalizeCloudChangedKeys(changedKeys);
+  const masterChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.master]);
+  const userChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.users]);
+  const movementChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay]);
+  const analysisChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.analise]);
+  const accessOrUnlockChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.accessRequests, 'cti_desbloqueio_requests']);
+
+  if (!normalizedChangedKeys || masterChanged || movementChanged || analysisChanged) {
+    refreshAnalysisRowsMappings();
+  }
+  if (!normalizedChangedKeys || movementChanged) {
+    movimentos.forEach(syncLegacyMovementFields);
+    legacyMovements.forEach(syncLegacyMovementFields);
+  }
+  if (!normalizedChangedKeys || masterChanged) {
+    populateSelects();
+    populateLegacyFilters();
+
+    const today = new Date().toISOString().split('T')[0];
+    if (document.getElementById('fDataFisico')) document.getElementById('fDataFisico').value = today;
+  }
+
+  if (!normalizedChangedKeys || userChanged) syncCurrentUserSessionState();
+  if (currentUser) {
+    if (!normalizedChangedKeys || userChanged) applyPermissionsUI();
+    if (!normalizedChangedKeys || accessOrUnlockChanged) {
+      updateAccessRequestBadge();
+      updateDesbloqueioRequestBadge();
+    }
+  }
+
   if (visibleOnly) {
-    refreshVisibleAppState();
+    refreshVisibleAppState(normalizedChangedKeys);
     return;
   }
 
@@ -3687,8 +3726,10 @@ async function reloadApplicationState({
   hydrateCloud = true,
   persistAfterLoad = false,
   silent = false,
-  reason = 'manual-reload'
+  reason = 'manual-reload',
+  changedKeys = null
 } = {}) {
+  const normalizedChangedKeys = normalizeCloudChangedKeys(changedKeys);
   if (hydrateCloud) {
     const cloudResult = await hydrateCloudStorageIfAvailable();
     if (!cloudResult || (!cloudResult.ok && !cloudResult.empty)) {
@@ -3698,15 +3739,25 @@ async function reloadApplicationState({
   }
 
   await runWithCloudSyncPaused(async () => {
-    loadMasterData();
-    loadUsers();
-    loadFromStorage();
-    await syncHistoricalSeedData();
+    if (!normalizedChangedKeys || normalizedChangedKeys.includes(STORAGE_KEYS.master)) {
+      loadMasterData();
+    }
+    if (!normalizedChangedKeys || normalizedChangedKeys.includes(STORAGE_KEYS.users)) {
+      loadUsers();
+    }
+    if (!normalizedChangedKeys || cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise])) {
+      loadFromStorage(normalizedChangedKeys);
+    }
+    if (!normalizedChangedKeys || cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay])) {
+      await syncHistoricalSeedData();
+    }
   });
 
   if (persistAfterLoad) saveToStorage();
-  applyLoadedApplicationState({ visibleOnly: reason === 'remote-sync' });
-  renderLoginUserOptions(getLoginAreaAllowedTypes());
+  applyLoadedApplicationState({ visibleOnly: reason === 'remote-sync', changedKeys: normalizedChangedKeys });
+  if (!normalizedChangedKeys || normalizedChangedKeys.includes(STORAGE_KEYS.users)) {
+    renderLoginUserOptions(getLoginAreaAllowedTypes());
+  }
 
   if (!silent) {
     const toastMessage = reason === 'remote-sync'
@@ -4073,56 +4124,66 @@ function findUserByName(name) {
   return users.find(u => u.name.toLowerCase() === key) || null;
 }
 
-function loadFromStorage() {
+function loadFromStorage(targetKeys = null) {
+  const normalizedTargetKeys = normalizeCloudChangedKeys(targetKeys);
+  const shouldLoadKey = (key) => !normalizedTargetKeys || normalizedTargetKeys.includes(key);
   let corruptedKeys = [];
-  try {
-    const saved = localStorage.getItem(STORAGE_KEYS.movimentos);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed) && parsed.length > 0) movimentos = parsed;
-    }
-  } catch(e) { console.error('Erro ao carregar movimentos:', e); corruptedKeys.push('Movimentacoes'); }
-  try {
-    const saved = localStorage.getItem(STORAGE_KEYS.legacyOverlay);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) legacyOverlay = parsed;
-    }
-  } catch(e) { console.error('Erro ao carregar legado local:', e); corruptedKeys.push('Legado'); }
-  try {
-    const saved = localStorage.getItem(STORAGE_KEYS.embalagens);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) embalagemDevolucoes = parsed.map(normalizePackagingReturnRecord).filter(item => item.quantidade > 0);
-    }
-  } catch(e) { console.error('Erro ao carregar embalagens:', e); corruptedKeys.push('Embalagens'); }
-  try {
-    const saved = localStorage.getItem(STORAGE_KEYS.analise);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (parsed && typeof parsed === 'object') {
-        analysisState = {
-          inventoryRows: Array.isArray(parsed.inventoryRows) ? parsed.inventoryRows : [],
-          foRows: Array.isArray(parsed.foRows) ? parsed.foRows : [],
-          inventoryFileName: normalizeText(parsed.inventoryFileName || ''),
-          foFileNames: Array.isArray(parsed.foFileNames) ? parsed.foFileNames.map(normalizeText).filter(Boolean) : [],
-          periodStart: normalizeText(parsed.periodStart || ''),
-          periodEnd: normalizeText(parsed.periodEnd || ''),
-          inventoryWarnings: Array.isArray(parsed.inventoryWarnings) ? parsed.inventoryWarnings : [],
-          inventoryUnresolvedMappings: Array.isArray(parsed.inventoryUnresolvedMappings) ? parsed.inventoryUnresolvedMappings : [],
-          inventoryConversionWarnings: Array.isArray(parsed.inventoryConversionWarnings) ? parsed.inventoryConversionWarnings : [],
-          foWarnings: Array.isArray(parsed.foWarnings) ? parsed.foWarnings : [],
-          foUnresolvedMappings: Array.isArray(parsed.foUnresolvedMappings) ? parsed.foUnresolvedMappings : [],
-          foConversionWarnings: Array.isArray(parsed.foConversionWarnings) ? parsed.foConversionWarnings : [],
-          mappingOverrides: parsed.mappingOverrides && typeof parsed.mappingOverrides === 'object' ? parsed.mappingOverrides : {},
-          acknowledgedWarnings: Array.isArray(parsed.acknowledgedWarnings) ? parsed.acknowledgedWarnings.map(normalizeText).filter(Boolean) : [],
-          warnings: Array.isArray(parsed.warnings) ? parsed.warnings : [],
-          unresolvedMappings: Array.isArray(parsed.unresolvedMappings) ? parsed.unresolvedMappings : [],
-          conversionWarnings: Array.isArray(parsed.conversionWarnings) ? parsed.conversionWarnings : []
-        };
+  if (shouldLoadKey(STORAGE_KEYS.movimentos)) {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.movimentos);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) movimentos = parsed;
       }
-    }
-  } catch(e) { console.error('Erro ao carregar analise:', e); corruptedKeys.push('Analise'); }
+    } catch(e) { console.error('Erro ao carregar movimentos:', e); corruptedKeys.push('Movimentacoes'); }
+  }
+  if (shouldLoadKey(STORAGE_KEYS.legacyOverlay)) {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.legacyOverlay);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) legacyOverlay = parsed;
+      }
+    } catch(e) { console.error('Erro ao carregar legado local:', e); corruptedKeys.push('Legado'); }
+  }
+  if (shouldLoadKey(STORAGE_KEYS.embalagens)) {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.embalagens);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (Array.isArray(parsed)) embalagemDevolucoes = parsed.map(normalizePackagingReturnRecord).filter(item => item.quantidade > 0);
+      }
+    } catch(e) { console.error('Erro ao carregar embalagens:', e); corruptedKeys.push('Embalagens'); }
+  }
+  if (shouldLoadKey(STORAGE_KEYS.analise)) {
+    try {
+      const saved = localStorage.getItem(STORAGE_KEYS.analise);
+      if (saved) {
+        const parsed = JSON.parse(saved);
+        if (parsed && typeof parsed === 'object') {
+          analysisState = {
+            inventoryRows: Array.isArray(parsed.inventoryRows) ? parsed.inventoryRows : [],
+            foRows: Array.isArray(parsed.foRows) ? parsed.foRows : [],
+            inventoryFileName: normalizeText(parsed.inventoryFileName || ''),
+            foFileNames: Array.isArray(parsed.foFileNames) ? parsed.foFileNames.map(normalizeText).filter(Boolean) : [],
+            periodStart: normalizeText(parsed.periodStart || ''),
+            periodEnd: normalizeText(parsed.periodEnd || ''),
+            inventoryWarnings: Array.isArray(parsed.inventoryWarnings) ? parsed.inventoryWarnings : [],
+            inventoryUnresolvedMappings: Array.isArray(parsed.inventoryUnresolvedMappings) ? parsed.inventoryUnresolvedMappings : [],
+            inventoryConversionWarnings: Array.isArray(parsed.inventoryConversionWarnings) ? parsed.inventoryConversionWarnings : [],
+            foWarnings: Array.isArray(parsed.foWarnings) ? parsed.foWarnings : [],
+            foUnresolvedMappings: Array.isArray(parsed.foUnresolvedMappings) ? parsed.foUnresolvedMappings : [],
+            foConversionWarnings: Array.isArray(parsed.foConversionWarnings) ? parsed.foConversionWarnings : [],
+            mappingOverrides: parsed.mappingOverrides && typeof parsed.mappingOverrides === 'object' ? parsed.mappingOverrides : {},
+            acknowledgedWarnings: Array.isArray(parsed.acknowledgedWarnings) ? parsed.acknowledgedWarnings.map(normalizeText).filter(Boolean) : [],
+            warnings: Array.isArray(parsed.warnings) ? parsed.warnings : [],
+            unresolvedMappings: Array.isArray(parsed.unresolvedMappings) ? parsed.unresolvedMappings : [],
+            conversionWarnings: Array.isArray(parsed.conversionWarnings) ? parsed.conversionWarnings : []
+          };
+        }
+      }
+    } catch(e) { console.error('Erro ao carregar analise:', e); corruptedKeys.push('Analise'); }
+  }
   if (corruptedKeys.length > 0) {
     setTimeout(() => {
       showToast('Aviso: dados corrompidos detectados em ' + corruptedKeys.join(', ') + '. Os valores padrao foram aplicados. Considere exportar um backup.', true);
@@ -4278,7 +4339,7 @@ function assignLegacyMovementIds(rows) {
 function loadSeedFile(fileName, windowKey) {
   const seeded = windowKey && Array.isArray(window[windowKey]) ? window[windowKey] : null;
   if (seeded) {
-    return Promise.resolve(JSON.parse(JSON.stringify(seeded)));
+    return Promise.resolve(seeded);
   }
   return fetch(fileName)
     .then((response) => {
@@ -4288,15 +4349,45 @@ function loadSeedFile(fileName, windowKey) {
     .catch(() => []);
 }
 
+const historicalSeedCache = {
+  current: null,
+  legacy: null,
+  pending: null
+};
+
+async function getHistoricalSeedRows() {
+  if (historicalSeedCache.legacy && historicalSeedCache.current) {
+    return {
+      legacySeedRaw: historicalSeedCache.legacy,
+      currentSeedRaw: historicalSeedCache.current
+    };
+  }
+
+  if (!historicalSeedCache.pending) {
+    historicalSeedCache.pending = Promise.all([
+      loadSeedFile('legacy_data.json', 'CTI_SEED_LEGACY_DATA'),
+      loadSeedFile('base_data.json', 'CTI_SEED_BASE_DATA')
+    ]).then(([legacySeedRaw, currentSeedRaw]) => {
+      historicalSeedCache.legacy = Array.isArray(legacySeedRaw) ? legacySeedRaw : [];
+      historicalSeedCache.current = Array.isArray(currentSeedRaw) ? currentSeedRaw : [];
+      return {
+        legacySeedRaw: historicalSeedCache.legacy,
+        currentSeedRaw: historicalSeedCache.current
+      };
+    }).finally(() => {
+      historicalSeedCache.pending = null;
+    });
+  }
+
+  return historicalSeedCache.pending;
+}
+
 async function syncHistoricalSeedData() {
   const storedRows = Array.isArray(movimentos) ? movimentos.map(row => normalizeImportedMovement(row)) : [];
   const storedSeedRows = storedRows.filter(isSeedManagedMovement);
   const storedManualRows = storedRows.filter(row => !isSeedManagedMovement(row));
 
-  const [legacySeedRaw, currentSeedRaw] = await Promise.all([
-    loadSeedFile('legacy_data.json', 'CTI_SEED_LEGACY_DATA'),
-    loadSeedFile('base_data.json', 'CTI_SEED_BASE_DATA')
-  ]);
+  const { legacySeedRaw, currentSeedRaw } = await getHistoricalSeedRows();
 
   const legacySeedRows = dedupeMovementsByImportKey(
     (legacySeedRaw && legacySeedRaw.length ? legacySeedRaw : storedSeedRows.filter(row => isLegacyMovementDate(row.dataFisico)))
@@ -5849,15 +5940,19 @@ if (window.CTICloudSync) {
     renderCloudSyncCard();
   });
   if (window.CTICloudSync.onRemoteChange) {
-    window.CTICloudSync.onRemoteChange(async () => {
+    window.CTICloudSync.onRemoteChange(async (payload = {}) => {
       try {
         if (appInitPromise) return;
+        const remoteChangedKeys = normalizeCloudChangedKeys(payload.changedKeys);
+        const inferredChangedKeys = remoteChangedKeys || getCloudSyncKeysForReason(payload.updatedBy || 'auto');
 
         if (!appReady && !currentUser) {
-          await runWithCloudSyncPaused(async () => {
-            loadUsers();
-          });
-          renderLoginUserOptions(getLoginAreaAllowedTypes());
+          if (cloudKeysChanged(inferredChangedKeys, [STORAGE_KEYS.users])) {
+            await runWithCloudSyncPaused(async () => {
+              loadUsers();
+            });
+            renderLoginUserOptions(getLoginAreaAllowedTypes());
+          }
           return;
         }
 
@@ -5865,7 +5960,8 @@ if (window.CTICloudSync) {
           hydrateCloud: false,
           persistAfterLoad: false,
           silent: true,
-          reason: 'remote-sync'
+          reason: 'remote-sync',
+          changedKeys: inferredChangedKeys
         });
         showToast('Dados atualizados automaticamente pela nuvem.');
       } catch (error) {

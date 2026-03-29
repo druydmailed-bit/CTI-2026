@@ -118,7 +118,7 @@
       : "";
   }
 
-  function applyDocsToLocalStorage(docs, meta) {
+  function applyDocsToLocalStorage(docs, meta, changedKeys) {
     var sourceDocs = docs && typeof docs === "object" ? docs : {};
     var sourceMeta = meta && typeof meta === "object" ? meta : sourceDocs[getMetaDocId()];
     if (!sourceMeta || !sourceMeta.keys) {
@@ -130,9 +130,28 @@
     }
 
     syncMetaState(sourceMeta);
-    state.cache = {};
-    Object.keys(sourceMeta.keys).forEach(function (key) {
+    var selectiveKeys = Array.isArray(changedKeys) && changedKeys.length
+      ? Array.from(new Set(changedKeys))
+      : null;
+    if (!selectiveKeys) {
+      Object.keys(state.cache || {}).forEach(function (key) {
+        if (!Object.prototype.hasOwnProperty.call(sourceMeta.keys, key)) {
+          localStorage.removeItem(key);
+        }
+      });
+      state.cache = {};
+    } else if (!state.cache || typeof state.cache !== "object") {
+      state.cache = {};
+    }
+
+    var keysToApply = selectiveKeys || Object.keys(sourceMeta.keys);
+    keysToApply.forEach(function (key) {
       var info = sourceMeta.keys[key] || {};
+      if (!sourceMeta.keys[key]) {
+        localStorage.removeItem(key);
+        delete state.cache[key];
+        return;
+      }
       var total = Number(info.chunks) || 0;
       var raw = "";
       for (var index = 0; index < total; index += 1) {
@@ -153,12 +172,17 @@
     if (!state.collection || state.unsubscribeCollection) return;
 
     state.unsubscribeCollection = state.collection.onSnapshot(function (snapshot) {
+      var changedKeys = [];
       snapshot.docChanges().forEach(function (change) {
+        var docData = change.doc.data();
+        if (docData && typeof docData.key === "string" && changedKeys.indexOf(docData.key) === -1) {
+          changedKeys.push(docData.key);
+        }
         if (change.type === "removed") {
           delete state.docCache[change.doc.id];
           return;
         }
-        state.docCache[change.doc.id] = change.doc.data();
+        state.docCache[change.doc.id] = docData;
       });
 
       var meta = state.docCache[getMetaDocId()];
@@ -173,11 +197,13 @@
       if (meta.updatedByClientId && meta.updatedByClientId === getClientId()) return;
 
       try {
-        var result = applyDocsToLocalStorage(state.docCache, meta);
+        var result = applyDocsToLocalStorage(state.docCache, meta, changedKeys);
         if (result && (result.ok || result.empty)) {
           notifyRemote({
             meta: meta,
-            result: result
+            result: result,
+            changedKeys: changedKeys,
+            updatedBy: meta.updatedBy || ""
           });
         }
       } catch (error) {
@@ -292,19 +318,31 @@
     var payload = uploadOptions.partial
       ? Object.assign({}, state.cache || {}, incomingPayload)
       : incomingPayload;
-    var options = globalScope.CTI_FIREBASE_OPTIONS || {};
+    var writeKeys = uploadOptions.partial
+      ? Object.keys(incomingPayload)
+      : Object.keys(payload);
+    var configOptions = globalScope.CTI_FIREBASE_OPTIONS || {};
     var previousMeta = state.meta && state.meta.keys ? state.meta.keys : {};
     var nextMeta = {};
+    var writeKeySet = {};
+    writeKeys.forEach(function (key) {
+      writeKeySet[key] = true;
+    });
+
+    if (uploadOptions.partial && writeKeys.length === 0) {
+      return { ok: true, mode: state.mode, skipped: true };
+    }
 
     try {
       var batch = state.db.batch();
       Object.keys(payload).forEach(function (key) {
         var raw = typeof payload[key] === "string" ? payload[key] : "";
-        var chunks = chunkString(raw, options.maxChunkSize);
+        var chunks = chunkString(raw, configOptions.maxChunkSize);
         nextMeta[key] = {
           chunks: chunks.length,
           size: raw.length
         };
+        if (!writeKeySet[key]) return;
         chunks.forEach(function (chunk, index) {
           batch.set(state.collection.doc(getChunkDocId(key, index)), {
             kind: "chunk",
@@ -322,13 +360,15 @@
         }
       });
 
-      Object.keys(previousMeta).forEach(function (key) {
-        if (Object.prototype.hasOwnProperty.call(payload, key)) return;
-        var previousChunks = Number(previousMeta[key].chunks) || 0;
-        for (var index = 0; index < previousChunks; index += 1) {
-          batch.delete(state.collection.doc(getChunkDocId(key, index)));
-        }
-      });
+      if (!uploadOptions.partial) {
+        Object.keys(previousMeta).forEach(function (key) {
+          if (Object.prototype.hasOwnProperty.call(payload, key)) return;
+          var previousChunks = Number(previousMeta[key].chunks) || 0;
+          for (var index = 0; index < previousChunks; index += 1) {
+            batch.delete(state.collection.doc(getChunkDocId(key, index)));
+          }
+        });
+      }
 
       batch.set(state.collection.doc(getMetaDocId()), {
         kind: "meta",
