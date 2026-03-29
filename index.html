@@ -12147,6 +12147,104 @@ function findWorkbookSheet(workbook, matcher, fallbackIndex) {
   return sheetName ? workbook.Sheets[sheetName] : null;
 }
 
+function extractFoPayloadFromSheet(sheet, fileName) {
+  const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: true });
+  const titleText = normalizeText(aoa[0] && aoa[0][0]);
+  const rawRows = XLSX.utils.sheet_to_json(sheet, { range: 2, defval: '', raw: true });
+
+  let firstDateFromColJ = '';
+  for (let r = 2; r < aoa.length; r++) {
+    const cellJ = aoa[r] && aoa[r][9];
+    if (cellJ !== undefined && cellJ !== null && cellJ !== '') {
+      const parsed = parseSpreadsheetDate(cellJ);
+      if (parsed) {
+        firstDateFromColJ = parsed;
+        break;
+      }
+    }
+  }
+
+  const rows = rawRows.map((row, index) => ({
+    index,
+    epsText: normalizeText(getObjectValueByKeys(row, ['EPS', 'Equipe/EPS'])),
+    productText: normalizeText(getObjectValueByKeys(row, ['PRODUTO', 'INSUMO'])),
+    materialCode: normalizeText(getObjectValueByKeys(row, ['CÓDIGO SAP', 'CODIGO SAP', 'SAP'])),
+    rawQuantity: parseLocaleNumber(getObjectValueByKeys(row, ['QUANTIDADE'])),
+    operationDate: parseSpreadsheetDate(getObjectValueByKeys(row, ['DATA OPERAÇÃO', 'DATA OPERACAO']))
+  }));
+
+  return {
+    fileName,
+    titleText,
+    firstDateFromColJ,
+    rows
+  };
+}
+
+async function readFoPayloadInWorker(files) {
+  if (!window.Worker) return null;
+  const payloadFiles = await Promise.all((Array.isArray(files) ? files : []).map(async (file) => ({
+    name: file.name,
+    data: await file.arrayBuffer()
+  })));
+  if (!payloadFiles.length) return [];
+
+  const workerUrl = new URL('analysis-fo-worker.js', window.location.href);
+  if (window.location.search) workerUrl.search = window.location.search;
+  const worker = new Worker(workerUrl.href);
+
+  return await new Promise((resolve, reject) => {
+    const cleanup = () => {
+      worker.onmessage = null;
+      worker.onerror = null;
+      worker.terminate();
+    };
+
+    worker.onmessage = (event) => {
+      cleanup();
+      const data = event && event.data ? event.data : {};
+      if (data.error) {
+        reject(new Error(data.error));
+        return;
+      }
+      resolve(Array.isArray(data.files) ? data.files : []);
+    };
+
+    worker.onerror = (event) => {
+      cleanup();
+      reject(new Error(event && event.message ? event.message : 'Falha ao processar F.O. em segundo plano.'));
+    };
+
+    try {
+      worker.postMessage(
+        { type: 'parse-fo-files', files: payloadFiles },
+        payloadFiles.map((item) => item.data).filter(Boolean)
+      );
+    } catch (error) {
+      cleanup();
+      reject(error);
+    }
+  });
+}
+
+async function readFoPayloads(files) {
+  try {
+    const workerData = await readFoPayloadInWorker(files);
+    if (Array.isArray(workerData) && workerData.length) return workerData;
+  } catch (error) {
+    console.warn('Fallback para leitura local da F.O.:', error);
+  }
+
+  const payloads = [];
+  for (const file of Array.isArray(files) ? files : []) {
+    const workbook = await readWorkbookFromFile(file);
+    const sheet = findWorkbookSheet(workbook, 'fo', 0);
+    if (!sheet) continue;
+    payloads.push(extractFoPayloadFromSheet(sheet, file.name));
+  }
+  return payloads;
+}
+
 async function parseAnalysisInventoryFile(file) {
   const workbook = await readWorkbookFromFile(file);
   const mainSheet = findWorkbookSheet(workbook, 'inventario', 0);
@@ -12390,6 +12488,119 @@ async function parseAnalysisFoFiles(files) {
   };
 }
 
+async function parseAnalysisFoFilesOptimized(files) {
+  const allRows = [];
+  const warnings = [];
+  const unresolved = [];
+  const conversionWarnings = [];
+  const mappingCache = new Map();
+  const materialCache = new Map();
+  const payloads = await readFoPayloads(files);
+
+  payloads.forEach((payload) => {
+    const fileName = normalizeText(payload && payload.fileName);
+    const inferredPeriod = inferMonthYearFromText(payload && payload.titleText);
+    const firstDateFromColJ = normalizeText(payload && payload.firstDateFromColJ);
+    const rows = Array.isArray(payload && payload.rows) ? payload.rows : [];
+
+    rows.forEach((row) => {
+      const epsText = normalizeText(row && row.epsText);
+      const productText = normalizeText(row && row.productText);
+      const materialCode = normalizeText(row && row.materialCode);
+      const rawQuantity = parseLocaleNumber(row && row.rawQuantity);
+      const index = Number(row && row.index) || 0;
+      if (!epsText || !productText || !Number.isFinite(rawQuantity) || rawQuantity <= 0) return;
+
+      const mappingKey = epsText.toLowerCase();
+      let mapping = mappingCache.get(mappingKey);
+      if (!mapping) {
+        mapping = resolveAnalysisDeposito([{ field: 'EPS', value: epsText }], 'F.O.');
+        mappingCache.set(mappingKey, mapping);
+      }
+
+      if (!mapping.matched) {
+        unresolved.push({
+          source: 'F.O.',
+          raw: epsText,
+          result: 'Sem correspondencia de deposito/EPS',
+          warningKey: getAnalysisWarningKey('unresolved', 'F.O.', epsText, 'EPS')
+        });
+      }
+
+      if (mapping.matched && normalizeText(mapping.mode) === 'approx') {
+        warnings.push({
+          source: 'F.O.',
+          raw: epsText,
+          mappedTo: `${mapping.deposito} - ${mapping.nome}`,
+          warningKey: getAnalysisWarningKey('approx', 'F.O.', epsText, 'EPS')
+        });
+      }
+
+      let date = normalizeText(row && row.operationDate);
+      if (!date && firstDateFromColJ) date = firstDateFromColJ;
+      if (!date && inferredPeriod) {
+        date = `${inferredPeriod.year}-${String(inferredPeriod.month).padStart(2, '0')}-01`;
+        warnings.push({
+          source: 'F.O.',
+          raw: `${fileName} / ${epsText}`,
+          mappedTo: `Data inferida para ${String(inferredPeriod.month).padStart(2, '0')}/${inferredPeriod.year}`
+        });
+      }
+      if (!date) {
+        const fallbackDate = normalizeText((document.getElementById('analysisPeriodStart') || {}).value || analysisState.periodStart || '');
+        if (fallbackDate) date = fallbackDate;
+      }
+
+      const materialKey = `${materialCode.toLowerCase()}|${productText.toLowerCase()}`;
+      let materialMeta = materialCache.get(materialKey);
+      if (materialMeta === undefined) {
+        materialMeta = getMaterialMetaByCode(materialCode) || getMaterialMetaByName(productText) || null;
+        materialCache.set(materialKey, materialMeta);
+      }
+
+      const converted = convertQuantityToPackaging(rawQuantity, materialMeta);
+      let embQtd = rawQuantity;
+      if (converted.ok) {
+        embQtd = converted.embalagemQuantidade;
+      } else {
+        conversionWarnings.push({
+          source: 'F.O.',
+          raw: materialCode || productText || `linha ${index + 1}`,
+          reason: converted.reason
+        });
+      }
+
+      allRows.push({
+        uniqueKey: `${fileName}|${index}|${normalizeText(mapping.deposito || '')}|${materialCode || productText}|${rawQuantity}`,
+        date,
+        deposito: mapping.matched ? normalizeText(mapping.deposito) : '',
+        epsNome: mapping.matched ? normalizeText(mapping.nome) : '',
+        sourceType: 'fo',
+        materialCode: materialCode || normalizeText(materialMeta ? materialMeta.c : ''),
+        materialName: productText || normalizeText(materialMeta ? materialMeta.d : materialCode),
+        rawQuantity,
+        embalagemQuantidade: embQtd,
+        mappingCandidates: [{ field: 'EPS', raw: epsText }],
+        mappingField: 'EPS',
+        mappingRaw: epsText,
+        mappingStatus: mapping.matched ? normalizeText(mapping.mode || 'exact') : 'unresolved',
+        mappingWarningKey: mapping.matched
+          ? (normalizeText(mapping.mode) === 'approx' ? getAnalysisWarningKey('approx', 'F.O.', epsText, 'EPS') : '')
+          : getAnalysisWarningKey('unresolved', 'F.O.', epsText, 'EPS'),
+        unresolvedReason: mapping.matched ? '' : 'Sem correspondencia de deposito/EPS',
+        fileName
+      });
+    });
+  });
+
+  return {
+    rows: dedupeAnalysisItems(allRows, item => item.uniqueKey),
+    warnings: dedupeAnalysisItems(warnings, item => `${item.source}|${item.raw}|${item.mappedTo}`),
+    unresolvedMappings: dedupeAnalysisItems(unresolved, item => `${item.source}|${item.raw}`),
+    conversionWarnings: dedupeAnalysisItems(conversionWarnings, item => `${item.source}|${item.raw}|${item.reason}`)
+  };
+}
+
 function syncAnalysisPeriodInputs() {
   const startEl = document.getElementById('analysisPeriodStart');
   const endEl = document.getElementById('analysisPeriodEnd');
@@ -12445,7 +12656,7 @@ async function handleAnalysisFoImport(fileList) {
     return;
   }
   try {
-    const parsed = await parseAnalysisFoFiles(files);
+    const parsed = await parseAnalysisFoFilesOptimized(files);
 
     // Verificar se existem frentes (depositos) ja importadas anteriormente
     const existingDepositos = new Set((analysisState.foRows || []).map(r => normalizeText(r.deposito)).filter(Boolean));
@@ -12569,22 +12780,26 @@ async function handleFoImportForDeposit(fileList, deposito) {
   const epsNome = epsItem ? normalizeText(epsItem.nome) : dep;
 
   try {
-    const workbook = await readWorkbookFromFile(files[0]);
-    const sheet = findWorkbookSheet(workbook, 'fo', 0);
-    if (!sheet) { showToast('Nao encontrei a aba da F.O. na planilha.', true); return; }
+    const payloads = await readFoPayloads([files[0]]);
+    const payload = payloads[0];
+    if (!payload) { showToast('Nao encontrei a aba da F.O. na planilha.', true); return; }
 
-    const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: true });
-    const rows = XLSX.utils.sheet_to_json(sheet, { range: 2, defval: '', raw: true });
+    const rows = (Array.isArray(payload.rows) ? payload.rows : []).map((row) => ({
+      PRODUTO: row && row.productText,
+      'CODIGO SAP': row && row.materialCode,
+      QUANTIDADE: row && row.rawQuantity,
+      __rowIndex: row && row.index
+    }));
     const materialCache = new Map();
 
     let foDate = normalizeText((document.getElementById('analysisPeriodStart') || {}).value || analysisState.periodStart || '');
     if (!foDate) {
-      for (let r = 2; r < aoa.length; r++) {
-        const cellJ = aoa[r] && aoa[r][9];
-        if (cellJ !== undefined && cellJ !== null && cellJ !== '') {
-          const parsed = parseSpreadsheetDate(cellJ);
-          if (parsed) { foDate = parsed; break; }
-        }
+      foDate = normalizeText(payload.firstDateFromColJ || '');
+    }
+    if (!foDate) {
+      const inferredPeriod = inferMonthYearFromText(payload.titleText);
+      if (inferredPeriod) {
+        foDate = `${inferredPeriod.year}-${String(inferredPeriod.month).padStart(2, '0')}-01`;
       }
     }
 
