@@ -4245,6 +4245,30 @@ function buildMovementImportKey(mov) {
   ].map(value => normalizeText(value).toLowerCase()).join('|');
 }
 
+function normalizeMovementReasonText(value) {
+  return normalizeText(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase();
+}
+
+function isSapPendingWriterReason(value) {
+  const text = normalizeMovementReasonText(value);
+  if (!text) return false;
+  const mentionsSap = text.includes('sap');
+  const mentionsPending = text.includes('pendenc') || text.includes('penden');
+  const mentionsError = text.includes('erro');
+  return mentionsSap && (mentionsPending || mentionsError);
+}
+
+function shouldForceRegistroWriterPending(mov) {
+  if (!mov || isLegacyMovementDate(mov.dataFisico)) return false;
+  const isWriterLike = normalizeText(mov.nfTipo).toLowerCase() === 'writer'
+    || normalizeText(mov.pedido).toLowerCase() === 'writer';
+  if (!isWriterLike) return false;
+  return isSapPendingWriterReason(mov.motivo);
+}
+
 function normalizeImportedMovement(raw, sourceFallback = '') {
   const mov = (raw && typeof raw === 'object') ? { ...raw } : {};
   mov.dataFisico = normalizeText(mov.dataFisico || mov.data || '');
@@ -4273,7 +4297,17 @@ function normalizeImportedMovement(raw, sourceFallback = '') {
   mov.caixasDevolver = Number(mov.caixasDevolver) || 0;
   mov.contEmb = normalizeText(mov.contEmb || 'NAO') || 'NAO';
   mov.nfTipo = normalizeText(mov.nfTipo || (mov.pedido.toUpperCase() === 'WRITER' ? 'writer' : 'pedido')).toLowerCase() === 'writer' ? 'writer' : 'pedido';
-  mov.status = normalizeText(mov.status || (mov.nfTipo === 'writer' && (!mov.migo || mov.migo.toLowerCase().includes('sem moviment')) ? 'pendente' : 'finalizado')).toLowerCase() === 'pendente' ? 'pendente' : 'finalizado';
+  if (shouldForceRegistroWriterPending(mov)) {
+    mov.nfTipo = 'writer';
+    mov.pedido = 'WRITER';
+    mov.status = 'pendente';
+    mov.dataSistemico = '';
+    mov.migo = '';
+    mov.finalizadoPor = '';
+    mov.finalizadoEm = '';
+  } else {
+    mov.status = normalizeText(mov.status || (mov.nfTipo === 'writer' && (!mov.migo || mov.migo.toLowerCase().includes('sem moviment')) ? 'pendente' : 'finalizado')).toLowerCase() === 'pendente' ? 'pendente' : 'finalizado';
+  }
   mov.inseridoPor = normalizeText(mov.inseridoPor || mov.atendente || 'Importado') || 'Importado';
   mov.inseridoEm = normalizeText(mov.inseridoEm || mov.dataSistemico || mov.dataFisico);
   mov.finalizadoPor = normalizeText(mov.finalizadoPor || '');
