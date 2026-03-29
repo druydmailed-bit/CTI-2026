@@ -11,7 +11,7 @@ window.CTI_FIREBASE_CONFIG = {
 window.CTI_FIREBASE_OPTIONS = {
   enabled: true,
   analyticsEnabled: true,
-  anonymousAuth: true,
+  anonymousAuth: false,
   webOnly: true,
   collection: "cti_app_state",
   maxChunkSize: 300000,
