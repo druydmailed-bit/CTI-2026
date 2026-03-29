@@ -187,6 +187,39 @@ body {
   line-height: 1.4;
 }
 
+.access-request-brand {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.access-request-brand-mark {
+  width: 42px;
+  height: 42px;
+  border-radius: 14px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, rgba(57,255,20,0.16), rgba(45,212,191,0.08));
+  border: 1px solid rgba(57,255,20,0.18);
+  color: var(--neon);
+  box-shadow: 0 0 18px rgba(57,255,20,0.08);
+}
+
+.access-request-brand-copy {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.access-request-footer {
+  margin-top: 22px;
+  text-align: center;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  letter-spacing: 0.2px;
+}
+
 .login-btn {
   width: 100%;
   padding: 15px;
@@ -354,6 +387,15 @@ body {
   border-color: rgba(255,71,87,0.4);
   color: var(--red);
   background: rgba(255,71,87,0.08);
+}
+
+.clickable-row {
+  cursor: pointer;
+  transition: background-color var(--transition-fast);
+}
+
+.clickable-row:hover td {
+  background: rgba(57,255,20,0.04);
 }
 
 /* Nav Tabs */
@@ -807,6 +849,8 @@ body {
 .form-group { display: flex; flex-direction: column; }
 
 .form-group.span-2 { grid-column: span 2; }
+
+.form-group.span-3 { grid-column: span 3; }
 
 .form-label {
   font-size: 0.72rem;
@@ -1526,6 +1570,7 @@ tbody tr { cursor: pointer; }
   .content { padding: 16px; }
   .form-grid { grid-template-columns: 1fr; }
   .form-group.span-2 { grid-column: span 1; }
+  .form-group.span-3 { grid-column: span 1; }
   .stats-grid { grid-template-columns: 1fr; }
   .dashboard-hero,
   .dashboard-grid-2,
@@ -1554,6 +1599,7 @@ tbody tr { cursor: pointer; }
   .header-right { gap: 10px; }
   .header-divider { display: none; }
   .header-title { font-size: 0.76rem; line-height: 1.4; }
+  .access-request-brand { align-items: flex-start; }
   .user-badge {
     width: 100%;
     flex-wrap: wrap;
@@ -1770,7 +1816,6 @@ button:focus-visible, input:focus-visible, select:focus-visible {
     </select>
     <label>Senha</label>
     <input type="password" class="login-input" id="loginPassword" placeholder="Digite sua senha" oninput="updateLoginButtonState()" onkeydown="if(event.key==='Enter'){doLogin()}">
-    <div class="login-helper">No primeiro acesso use a senha temporaria <strong>123456</strong> e defina uma nova senha.</div>
     <button class="login-btn" id="loginBtn" disabled onclick="doLogin()">Entrar no Sistema</button>
     <div id="loginSolicitarDiv" style="text-align:center;margin-top:16px;display:none;">
       <button type="button" onclick="openAccessRequestModal()" style="background:none;border:none;color:var(--blue);font-size:0.8rem;cursor:pointer;text-decoration:underline;font-family:inherit;">Nao tem acesso? Solicitar acesso</button>
@@ -1782,7 +1827,18 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 <div id="accessRequestModal" style="display:none;position:fixed;top:0;left:0;right:0;bottom:0;z-index:9999;background:rgba(0,0,0,0.7);backdrop-filter:blur(6px);overflow-y:auto;padding:24px;" onclick="if(event.target===this)closeAccessRequestModal()">
   <div style="max-width:520px;margin:40px auto;background:var(--bg2);border:1px solid var(--border);border-radius:16px;box-shadow:0 20px 60px rgba(0,0,0,0.5);padding:32px;">
     <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;">
-      <div style="font-size:1.1rem;font-weight:700;color:var(--neon);">Solicitar Acesso</div>
+      <div class="access-request-brand">
+        <div class="access-request-brand-mark" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" style="width:20px;height:20px;">
+            <path d="M6 16c2.2-5.2 6.1-8.4 12-9-1.2 5.7-4.1 9.7-9 12"></path>
+            <path d="M8 8c.9 1.1 1.4 2.4 1.6 3.9"></path>
+          </svg>
+        </div>
+        <div class="access-request-brand-copy">
+          <div style="font-size:1.08rem;font-weight:700;color:var(--neon);">Solicitar Acesso</div>
+          <div style="font-size:0.72rem;color:var(--text-dim);">MS Florestal</div>
+        </div>
+      </div>
       <button onclick="closeAccessRequestModal()" style="background:none;border:none;color:var(--text-dim);font-size:1.2rem;cursor:pointer;">&times;</button>
     </div>
     <div style="margin-bottom:16px;">
@@ -1806,6 +1862,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       <div style="margin-bottom:12px;"><label class="form-label">Email *</label><input type="email" class="form-input" id="reqEmailEps" placeholder="email@empresa.com"></div>
     </div>
     <button type="button" class="login-btn" onclick="submitAccessRequest()" style="margin-top:16px;width:100%;">Enviar Solicitacao</button>
+    <div class="access-request-footer">Elaborado por <strong style="color:var(--neon);">Lucas Marques</strong> — 2026</div>
   </div>
 </div>
 
@@ -1829,14 +1886,6 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         <span class="cloud-online-badge-dot"></span>
         <span id="cloudOnlineBadgeText">Modo Local</span>
       </div>
-      <button class="btn-logout" onclick="exportFullBackup()" title="Exportar backup completo" style="background:rgba(57,255,20,0.15);color:var(--neon);border:1px solid rgba(57,255,20,0.3);font-size:0.75rem;padding:6px 10px;border-radius:8px;cursor:pointer;">
-        <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:2px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-        Backup
-      </button>
-      <button class="btn-logout" onclick="importFullBackup()" title="Importar backup" style="background:rgba(24,220,255,0.12);color:#18dcff;border:1px solid rgba(24,220,255,0.3);font-size:0.75rem;padding:6px 10px;border-radius:8px;cursor:pointer;">
-        <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:2px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
-        Restaurar
-      </button>
       <button class="btn-logout" onclick="doLogout()">Sair</button>
     </div>
   </div>
@@ -2050,7 +2099,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       </div>
 
       <!-- Radar EPS -->
-      <div class="form-section" style="margin-bottom:14px;">
+      <div class="form-section" style="margin-bottom:14px;display:none;">
         <div class="form-section-title" id="dashboardRadarTitle">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M8 17l4-4 4 2 3-5"/></svg>
           Radar de Embalagens por EPS
@@ -2075,7 +2124,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       </div>
 
       <!-- Últimas movimentações -->
-      <div class="form-section">
+      <div class="form-section" style="display:none;">
         <div class="form-section-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
           Últimas Movimentações
@@ -2446,6 +2495,10 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <select class="filter-select" id="packagingFilterDeposito" onchange="filterPackagingTable()">
             <option value="">Todos os depositos</option>
           </select>
+          <button class="btn btn-secondary" onclick="exportPackagingControlSheet()">
+            <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
+            Exportar Planilha
+          </button>
           <button class="btn btn-primary" onclick="openPackagingReturnModal()">
             <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
             Registrar Devolucao de Embalagem
@@ -2533,9 +2586,9 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             <option value="quitadas">Somente quitadas</option>
             <option value="bloqueadas">Somente bloqueadas</option>
           </select>
-          <button class="btn btn-primary" onclick="exportSaldoEpsCSV()" title="Exportar saldo para CSV">
+          <button class="btn btn-primary" onclick="exportSaldoEpsCSV()" title="Exportar saldo EPS">
             <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-            Exportar CSV
+            Exportar Planilha
           </button>
         </div>
       </div>
@@ -3045,7 +3098,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       </div>
 
       <!-- ===== GESTÃO DE DADOS ===== -->
-      <div class="form-section" style="margin-top:28px;">
+      <div class="form-section" id="dataManagementPanel" style="margin-top:28px;">
         <div class="form-section-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
           Gestão de Dados
@@ -3152,30 +3205,38 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 
     <!-- ========== CONFIGURACOES ========== -->
     <div class="tab-panel" id="tab-config">
-      <div class="form-section" style="max-width:480px;">
+      <div class="form-section">
         <div class="form-section-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 00.33 1.82l.06.06a2 2 0 010 2.83 2 2 0 01-2.83 0l-.06-.06a1.65 1.65 0 00-1.82-.33 1.65 1.65 0 00-1 1.51V21a2 2 0 01-4 0v-.09A1.65 1.65 0 009 19.4"/></svg>
           Configuracoes
         </div>
-        <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:24px;margin-top:16px;">
-          <div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:4px;">Alterar Senha</div>
-          <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:20px;">Defina uma nova senha para sua conta.</div>
-          <div style="margin-bottom:12px;">
-            <label class="form-label">Senha atual</label>
-            <input type="password" class="form-input" id="cfgSenhaAtual" placeholder="Sua senha atual">
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:18px;align-items:start;margin-top:16px;">
+          <div style="display:grid;gap:16px;">
+            <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:24px;">
+              <div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:4px;">Alterar Senha</div>
+              <div style="font-size:0.75rem;color:var(--text-dim);margin-bottom:20px;">Defina uma nova senha para sua conta.</div>
+              <div style="margin-bottom:12px;">
+                <label class="form-label">Senha atual</label>
+                <input type="password" class="form-input" id="cfgSenhaAtual" placeholder="Sua senha atual">
+              </div>
+              <div style="margin-bottom:12px;">
+                <label class="form-label">Nova senha</label>
+                <input type="password" class="form-input" id="cfgSenhaNova" placeholder="Minimo 4 caracteres">
+              </div>
+              <div style="margin-bottom:16px;">
+                <label class="form-label">Confirmar nova senha</label>
+                <input type="password" class="form-input" id="cfgSenhaConfirm" placeholder="Repita a nova senha">
+              </div>
+              <button type="button" class="btn btn-primary" onclick="changeUserPassword()" style="width:100%;justify-content:center;">Salvar Nova Senha</button>
+            </div>
+            <div id="cfgUserInfo" style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;"></div>
+            <div id="cfgCloudSyncCard" style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;"></div>
           </div>
-          <div style="margin-bottom:12px;">
-            <label class="form-label">Nova senha</label>
-            <input type="password" class="form-input" id="cfgSenhaNova" placeholder="Minimo 4 caracteres">
+          <div style="display:grid;gap:16px;">
+            <div id="cfgAutoBackupCard" style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;"></div>
+            <div id="cfgBackupSectionHost"></div>
           </div>
-          <div style="margin-bottom:16px;">
-            <label class="form-label">Confirmar nova senha</label>
-            <input type="password" class="form-input" id="cfgSenhaConfirm" placeholder="Repita a nova senha">
-          </div>
-          <button type="button" class="btn btn-primary" onclick="changeUserPassword()" style="width:100%;justify-content:center;">Salvar Nova Senha</button>
         </div>
-        <div id="cfgUserInfo" style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:16px;"></div>
-        <div id="cfgCloudSyncCard" style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;margin-top:16px;"></div>
       </div>
     </div>
 
@@ -3414,6 +3475,19 @@ const IMMEDIATE_CLOUD_SYNC_REASONS = new Set([
   'desbloqueio-requests',
   'desbloqueio-history'
 ]);
+const AUTO_BACKUP_KEYS = {
+  date: 'cti_auto_backup_date',
+  at: 'cti_auto_backup_at',
+  status: 'cti_auto_backup_status',
+  reason: 'cti_auto_backup_reason'
+};
+const AUTO_BACKUP_COLLECTION = 'cti_daily_backups';
+let autoBackupState = {
+  lastMeta: null,
+  loading: false,
+  timer: null,
+  running: null
+};
 
 function getCloudSyncableStorageKeys() {
   return [...new Set([...Object.values(STORAGE_KEYS), ...CLOUD_SYNC_EXTRA_KEYS])];
@@ -3562,12 +3636,20 @@ async function hydrateCloudStorageIfAvailable() {
   return result;
 }
 
+function relocateBackupManagementSection() {
+  const host = document.getElementById('cfgBackupSectionHost');
+  const section = document.getElementById('dataManagementPanel');
+  if (!host || !section || host.contains(section)) return;
+  host.appendChild(section);
+}
+
 function prepareAppInterfaceOnce() {
   if (appInterfacePrepared) return;
   injectRoutingAndCadastroStyles();
   upgradeMovementRoutingSection();
   upgradeMaterialSection();
   upgradeCadastroSection();
+  relocateBackupManagementSection();
   setupSearchableSelects();
   appInterfacePrepared = true;
 }
@@ -3919,6 +4001,7 @@ function applyMasterData(master) {
     e: (normalizeText(m.e).toUpperCase() === 'S' ? 'S' : 'N')
   })).filter(m => m.d));
   invalidateMaterialMaps();
+  invalidateAnalysisDepositoCatalog();
 }
 
 function loadMasterData() {
@@ -3958,7 +4041,9 @@ function saveMasterData() {
     materiais: DATA.materiais.map(m => ({ d: m.d, c: m.c, g: m.g, u: m.u, e: m.e }))
   };
   localStorage.setItem(STORAGE_KEYS.master, JSON.stringify(master));
+  invalidateAnalysisDepositoCatalog();
   scheduleCloudSync('master-data');
+  queueDailyBackupRun();
 }
 
 function createUserRecord(name, extra = {}) {
@@ -3975,6 +4060,10 @@ function createUserRecord(name, extra = {}) {
     email: extra.email || '',
     epsVinculada: extra.epsVinculada || '',
     approved: extra.approved !== undefined ? !!extra.approved : true,
+    createdAt: normalizeText(extra.createdAt || ''),
+    approvedAt: normalizeText(extra.approvedAt || ''),
+    lastLoginAt: normalizeText(extra.lastLoginAt || ''),
+    lastLoginMode: normalizeText(extra.lastLoginMode || ''),
     permissions: {
       manageUsers: !!perms.manageUsers,
       manageCadastros: !!perms.manageCadastros,
@@ -4003,6 +4092,8 @@ function ensureLucasAdmin(list) {
     isAdmin: true,
     password: DEFAULT_TEMP_PASSWORD,
     mustChangePassword: true,
+    createdAt: new Date().toISOString(),
+    approvedAt: new Date().toISOString(),
     permissions: {
       manageUsers: true,
       manageCadastros: true,
@@ -4024,6 +4115,8 @@ function buildDefaultUsers() {
       isAdmin: key === 'lucas marques',
       password: DEFAULT_TEMP_PASSWORD,
       mustChangePassword: true,
+      createdAt: '',
+      approvedAt: '',
       permissions: key === 'lucas marques'
         ? { manageUsers: true, manageCadastros: true, deleteMovements: true }
         : { manageUsers: false, manageCadastros: false, deleteMovements: false }
@@ -4068,6 +4161,10 @@ function loadUsers() {
       email: obj.email || '',
       epsVinculada: obj.epsVinculada || '',
       approved: obj.approved !== undefined ? obj.approved : true,
+      createdAt: obj.createdAt || obj.dataRegistro || '',
+      approvedAt: obj.approvedAt || obj.dataAprovacao || '',
+      lastLoginAt: obj.lastLoginAt || obj.ultimoLogin || '',
+      lastLoginMode: obj.lastLoginMode || obj.modoUltimoLogin || '',
       permissions: {
         manageUsers: !!manageUsersValue,
         manageCadastros: !!manageCadastrosValue,
@@ -4084,6 +4181,7 @@ function loadUsers() {
 function saveUsers() {
   localStorage.setItem(STORAGE_KEYS.users, JSON.stringify(users));
   scheduleCloudSync('users');
+  queueDailyBackupRun();
 }
 
 function syncUsuariosData() {
@@ -4097,6 +4195,7 @@ function loadAccessRequests() {
 function saveAccessRequests(requests) {
   localStorage.setItem(STORAGE_KEYS.accessRequests, JSON.stringify(requests));
   scheduleCloudSync('access-requests');
+  queueDailyBackupRun();
 }
 function generateRandomPassword(len = 8) {
   const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz23456789';
@@ -4200,11 +4299,13 @@ function saveToStorage(reason = 'storage') {
   localStorage.setItem(STORAGE_KEYS.embalagens, JSON.stringify(parsed.embalagens));
   localStorage.setItem(STORAGE_KEYS.analise, JSON.stringify(parsed.analise));
   scheduleCloudSync(reason);
+  queueDailyBackupRun();
 }
 
 function saveAnalysisState() {
   localStorage.setItem(STORAGE_KEYS.analise, JSON.stringify(analysisState));
   scheduleCloudSync('analysis');
+  queueDailyBackupRun();
 }
 
 function isLegacyMovementDate(dateValue) {
@@ -4452,8 +4553,8 @@ async function syncHistoricalSeedData() {
   ]).filter(row => !isLegacyMovementDate(row.dataFisico));
 }
 
-function exportFullBackup() {
-  const backup = {
+function buildFullBackupPayload() {
+  return {
     _backupVersion: 2,
     _exportedAt: new Date().toISOString(),
     movimentos: movimentos,
@@ -4463,6 +4564,207 @@ function exportFullBackup() {
     users: users,
     master: localStorage.getItem(STORAGE_KEYS.master)
   };
+}
+
+function getBackupFirestoreDb() {
+  if (!window.firebase || !firebase.apps || !firebase.apps.length) return null;
+  try {
+    return firebase.app().firestore();
+  } catch (error) {
+    console.error('Falha ao obter Firestore para backup:', error);
+    return null;
+  }
+}
+
+function getBackupTimestampLabel(value) {
+  if (!value) return 'Ainda nao gerado';
+  try {
+    if (value && typeof value.toDate === 'function') return value.toDate().toLocaleString('pt-BR');
+    return new Date(value).toLocaleString('pt-BR');
+  } catch (error) {
+    return 'Data indisponivel';
+  }
+}
+
+function renderAutoBackupCard() {
+  const card = document.getElementById('cfgAutoBackupCard');
+  if (!card) return;
+
+  const mode = cloudSyncState && cloudSyncState.mode ? cloudSyncState.mode : 'local-only';
+  const lastLocalAt = localStorage.getItem(AUTO_BACKUP_KEYS.at);
+  const lastLocalDate = localStorage.getItem(AUTO_BACKUP_KEYS.date);
+  const lastMeta = autoBackupState.lastMeta;
+  const lastCloudAt = lastMeta ? (lastMeta.exportedAtIso || lastMeta.exportedAt || '') : '';
+  const lastBackupLabel = lastCloudAt
+    ? getBackupTimestampLabel(lastCloudAt)
+    : (lastLocalAt ? getBackupTimestampLabel(lastLocalAt) : 'Ainda nao gerado');
+  const status = localStorage.getItem(AUTO_BACKUP_KEYS.status) || (mode === 'web-cloud' ? 'Aguardando' : 'Indisponivel');
+  const reason = localStorage.getItem(AUTO_BACKUP_KEYS.reason) || (mode === 'web-cloud'
+    ? 'O sistema salva um backup diario do estado completo na nuvem.'
+    : 'O backup diario automatico funciona na versao web conectada ao Firebase.');
+  const exportedBy = lastMeta && lastMeta.exportedBy ? lastMeta.exportedBy : 'Sistema';
+  const isCloud = mode === 'web-cloud';
+  const accent = isCloud ? 'var(--neon)' : 'var(--yellow)';
+
+  card.innerHTML =
+    '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
+      '<div>' +
+        '<div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:4px;">Backup Diario</div>' +
+        '<div style="font-size:0.75rem;color:var(--text-dim);line-height:1.6;">Uma copia integral do sistema fica salva na nuvem para recuperacao de emergencia.</div>' +
+      '</div>' +
+      '<span style="font-size:0.72rem;font-weight:800;padding:6px 10px;border-radius:999px;background:' + (isCloud ? 'rgba(57,255,20,0.08)' : 'rgba(255,211,42,0.1)') + ';color:' + accent + ';border:1px solid ' + accent + '33;">' + escapeHtml(status) + '</span>' +
+    '</div>' +
+    '<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;margin-top:16px;">' +
+      '<div style="background:var(--bg4);border-radius:10px;padding:12px;">' +
+        '<div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Ultimo envio</div>' +
+        '<div style="font-size:0.82rem;font-weight:600;color:' + accent + ';">' + escapeHtml(lastBackupLabel) + '</div>' +
+      '</div>' +
+      '<div style="background:var(--bg4);border-radius:10px;padding:12px;">' +
+        '<div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Referencia</div>' +
+        '<div style="font-size:0.82rem;font-weight:600;color:var(--text);">' + escapeHtml(lastLocalDate || (lastMeta && lastMeta.backupDate) || '-') + '</div>' +
+      '</div>' +
+      '<div style="background:var(--bg4);border-radius:10px;padding:12px;">' +
+        '<div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Responsavel</div>' +
+        '<div style="font-size:0.82rem;font-weight:600;color:var(--text);">' + escapeHtml(exportedBy) + '</div>' +
+      '</div>' +
+    '</div>' +
+    '<div style="margin-top:14px;font-size:0.76rem;color:var(--text-dim);line-height:1.6;">' + escapeHtml(reason) + '</div>' +
+    '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">' +
+      '<button type="button" class="btn btn-primary" onclick="runAutoBackupNow()" style="flex:1 1 180px;justify-content:center;" ' + (isCloud ? '' : 'disabled') + '>Salvar Backup Diario Agora</button>' +
+      '<button type="button" class="btn btn-secondary" onclick="refreshAutoBackupMetaFromCloud()" style="flex:1 1 180px;justify-content:center;" ' + (isCloud ? '' : 'disabled') + '>Atualizar Status</button>' +
+    '</div>';
+}
+
+async function refreshAutoBackupMetaFromCloud() {
+  const db = getBackupFirestoreDb();
+  if (!db || autoBackupState.loading) {
+    renderAutoBackupCard();
+    return;
+  }
+  autoBackupState.loading = true;
+  try {
+    const snapshot = await db.collection(AUTO_BACKUP_COLLECTION).doc('backup_registry_latest').get();
+    autoBackupState.lastMeta = snapshot.exists ? snapshot.data() : null;
+  } catch (error) {
+    console.error('Falha ao consultar status do backup diario:', error);
+  } finally {
+    autoBackupState.loading = false;
+    renderAutoBackupCard();
+  }
+}
+
+async function runDailyBackupNow(force = false, silent = false) {
+  if (autoBackupState.running) return autoBackupState.running;
+
+  autoBackupState.running = (async () => {
+    const todayKey = new Date().toISOString().split('T')[0];
+    if (!force && localStorage.getItem(AUTO_BACKUP_KEYS.date) === todayKey) {
+      renderAutoBackupCard();
+      return { ok: true, skipped: true };
+    }
+
+    if ((cloudSyncState && cloudSyncState.mode) !== 'web-cloud') {
+      localStorage.setItem(AUTO_BACKUP_KEYS.status, 'Modo local');
+      localStorage.setItem(AUTO_BACKUP_KEYS.reason, 'Abra a versao web conectada para enviar o backup diario automatico.');
+      renderAutoBackupCard();
+      return { ok: false, reason: 'Modo local' };
+    }
+
+    const db = getBackupFirestoreDb();
+    if (!db) {
+      localStorage.setItem(AUTO_BACKUP_KEYS.status, 'Sem Firestore');
+      localStorage.setItem(AUTO_BACKUP_KEYS.reason, 'Nao foi possivel acessar o Firestore para gravar o backup.');
+      renderAutoBackupCard();
+      return { ok: false, reason: 'Sem Firestore' };
+    }
+
+    const payload = buildFullBackupPayload();
+    const serialized = JSON.stringify(payload);
+    const chunks = [];
+    const chunkSize = 280000;
+    for (let index = 0; index < serialized.length; index += chunkSize) {
+      chunks.push(serialized.slice(index, index + chunkSize));
+    }
+
+    const collection = db.collection(AUTO_BACKUP_COLLECTION);
+    const metaRef = collection.doc(`backup_meta_${todayKey}`);
+    const latestRef = collection.doc('backup_registry_latest');
+    let previousChunkCount = 0;
+    try {
+      const previousMeta = await metaRef.get();
+      if (previousMeta.exists) previousChunkCount = Number(previousMeta.data().chunkCount) || 0;
+    } catch (error) {
+      console.warn('Nao foi possivel ler o backup anterior do dia:', error);
+    }
+
+    const serverTimestamp = firebase.firestore && firebase.firestore.FieldValue
+      ? firebase.firestore.FieldValue.serverTimestamp()
+      : new Date().toISOString();
+    const exportedAtIso = new Date().toISOString();
+    const exportedBy = currentUser && currentUser.name ? currentUser.name : 'Sistema';
+    const batch = db.batch();
+
+    chunks.forEach((chunk, index) => {
+      batch.set(collection.doc(`backup_${todayKey}_${index}`), {
+        backupDate: todayKey,
+        index,
+        data: chunk,
+        exportedBy,
+        exportedAt: serverTimestamp
+      });
+    });
+    for (let index = chunks.length; index < previousChunkCount; index += 1) {
+      batch.delete(collection.doc(`backup_${todayKey}_${index}`));
+    }
+
+    const metaPayload = {
+      backupDate: todayKey,
+      chunkCount: chunks.length,
+      exportedBy,
+      exportedAt: serverTimestamp,
+      exportedAtIso,
+      bytes: serialized.length,
+      mode: location.protocol === 'file:' ? 'desktop' : 'web'
+    };
+    batch.set(metaRef, metaPayload, { merge: true });
+    batch.set(latestRef, metaPayload, { merge: true });
+    await batch.commit();
+
+    autoBackupState.lastMeta = metaPayload;
+    localStorage.setItem(AUTO_BACKUP_KEYS.date, todayKey);
+    localStorage.setItem(AUTO_BACKUP_KEYS.at, exportedAtIso);
+    localStorage.setItem(AUTO_BACKUP_KEYS.status, 'Em dia');
+    localStorage.setItem(AUTO_BACKUP_KEYS.reason, 'Backup diario salvo na nuvem com sucesso.');
+    renderAutoBackupCard();
+    if (!silent) showToast('Backup diario salvo na nuvem.');
+    return { ok: true };
+  })().catch((error) => {
+    console.error('Falha ao gravar backup diario:', error);
+    localStorage.setItem(AUTO_BACKUP_KEYS.status, 'Falhou');
+    localStorage.setItem(AUTO_BACKUP_KEYS.reason, error && error.message ? error.message : 'Falha ao salvar o backup diario na nuvem.');
+    renderAutoBackupCard();
+    if (!silent) showToast('Nao foi possivel salvar o backup diario na nuvem.', true);
+    return { ok: false, error };
+  }).finally(() => {
+    autoBackupState.running = null;
+  });
+
+  return autoBackupState.running;
+}
+
+function queueDailyBackupRun() {
+  if (autoBackupState.timer) clearTimeout(autoBackupState.timer);
+  autoBackupState.timer = setTimeout(() => {
+    runDailyBackupNow(false, true);
+  }, 1800);
+}
+
+function runAutoBackupNow() {
+  return runDailyBackupNow(true, false);
+}
+
+function exportFullBackup() {
+  const backup = buildFullBackupPayload();
   const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
@@ -4474,6 +4776,7 @@ function exportFullBackup() {
   scheduleCloudSync('backup-export');
   showToast('Backup completo exportado com sucesso.');
   updateBackupPanel();
+  renderAutoBackupCard();
 }
 
 function clearAllData() {
@@ -4671,6 +4974,8 @@ function _rebuildMaterialMaps() {
   });
 }
 function invalidateMaterialMaps() { _materialNameMap = null; _materialCodeMap = null; }
+let _analysisDepositoCatalogCache = null;
+function invalidateAnalysisDepositoCatalog() { _analysisDepositoCatalogCache = null; }
 
 function getMaterialMetaByName(name) {
   if (!_materialNameMap) _rebuildMaterialMaps();
@@ -4868,7 +5173,10 @@ function getPackagingBalanceKey(depositoOrigem, material) {
   return `${normalizeText(depositoOrigem).toLowerCase()}|${normalizeText(material).toLowerCase()}`;
 }
 
-function buildPackagingControlData() {
+function buildPackagingControlData(sourceMovements, options) {
+  const movementSource = Array.isArray(sourceMovements) ? sourceMovements : movimentos;
+  const settings = options && typeof options === 'object' ? options : {};
+  const includeManualReturns = settings.includeManualReturns !== false;
   const rows = [];
   const balanceMap = {};
   const groupMap = {};
@@ -4935,7 +5243,7 @@ function buildPackagingControlData() {
     rows.push(row);
   }
 
-  movimentos.forEach((mov) => {
+  movementSource.forEach((mov) => {
     if (isCancelledMovement(mov)) return;
     getPackagingItems(mov).forEach((item, index) => {
       const quantidade = Number(item.embDevolver) || 0;
@@ -5011,25 +5319,27 @@ function buildPackagingControlData() {
     });
   });
 
-  embalagemDevolucoes
-    .map(normalizePackagingReturnRecord)
-    .filter(item => item.quantidade > 0 && item.depositoOrigem && item.material)
-    .forEach((item) => {
-      pushFlowRow({
-        ...item,
-        id: item.id || safeId('pkg'),
-        rowType: 'devolucao',
-        tipoRegistro: 'Devolucao Embalagem',
-        badgeClass: 'badge-devolucao',
-        depositoOrigem: item.depositoOrigem,
-        origem: item.origem,
-        signedQuantidade: (Number(item.quantidade) || 0) * -1,
-        fixedStatus: 'devolvida',
-        sortTime: normalizeText(item.data || item.inseridoEm || ''),
-        sourceLabel: 'Registro manual',
-        flowOrder: 0
+  if (includeManualReturns) {
+    embalagemDevolucoes
+      .map(normalizePackagingReturnRecord)
+      .filter(item => item.quantidade > 0 && item.depositoOrigem && item.material)
+      .forEach((item) => {
+        pushFlowRow({
+          ...item,
+          id: item.id || safeId('pkg'),
+          rowType: 'devolucao',
+          tipoRegistro: 'Devolucao Embalagem',
+          badgeClass: 'badge-devolucao',
+          depositoOrigem: item.depositoOrigem,
+          origem: item.origem,
+          signedQuantidade: (Number(item.quantidade) || 0) * -1,
+          fixedStatus: 'devolvida',
+          sortTime: normalizeText(item.data || item.inseridoEm || ''),
+          sourceLabel: 'Registro manual',
+          flowOrder: 0
+        });
       });
-    });
+  }
 
   Object.keys(groupMap).forEach((key) => {
     groupMap[key].saldoPendente = Number(Math.max(0, balanceMap[key] || 0).toFixed(6));
@@ -5529,6 +5839,18 @@ function updateLoginButtonState() {
   document.getElementById('loginBtn').disabled = !user;
 }
 
+function registerUserLogin(user) {
+  if (!user) return;
+  const target = users.find((item) => item.id === user.id) || user;
+  target.lastLoginAt = new Date().toISOString();
+  target.lastLoginMode = location.protocol === 'file:' ? 'desktop' : 'web';
+  if (currentUser && currentUser.id === target.id) {
+    currentUser.lastLoginAt = target.lastLoginAt;
+    currentUser.lastLoginMode = target.lastLoginMode;
+  }
+  setTimeout(() => saveUsers(), 0);
+}
+
 async function completeLogin(user) {
   const loginBtn = document.getElementById('loginBtn');
   const originalLabel = loginBtn ? loginBtn.textContent : '';
@@ -5550,6 +5872,7 @@ async function completeLogin(user) {
   }
 
   currentUser = users.find((item) => item.id === user.id) || findUserByName(user.name) || user;
+  registerUserLogin(currentUser);
   document.getElementById('loginPassword').value = '';
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
@@ -5578,6 +5901,7 @@ async function completeLogin(user) {
   if (defaultTab === 'dashboard') updateDashboard();
   renderTable();
   if (loginBtn) loginBtn.textContent = originalLabel || 'Entrar no Sistema';
+  queueDailyBackupRun();
 
   // Check if EPS user's EPS is blocked
   if (currentUser.userType === 'eps' && currentUser.epsVinculada) {
@@ -5728,6 +6052,7 @@ function loadDesbloqueioRequests() {
 function saveDesbloqueioRequests(requests) {
   localStorage.setItem('cti_desbloqueio_requests', JSON.stringify(requests));
   scheduleCloudSync('desbloqueio-requests');
+  queueDailyBackupRun();
 }
 
 function openFirstAccessModal(user) {
@@ -6012,6 +6337,7 @@ async function reloadFromCloudState() {
 function renderConfigTab() {
   const info = document.getElementById('cfgUserInfo');
   if (!info || !currentUser) return;
+  relocateBackupManagementSection();
   const ut = currentUser.userType || 'msfc';
   const typeLabel = ut === 'admin' ? 'Administrador' : ut === 'eps' ? 'EPS' : 'MS Florestal';
   let html = '<div style="font-size:0.85rem;font-weight:700;color:var(--text);margin-bottom:8px;">Dados da Conta</div>';
@@ -6022,9 +6348,14 @@ function renderConfigTab() {
   if (currentUser.email) html += '<div><strong>Email:</strong> ' + escapeHtml(currentUser.email) + '</div>';
   if (currentUser.area) html += '<div><strong>Area:</strong> ' + escapeHtml(currentUser.area) + '</div>';
   if (currentUser.epsVinculada) html += '<div><strong>EPS Vinculada:</strong> ' + escapeHtml(currentUser.epsVinculada) + '</div>';
+  if (currentUser.createdAt) html += '<div><strong>Registro:</strong> ' + escapeHtml(getBackupTimestampLabel(currentUser.createdAt)) + '</div>';
+  if (currentUser.lastLoginAt) html += '<div><strong>Ultimo login:</strong> ' + escapeHtml(getBackupTimestampLabel(currentUser.lastLoginAt)) + '</div>';
   html += '</div>';
   info.innerHTML = html;
   renderCloudSyncCard();
+  updateBackupPanel();
+  renderAutoBackupCard();
+  refreshAutoBackupMetaFromCloud();
 }
 
 function changeUserPassword() {
@@ -6050,6 +6381,64 @@ function changeUserPassword() {
 }
 
 // ==================== PENDING ACCESS REQUESTS ====================
+function getAccessUserTypeLabel(type) {
+  return type === 'admin' ? 'Administrador' : type === 'eps' ? 'EPS (Parceiro)' : 'MS Florestal';
+}
+
+function openAccessEntityDetail(kind, id) {
+  const data = kind === 'request'
+    ? loadAccessRequests().find(item => item.id === id)
+    : users.find(item => item.id === id);
+  if (!data) return;
+
+  const title = kind === 'request' ? 'Solicitacao de Acesso' : 'Cadastro do Usuario';
+  const profileLabel = kind === 'request'
+    ? 'Pendente de aprovacao'
+    : getUserRoleLabel(data);
+  const fields = [
+    ['Nome', data.nome || data.name || '-'],
+    ['Perfil', profileLabel],
+    ['Tipo', getAccessUserTypeLabel(data.userType || (data.isAdmin ? 'admin' : 'msfc'))],
+    ['Email', data.email || '-'],
+    ['Contato', data.contato || '-'],
+    ['Area', data.area || '-'],
+    ['EPS', data.epsVinculada || '-'],
+    ['Registro', data.createdAt ? getBackupTimestampLabel(data.createdAt) : '-'],
+    ['Ultimo login', kind === 'user' && data.lastLoginAt ? getBackupTimestampLabel(data.lastLoginAt) : '-']
+  ];
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="detail-modal" style="max-width:760px;">
+      <div class="detail-header">
+        <div class="detail-header-left">
+          <span class="badge ${kind === 'request' ? 'badge-writer' : 'badge-transferencia'}">${kind === 'request' ? 'Solicitacao' : 'Usuario'}</span>
+          <span class="status-finalizado" style="font-size:0.68rem">${escapeHtml(profileLabel)}</span>
+        </div>
+        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+      </div>
+      <div class="detail-body">
+        <div class="detail-section">
+          <div class="detail-section-title">${escapeHtml(title)}</div>
+          <div class="details-grid" style="margin-top:16px;">
+            ${fields.map(([label, value]) => `
+              <div class="detail-item">
+                <div class="detail-label">${escapeHtml(label)}</div>
+                <div class="detail-value">${escapeHtml(value || '-')}</div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      </div>
+    </div>`;
+
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) overlay.remove();
+  });
+}
+
 function renderPendingAccessRequests() {
   const container = document.getElementById('pendingAccessContainer');
   if (!container) return;
@@ -6069,14 +6458,14 @@ function renderPendingAccessRequests() {
         ? 'EPS: ' + escapeHtml(r.epsVinculada || '-') + ' | ' + escapeHtml(r.email || '-')
         : 'Area: ' + escapeHtml(r.area || '-') + ' | ' + escapeHtml(r.contato || '-');
       const dateStr = r.createdAt ? new Date(r.createdAt).toLocaleDateString('pt-BR') : '-';
-      return '<tr>' +
+      return '<tr class="clickable-row" onclick="openAccessEntityDetail(\'request\', \'' + escapeHtml(r.id) + '\')">' +
         '<td style="font-weight:600;">' + escapeHtml(r.nome) + '</td>' +
         '<td><span class="badge ' + (r.userType === 'eps' ? 'badge-transferencia' : 'badge-devolucao') + '">' + typeLabel + '</span></td>' +
         '<td style="font-size:0.75rem;color:var(--text-dim);">' + details + '</td>' +
         '<td style="font-size:0.75rem;">' + dateStr + '</td>' +
         '<td style="white-space:nowrap;">' +
-          '<button class="btn btn-primary" style="font-size:0.7rem;padding:4px 10px;" onclick="approveAccessRequest(\'' + escapeHtml(r.id) + '\')">Aprovar</button> ' +
-          '<button class="btn btn-secondary" style="font-size:0.7rem;padding:4px 10px;color:var(--red);" onclick="rejectAccessRequest(\'' + escapeHtml(r.id) + '\')">Rejeitar</button>' +
+          '<button class="btn btn-primary" style="font-size:0.7rem;padding:4px 10px;" onclick="event.stopPropagation();approveAccessRequest(\'' + escapeHtml(r.id) + '\')">Aprovar</button> ' +
+          '<button class="btn btn-secondary" style="font-size:0.7rem;padding:4px 10px;color:var(--red);" onclick="event.stopPropagation();rejectAccessRequest(\'' + escapeHtml(r.id) + '\')">Rejeitar</button>' +
         '</td></tr>';
     }).join('') + '</tbody></table>';
 }
@@ -6099,6 +6488,8 @@ function approveAccessRequest(reqId) {
     email: req.email || '',
     epsVinculada: req.epsVinculada || '',
     approved: true,
+    createdAt: req.createdAt || new Date().toISOString(),
+    approvedAt: new Date().toISOString(),
     permissions: { manageUsers: false, manageCadastros: false, deleteMovements: false }
   });
 
@@ -6522,6 +6913,7 @@ function getBlockedEps() {
 function setBlockedEps(map) {
   localStorage.setItem('cti_blockedEps', JSON.stringify(map));
   scheduleCloudSync('blocked-eps');
+  queueDailyBackupRun();
 }
 function isEpsBlocked(deposito) {
   return !!getBlockedEps()[deposito];
@@ -6534,6 +6926,7 @@ function getDesbloqueioHistory() {
 function saveDesbloqueioHistory(hist) {
   localStorage.setItem('cti_desbloqueio_history', JSON.stringify(hist));
   scheduleCloudSync('desbloqueio-history');
+  queueDailyBackupRun();
 }
 function countLiberacoesTemporarias(deposito) {
   const hist = getDesbloqueioHistory();
@@ -6996,6 +7389,157 @@ function fecharDetalheEps() {
   document.getElementById('saldoEpsModal').style.display = 'none';
   document.body.style.overflow = '';
   _modalEpsDeposito = null;
+}
+
+function normalizeWorksheetCell(cell) {
+  if (cell && typeof cell === 'object' && !Array.isArray(cell)) {
+    return {
+      value: cell.value === null || cell.value === undefined ? '' : cell.value,
+      className: normalizeText(cell.className || ''),
+      style: normalizeText(cell.style || '')
+    };
+  }
+  return {
+    value: cell === null || cell === undefined ? '' : cell,
+    className: '',
+    style: ''
+  };
+}
+
+function buildStyledWorksheet(config) {
+  const title = escapeHtml(config && config.title ? config.title : 'Relatorio');
+  const subtitle = escapeHtml(config && config.subtitle ? config.subtitle : '');
+  const generatedAt = escapeHtml(new Date().toLocaleString('pt-BR'));
+  const summaryItems = Array.isArray(config && config.summaryItems) ? config.summaryItems : [];
+  const headers = Array.isArray(config && config.headers) ? config.headers : [];
+  const rows = Array.isArray(config && config.rows) ? config.rows : [];
+  const accent = escapeHtml(normalizeText(config && config.accent) || '#39ff14');
+
+  const summaryHtml = summaryItems.length
+    ? `<div class="summary-grid">${summaryItems.map((item) => `
+        <div class="summary-card">
+          <div class="summary-label">${escapeHtml(item.label || '-')}</div>
+          <div class="summary-value">${escapeHtml(item.value || '0')}</div>
+        </div>
+      `).join('')}</div>`
+    : '';
+
+  const tableHeaderHtml = headers.map((header) => `<th>${escapeHtml(header)}</th>`).join('');
+  const tableRowsHtml = rows.map((row, index) => {
+    const cells = (Array.isArray(row) ? row : []).map((cell) => {
+      const normalizedCell = normalizeWorksheetCell(cell);
+      const classAttr = normalizedCell.className ? ` class="${escapeHtml(normalizedCell.className)}"` : '';
+      const styleAttr = normalizedCell.style ? ` style="${escapeHtml(normalizedCell.style)}"` : '';
+      return `<td${classAttr}${styleAttr}>${escapeHtml(normalizedCell.value)}</td>`;
+    }).join('');
+    return `<tr class="${index % 2 === 0 ? 'even' : 'odd'}">${cells}</tr>`;
+  }).join('');
+
+  return `<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+  :root { --accent:${accent}; }
+  body { font-family:'Segoe UI',Arial,sans-serif; background:#eef3f7; color:#0f172a; margin:0; padding:24px; }
+  .sheet-card { background:#ffffff; border-radius:20px; overflow:hidden; border:1px solid #d8e2ec; box-shadow:0 16px 42px rgba(15,23,42,0.12); }
+  .sheet-header { padding:24px 28px; background:linear-gradient(135deg,#08120b 0%,#0f2d15 40%,#173b1e 100%); color:#f8fafc; }
+  .sheet-title { margin:0; font-size:24px; font-weight:800; letter-spacing:0.02em; }
+  .sheet-subtitle { margin-top:8px; font-size:13px; color:rgba(255,255,255,0.82); }
+  .sheet-meta { margin-top:10px; font-size:12px; color:rgba(255,255,255,0.74); }
+  .summary-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); gap:12px; padding:18px 22px; background:#f8fbfd; border-bottom:1px solid #dde7ef; }
+  .summary-card { background:#ffffff; border:1px solid #d8e2ec; border-left:4px solid var(--accent); border-radius:14px; padding:14px 16px; }
+  .summary-label { font-size:11px; text-transform:uppercase; letter-spacing:0.08em; color:#64748b; margin-bottom:6px; }
+  .summary-value { font-size:18px; font-weight:800; color:#0f172a; }
+  .table-wrap { padding:20px 22px 26px; }
+  table { width:100%; border-collapse:collapse; font-size:12px; }
+  th { background:#102435; color:#f8fafc; text-transform:uppercase; letter-spacing:0.06em; font-size:10px; padding:11px 8px; border:1px solid #163249; text-align:left; }
+  td { padding:8px; border:1px solid #d9e3eb; vertical-align:top; }
+  tr.even td { background:#ffffff; }
+  tr.odd td { background:#f7fbff; }
+  td.group-cell { background:#e8fff0 !important; color:#0f5132; font-weight:800; }
+  td.subrow { color:#334155; padding-left:18px; }
+  td.pos { color:#15803d; font-weight:800; }
+  td.neg { color:#b91c1c; font-weight:800; }
+  td.warn { color:#b45309; font-weight:800; }
+  td.muted { color:#64748b; }
+  .sheet-footer { padding:14px 24px 22px; font-size:11px; color:#64748b; text-align:right; }
+</style>
+</head>
+<body>
+  <div class="sheet-card">
+    <div class="sheet-header">
+      <h1 class="sheet-title">${title}</h1>
+      ${subtitle ? `<div class="sheet-subtitle">${subtitle}</div>` : ''}
+      <div class="sheet-meta">Gerado em ${generatedAt}</div>
+    </div>
+    ${summaryHtml}
+    <div class="table-wrap">
+      <table>
+        <thead><tr>${tableHeaderHtml}</tr></thead>
+        <tbody>${tableRowsHtml}</tbody>
+      </table>
+    </div>
+    <div class="sheet-footer">CTI 2026 • Elaborado por Lucas Marques</div>
+  </div>
+</body>
+</html>`;
+}
+
+function downloadStyledWorksheet(config) {
+  const html = buildStyledWorksheet(config);
+  const blob = new Blob(['\uFEFF' + html], { type: 'application/vnd.ms-excel;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = normalizeText(config && config.fileName) || `CTI_2026_${new Date().toISOString().split('T')[0]}.xls`;
+  link.click();
+  URL.revokeObjectURL(url);
+}
+
+function exportPackagingControlSheet() {
+  const rows = getFilteredPackagingRows();
+  if (!rows.length) {
+    showToast('Nenhum registro de embalagem para exportar.', true);
+    return;
+  }
+
+  const saldoAberto = rows.reduce((sum, row) => sum + (Number(row.saldoPendente) || 0), 0);
+  const pendentes = rows.filter((row) => row.status === 'pendente').length;
+  const baixadas = rows.filter((row) => row.status === 'baixada' || row.status === 'devolvida').length;
+
+  downloadStyledWorksheet({
+    title: 'Controle de Embalagens',
+    subtitle: 'Exportacao gerencial com os filtros aplicados na tela.',
+    fileName: `CTI_Controle_Embalagens_${new Date().toISOString().split('T')[0]}.xls`,
+    accent: '#39ff14',
+    summaryItems: [
+      { label: 'Registros', value: String(rows.length) },
+      { label: 'Pendentes', value: String(pendentes) },
+      { label: 'Baixadas / Devolvidas', value: String(baixadas) },
+      { label: 'Saldo Aberto', value: formatNumber(saldoAberto) }
+    ],
+    headers: ['Data', 'Tipo', 'Status', 'Deposito', 'Origem', 'Material', 'Quantidade', 'Saldo Pendente', 'Quem Devolveu', 'Inserido Por'],
+    rows: rows.map((row) => {
+      const signedQty = getSignedQuantityDisplay(row);
+      const statusMeta = getPackagingStatusMeta(row);
+      const saldoValue = Number(row.saldoPendente) || 0;
+      return [
+        formatDate(row.data),
+        row.tipoRegistro || '-',
+        statusMeta.label,
+        row.depositoOrigem || '-',
+        row.origem || '-',
+        row.material || '-',
+        { value: signedQty.text, className: signedQty.color === '#ff4757' ? 'neg' : (signedQty.color === '#39ff14' ? 'pos' : 'muted') },
+        { value: formatNumber(saldoValue), className: saldoValue > 0 ? 'warn' : 'muted' },
+        row.quemDevolveu || '-',
+        row.inseridoPor || '-'
+      ];
+    })
+  });
+
+  showToast(`${rows.length} registro(s) de embalagem exportado(s)!`);
 }
 
 function exportSaldoEpsCSV() {
@@ -7611,21 +8155,21 @@ function renderUserManagementTable() {
     const profileLabel = u.isAdmin ? 'ADMIN' : (isPrivileged ? 'PRIVILEGIADO' : 'USUARIO');
     const canRemove = canManage && !u.isAdmin && (!currentUser || currentUser.id !== u.id);
     return `
-      <tr>
+      <tr class="clickable-row" onclick="openAccessEntityDetail('user', '${u.id}')">
         <td>${u.name}</td>
         <td><span class="user-chip ${profileClass}">${profileLabel}</span></td>
-        <td><label class="permission-switch"><input type="checkbox" ${u.permissions.manageUsers ? 'checked' : ''} ${disableAttr} onchange="toggleUserPermission('${u.id}', 'manageUsers', this.checked)">Permitir</label></td>
-        <td><label class="permission-switch"><input type="checkbox" ${u.permissions.manageCadastros ? 'checked' : ''} ${disableAttr} onchange="toggleUserPermission('${u.id}', 'manageCadastros', this.checked)">Permitir</label></td>
-        <td><label class="permission-switch"><input type="checkbox" ${u.permissions.deleteMovements ? 'checked' : ''} ${disableAttr} onchange="toggleUserPermission('${u.id}', 'deleteMovements', this.checked)">Permitir</label></td>
+        <td><label class="permission-switch" onclick="event.stopPropagation()"><input type="checkbox" ${u.permissions.manageUsers ? 'checked' : ''} ${disableAttr} onchange="toggleUserPermission('${u.id}', 'manageUsers', this.checked)">Permitir</label></td>
+        <td><label class="permission-switch" onclick="event.stopPropagation()"><input type="checkbox" ${u.permissions.manageCadastros ? 'checked' : ''} ${disableAttr} onchange="toggleUserPermission('${u.id}', 'manageCadastros', this.checked)">Permitir</label></td>
+        <td><label class="permission-switch" onclick="event.stopPropagation()"><input type="checkbox" ${u.permissions.deleteMovements ? 'checked' : ''} ${disableAttr} onchange="toggleUserPermission('${u.id}', 'deleteMovements', this.checked)">Permitir</label></td>
         <td style="white-space:nowrap">
-          <button class="btn-del" title="Alterar nome" ${canManage ? '' : 'disabled'} onclick="renameUser('${u.id}')">
+          <button class="btn-del" title="Alterar nome" ${canManage ? '' : 'disabled'} onclick="event.stopPropagation();renameUser('${u.id}')">
             <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4z"/></svg>
           </button>
-          <button class="btn-del" title="Resetar senha" ${canManage ? '' : 'disabled'} onclick="resetUserPassword('${u.id}')">
+          <button class="btn-del" title="Resetar senha" ${canManage ? '' : 'disabled'} onclick="event.stopPropagation();resetUserPassword('${u.id}')">
             <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="11" width="18" height="10" rx="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           </button>
           ${canRemove ? `
-          <button class="btn-del" title="Remover usuario" onclick="removeUser('${u.id}')">
+          <button class="btn-del" title="Remover usuario" onclick="event.stopPropagation();removeUser('${u.id}')">
             <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
           </button>` : ''}
         </td>
@@ -7654,6 +8198,8 @@ function createUser(event) {
   users.push(createUserRecord(name, {
     password: tempPassword,
     mustChangePassword: true,
+    createdAt: new Date().toISOString(),
+    approvedAt: new Date().toISOString(),
     permissions: { manageUsers: false, manageCadastros: false, deleteMovements: false }
   }));
   saveUsers();
@@ -7931,6 +8477,7 @@ function renderCadastroTable() {
   const head = document.getElementById('cadastroTableHead');
   const body = document.getElementById('cadastroTableBody');
   if (!head || !body) return;
+  renderMarchMissingCadastrosReview();
 
   const canManage = hasPermission('manageCadastros');
   const type = getCadastroType();
@@ -8663,10 +9210,63 @@ function injectRoutingAndCadastroStyles() {
       gap: 18px;
       align-items: start;
     }
+    .form-grid.cadastro-fields-material {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
     .cadastro-form-card,
     .cadastro-table-card {
       margin-bottom: 0;
       height: 100%;
+    }
+    .cadastro-review-panel {
+      margin-top: 18px;
+      background: linear-gradient(135deg, rgba(255,255,255,0.02), rgba(57,255,20,0.03));
+      border: 1px solid rgba(57,255,20,0.12);
+      border-radius: 18px;
+      padding: 20px;
+    }
+    .cadastro-review-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+      margin-top: 16px;
+    }
+    .cadastro-review-card {
+      background: var(--bg2);
+      border: 1px solid var(--glass-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .cadastro-review-title {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+    .cadastro-review-chip {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      padding: 4px 10px;
+      border-radius: 999px;
+      background: rgba(57,255,20,0.1);
+      color: var(--neon);
+      font-size: 0.66rem;
+      font-weight: 700;
+      letter-spacing: 0.6px;
+      text-transform: uppercase;
+    }
+    .cadastro-review-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+    .cadastro-review-actions .btn {
+      flex: 1 1 120px;
+      justify-content: center;
     }
     .cadastro-table-headline {
       display: flex;
@@ -8818,6 +9418,12 @@ function injectRoutingAndCadastroStyles() {
       .cadastro-hero,
       .cadastro-grid-layout {
         grid-template-columns: 1fr;
+      }
+      .form-grid.cadastro-fields-material {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+      .form-group.span-3 {
+        grid-column: span 2;
       }
     }
   `;
@@ -9577,8 +10183,7 @@ function upgradeCadastroSection() {
           <p id="cadastroInfoText">Organize os dados que completam automaticamente o formulario de movimentacao.</p>
         </div>
         <div>
-          <div class="cadastro-badge" id="cadastroInfoBadge">Formulario</div>
-          <div class="form-group" style="margin-top:16px">
+          <div class="form-group">
             <label class="form-label">Categoria</label>
             <select class="form-select" id="cadastroTipo" onchange="onCadastroTipoChange()">
               <option value="tipos">Tipos de transacao</option>
@@ -9630,6 +10235,7 @@ function upgradeCadastroSection() {
           </div>
         </div>
       </div>
+      <div class="cadastro-review-panel" id="cadastroMarchReviewPanel"></div>
     </div>`;
 }
 
@@ -10847,8 +11453,8 @@ function buildInsumoExtractRows() {
   return rows;
 }
 
-function buildEmbalagemExtractRows() {
-  return buildPackagingControlData().rows
+function buildEmbalagemExtractRows(sourceMovements, options) {
+  return buildPackagingControlData(sourceMovements, options).rows
     .filter(row => normalizeText(row.depositoOrigem) && normalizeText(row.material) && (Number(row._signedQuantidade) || 0))
     .map((row) => ({
       id: `ext_pkg_${row.id}`,
@@ -11399,7 +12005,8 @@ function getObjectValueByKeys(obj, keys) {
 }
 
 function getAnalysisDepositoCatalog() {
-  return getDepositosList().map((item) => {
+  if (_analysisDepositoCatalogCache) return _analysisDepositoCatalogCache;
+  _analysisDepositoCatalogCache = getDepositosList().map((item) => {
     const deposito = normalizeText(item.deposito);
     const nome = normalizeText(item.nome || item.deposito);
     const exactKeys = [
@@ -11417,6 +12024,7 @@ function getAnalysisDepositoCatalog() {
       firstToken
     };
   }).filter(item => item.deposito);
+  return _analysisDepositoCatalogCache;
 }
 
 function resolveAnalysisDeposito(candidates, source) {
@@ -11640,6 +12248,8 @@ async function parseAnalysisFoFiles(files) {
   const warnings = [];
   const unresolved = [];
   const conversionWarnings = [];
+  const mappingCache = new Map();
+  const materialCache = new Map();
 
   for (const file of files) {
     const workbook = await readWorkbookFromFile(file);
@@ -11668,9 +12278,14 @@ async function parseAnalysisFoFiles(files) {
       const rawQuantity = parseLocaleNumber(getObjectValueByKeys(row, ['QUANTIDADE']));
       if (!epsText || !productText || !Number.isFinite(rawQuantity) || rawQuantity <= 0) return;
 
-      const mapping = resolveAnalysisDeposito([
-        { field: 'EPS', value: epsText }
-      ], 'F.O.');
+      const mappingKey = epsText.toLowerCase();
+      let mapping = mappingCache.get(mappingKey);
+      if (!mapping) {
+        mapping = resolveAnalysisDeposito([
+          { field: 'EPS', value: epsText }
+        ], 'F.O.');
+        mappingCache.set(mappingKey, mapping);
+      }
 
       if (!mapping.matched) {
         unresolved.push({
@@ -11708,7 +12323,12 @@ async function parseAnalysisFoFiles(files) {
         if (fallbackDate) date = fallbackDate;
       }
 
-      const materialMeta = getMaterialMetaByCode(materialCode) || getMaterialMetaByName(productText);
+      const materialKey = `${materialCode.toLowerCase()}|${productText.toLowerCase()}`;
+      let materialMeta = materialCache.get(materialKey);
+      if (materialMeta === undefined) {
+        materialMeta = getMaterialMetaByCode(materialCode) || getMaterialMetaByName(productText) || null;
+        materialCache.set(materialKey, materialMeta);
+      }
       const converted = convertQuantityToPackaging(rawQuantity, materialMeta);
       let embQtd = rawQuantity;
       if (converted.ok) {
@@ -11939,6 +12559,7 @@ async function handleFoImportForDeposit(fileList, deposito) {
 
     const aoa = XLSX.utils.sheet_to_json(sheet, { header: 1, defval: '', raw: true });
     const rows = XLSX.utils.sheet_to_json(sheet, { range: 2, defval: '', raw: true });
+    const materialCache = new Map();
 
     let foDate = normalizeText((document.getElementById('analysisPeriodStart') || {}).value || analysisState.periodStart || '');
     if (!foDate) {
@@ -11961,7 +12582,12 @@ async function handleFoImportForDeposit(fileList, deposito) {
       const rawQuantity = parseLocaleNumber(getObjectValueByKeys(row, ['QUANTIDADE']));
       if (!productText || !Number.isFinite(rawQuantity) || rawQuantity <= 0) return;
 
-      const materialMeta = getMaterialMetaByCode(materialCode) || getMaterialMetaByName(productText);
+      const materialKey = `${materialCode.toLowerCase()}|${productText.toLowerCase()}`;
+      let materialMeta = materialCache.get(materialKey);
+      if (materialMeta === undefined) {
+        materialMeta = getMaterialMetaByCode(materialCode) || getMaterialMetaByName(productText) || null;
+        materialCache.set(materialKey, materialMeta);
+      }
       const converted = convertQuantityToPackaging(rawQuantity, materialMeta);
       let embQtd = rawQuantity;
       if (converted.ok) {
@@ -13040,13 +13666,27 @@ function buildDashboardData() {
   const period = getDashboardPeriod();
   const snapshotEnd = getDashboardSnapshotEnd(period);
   const periodStart = period.mode === 'general' ? '' : period.start;
+  const dashboardSourceMovs = [...legacyMovements, ...movimentos].filter((mov) => {
+    if (!mov || isCancelledMovement(mov)) return false;
+    return !!normalizeText(getDashboardMovementDate(mov));
+  });
 
-  const filteredMovs = movimentos.filter((mov) =>
-    !isCancelledMovement(mov) && isDashboardDateWithin(getDashboardMovementDate(mov), periodStart, snapshotEnd)
+  const filteredMovs = dashboardSourceMovs.filter((mov) =>
+    isDashboardDateWithin(getDashboardMovementDate(mov), periodStart, snapshotEnd)
   );
-  const filteredInsumoRows = buildInsumoExtractRows().filter((row) => isDashboardDateWithin(row.data, periodStart, snapshotEnd));
-  const filteredPackagingRows = buildEmbalagemExtractRows().filter((row) => isDashboardDateWithin(row.data, periodStart, snapshotEnd));
-  const packagingRowsToDate = buildEmbalagemExtractRows().filter((row) => isDashboardDateWithin(row.data, '', snapshotEnd));
+  const filteredInsumoRows = filteredMovs.flatMap((mov) =>
+    getMovementMaterials(mov)
+      .filter((item) => normalizeText(item.material))
+      .map((item) => ({
+        data: getDashboardMovementDate(mov),
+        material: normalizeText(item.material),
+        codProduto: normalizeText(item.codProduto || ''),
+        quantidade: Number(item.quantidade) || 0
+      }))
+  );
+  const dashboardPackagingRows = buildEmbalagemExtractRows(dashboardSourceMovs, { includeManualReturns: true });
+  const filteredPackagingRows = dashboardPackagingRows.filter((row) => isDashboardDateWithin(row.data, periodStart, snapshotEnd));
+  const packagingRowsToDate = dashboardPackagingRows.filter((row) => isDashboardDateWithin(row.data, '', snapshotEnd));
   const packagingSnapshot = buildDashboardPackagingSnapshot(packagingRowsToDate);
 
   const nfCount = new Set(filteredMovs.map(mov => normalizeText(mov.nf)).filter(Boolean)).size;
@@ -13163,7 +13803,7 @@ function buildDashboardData() {
       return b.retiradas - a.retiradas;
     });
 
-  const writerResolved = movimentos.filter((mov) =>
+  const writerResolved = dashboardSourceMovs.filter((mov) =>
     isWriterMovement(mov) && isDashboardDateWithin(parseSpreadsheetDate(mov.finalizadoEm), periodStart, snapshotEnd)
   );
   const writerLeadTimes = writerResolved
@@ -13174,7 +13814,7 @@ function buildDashboardData() {
     : 0;
   const writerWithin2Days = writerLeadTimes.filter(value => value <= 2).length;
 
-  const writerOpened = movimentos.filter((mov) =>
+  const writerOpened = dashboardSourceMovs.filter((mov) =>
     isWriterMovement(mov) && isDashboardDateWithin(getDashboardMovementDate(mov), periodStart, snapshotEnd)
   );
   const writerPending = writerOpened.filter((mov) => {
@@ -13304,8 +13944,8 @@ function updateDashboard() {
 
   setDashboardText('dashboardScopeLabel',
     data.period.mode === 'general'
-      ? 'Visao consolidada de todo o historico do sistema, destacando gargalos de Writers, embalagens e materiais com maior pressao operacional.'
-      : `Leitura de ${data.period.label.toLowerCase()}, destacando pressao operacional, giro de materiais, Writers e embalagens em aberto ate ${formatDate(data.snapshotEnd)}.`
+      ? 'Visao consolidada com registros atuais e legado para acompanhar pressao operacional, giro de materiais, writers e embalagens em aberto.'
+      : `Pressao operacional, giro de materiais, writers e embalagens em aberto ate ${formatDate(data.snapshotEnd)}.`
   );
   setDashboardText('dashboardPeriodChip', data.period.mode === 'general' ? 'Consolidado geral' : data.period.label);
   setDashboardText('dashboardNfChip', String(data.nfCount));
@@ -13452,12 +14092,457 @@ function getCadastroItems(type = getCadastroType()) {
   return [];
 }
 
+let cadastroReviewItemsState = [];
+
+function getCadastroReviewMonthMeta() {
+  const month = normalizeText(getCurrentMonthValue ? getCurrentMonthValue() : new Date().toISOString().slice(0, 7)) || new Date().toISOString().slice(0, 7);
+  const [year, monthNumber] = month.split('-').map(Number);
+  const start = `${month}-01`;
+  const end = new Date(year, monthNumber, 0).toISOString().slice(0, 10);
+  const label = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(new Date(`${start}T00:00:00`));
+  return {
+    month,
+    start,
+    end,
+    label: label.charAt(0).toUpperCase() + label.slice(1)
+  };
+}
+
+function getCadastroReviewLabel(type) {
+  if (type === 'tipos') return 'Tipo';
+  if (type === 'eps') return 'EPS';
+  if (type === 'fazendas') return 'Fazenda / Centro';
+  if (type === 'supervisores') return 'Supervisor';
+  if (type === 'motivosWriter') return 'Motivo Writer';
+  if (type === 'materiais') return 'Material';
+  return 'Cadastro';
+}
+
+function getCadastroReviewItemsByMonth() {
+  const meta = getCadastroReviewMonthMeta();
+  const map = new Map();
+  const typeLookup = new Set((DATA.tipos || []).map(item => normalizeText(item.nome).toLowerCase()).filter(Boolean));
+  const epsLookup = new Set(getDepositosList().map(item => normalizeText(item.deposito).toLowerCase()).filter(Boolean));
+  const fazendaLookup = new Set((DATA.centros || []).map(item => normalizeText(item.centro).toLowerCase()).filter(Boolean));
+  const supervisorLookup = new Set((DATA.supervisores || []).map(item => normalizeText(item).toLowerCase()).filter(Boolean));
+  const writerLookup = new Set((Array.isArray(DATA.motivosWriter) ? DATA.motivosWriter : []).map(item => normalizeText(item).toLowerCase()).filter(Boolean));
+
+  function register(type, rawKey, payload) {
+    const normalizedKey = normalizeText(rawKey).toLowerCase();
+    if (!normalizedKey) return;
+    const mapKey = `${type}|${normalizedKey}`;
+    if (!map.has(mapKey)) {
+      map.set(mapKey, {
+        id: safeId('cadrev'),
+        type,
+        key: normalizedKey,
+        displayValue: normalizeText(payload.displayValue || payload.material || payload.deposito || payload.centro || payload.value || rawKey),
+        detail: normalizeText(payload.detail || ''),
+        count: 0,
+        sampleDate: normalizeText(payload.sampleDate || ''),
+        deposito: normalizeText(payload.deposito || ''),
+        nome: normalizeText(payload.nome || ''),
+        centro: normalizeText(payload.centro || ''),
+        municipio: normalizeText(payload.municipio || ''),
+        material: normalizeText(payload.material || ''),
+        codProduto: normalizeText(payload.codProduto || ''),
+        unidade: normalizeText(payload.unidade || ''),
+        suggestionEmb: payload.suggestionEmb === true,
+        value: normalizeText(payload.value || rawKey)
+      });
+    }
+
+    const entry = map.get(mapKey);
+    entry.count += 1;
+    if (!entry.sampleDate || normalizeText(payload.sampleDate || '') < entry.sampleDate) entry.sampleDate = normalizeText(payload.sampleDate || entry.sampleDate);
+    if (!entry.detail && payload.detail) entry.detail = normalizeText(payload.detail);
+  }
+
+  movimentos.forEach((mov) => {
+    if (!mov || isCancelledMovement(mov)) return;
+    const movementDate = getDashboardMovementDate(mov);
+    if (!isDashboardDateWithin(movementDate, meta.start, meta.end)) return;
+
+    const tipo = normalizeText(mov.tipo || '');
+    if (tipo && !typeLookup.has(tipo.toLowerCase())) {
+      register('tipos', tipo, {
+        value: tipo,
+        displayValue: tipo,
+        detail: 'Usado nas movimentacoes de março.',
+        sampleDate: movementDate,
+        suggestionEmb: normalizeText(tipo).toLowerCase().includes('embal')
+      });
+    }
+
+    const route = getMovementRouteData(mov);
+    [['origem', route.depositoOrigem, route.origem], ['destino', route.depositoDestino, route.destino]].forEach(([side, deposito, nome]) => {
+      const depositoKey = normalizeText(deposito || '');
+      if (!depositoKey || epsLookup.has(depositoKey.toLowerCase())) return;
+      register('eps', depositoKey, {
+        deposito: depositoKey,
+        nome: normalizeText(nome || depositoKey),
+        displayValue: [depositoKey, normalizeText(nome || '')].filter(Boolean).join(' - '),
+        detail: `Encontrado no campo de ${side}.`,
+        sampleDate: movementDate
+      });
+    });
+
+    [['origem', route.centroOrigem, route.fazendaOrigem], ['destino', route.centroDestino, route.fazendaDestino]].forEach(([side, centro, nome]) => {
+      const centroKey = normalizeText(centro || '');
+      if (!centroKey || fazendaLookup.has(centroKey.toLowerCase())) return;
+      register('fazendas', centroKey, {
+        centro: centroKey,
+        nome: normalizeText(nome || ''),
+        displayValue: [centroKey, normalizeText(nome || '')].filter(Boolean).join(' - '),
+        detail: `Encontrado no campo de ${side}.`,
+        sampleDate: movementDate
+      });
+    });
+
+    const supervisor = normalizeText(route.supervisor || mov.supervisor || '');
+    if (supervisor && !supervisorLookup.has(supervisor.toLowerCase())) {
+      register('supervisores', supervisor, {
+        value: supervisor,
+        displayValue: supervisor,
+        detail: 'Supervisor informado em março sem cadastro.',
+        sampleDate: movementDate
+      });
+    }
+
+    const motivo = normalizeText(mov.motivo || '');
+    if (motivo && isWriterMovement(mov) && !writerLookup.has(motivo.toLowerCase())) {
+      register('motivosWriter', motivo, {
+        value: motivo,
+        displayValue: motivo,
+        detail: 'Motivo writer usado em março sem cadastro.',
+        sampleDate: movementDate
+      });
+    }
+
+    getMovementMaterials(mov).forEach((item) => {
+      const material = normalizeText(item.material || '');
+      if (!material || getMaterialMetaByName(material)) return;
+      const codProduto = normalizeText(item.codProduto || '');
+      const materialKey = `${material.toLowerCase()}|${codProduto.toLowerCase()}`;
+      register('materiais', materialKey, {
+        material,
+        codProduto,
+        unidade: normalizeText(item.unidade || ''),
+        displayValue: codProduto ? `${material} (${codProduto})` : material,
+        detail: 'Material movimentado em março sem cadastro.',
+        sampleDate: movementDate
+      });
+    });
+  });
+
+  const items = [...map.values()].sort((a, b) => {
+    if (a.type !== b.type) return getCadastroReviewLabel(a.type).localeCompare(getCadastroReviewLabel(b.type), 'pt-BR');
+    if (b.count !== a.count) return b.count - a.count;
+    return a.displayValue.localeCompare(b.displayValue, 'pt-BR');
+  });
+
+  return { meta, items };
+}
+
+function getCadastroReviewItemById(id) {
+  return cadastroReviewItemsState.find(item => item.id === id) || null;
+}
+
+function getCadastroReviewTargetOptions(type) {
+  if (type === 'tipos') {
+    return (DATA.tipos || []).map(item => ({ value: normalizeText(item.nome), label: normalizeText(item.nome) }));
+  }
+  if (type === 'eps') {
+    return getDepositosList().map(item => ({
+      value: normalizeText(item.deposito),
+      label: [item.deposito, item.nome].filter(Boolean).join(' - ')
+    }));
+  }
+  if (type === 'fazendas') {
+    return (DATA.centros || []).map(item => ({
+      value: normalizeText(item.centro),
+      label: [item.centro, item.nome, item.municipio].filter(Boolean).join(' - ')
+    }));
+  }
+  if (type === 'supervisores') {
+    return (DATA.supervisores || []).map(item => ({ value: normalizeText(item), label: normalizeText(item) }));
+  }
+  if (type === 'motivosWriter') {
+    return (Array.isArray(DATA.motivosWriter) ? DATA.motivosWriter : []).map(item => ({ value: normalizeText(item), label: normalizeText(item) }));
+  }
+  if (type === 'materiais') {
+    return (DATA.materiais || []).map(item => ({
+      value: `${normalizeText(item.c)}|${normalizeText(item.d)}`,
+      label: [item.c, item.d, item.u].filter(Boolean).join(' - ')
+    }));
+  }
+  return [];
+}
+
+function renderMarchMissingCadastrosReview() {
+  const panel = document.getElementById('cadastroMarchReviewPanel');
+  if (!panel) return;
+
+  const review = getCadastroReviewItemsByMonth();
+  cadastroReviewItemsState = review.items;
+
+  if (!review.items.length) {
+    panel.innerHTML = `
+      <div class="cadastro-review-card">
+        <div class="cadastro-review-title">Pendencias de cadastro em ${escapeHtml(review.meta.label)}</div>
+        <div class="hint-line">Tudo o que foi usado em março ja esta vinculado aos cadastros atuais.</div>
+      </div>
+    `;
+    return;
+  }
+
+  panel.innerHTML = `
+    <div class="cadastro-review-card">
+      <div class="cadastro-review-title">Pendencias de cadastro em ${escapeHtml(review.meta.label)}</div>
+      <div class="hint-line">Revise os itens abaixo e decida se quer cadastrar um novo item ou vincular ao que ja existe.</div>
+      <div class="cadastro-review-grid">
+        ${review.items.map((item) => `
+          <div class="cadastro-review-card">
+            <div class="cadastro-review-chip">${escapeHtml(getCadastroReviewLabel(item.type))}</div>
+            <div style="font-weight:700;color:var(--text);font-size:0.95rem;">${escapeHtml(item.displayValue)}</div>
+            <div class="hint-line" style="margin-top:6px;">${escapeHtml(item.detail || 'Sem detalhe adicional.')}</div>
+            <div class="hint-line" style="margin-top:4px;">${escapeHtml(item.count)} ocorrencia(s) em março${item.sampleDate ? ` • primeiro em ${escapeHtml(formatDate(item.sampleDate))}` : ''}</div>
+            <div class="cadastro-review-actions">
+              <button type="button" class="btn btn-primary" style="padding:8px 12px;font-size:0.76rem;" onclick="startCadastroFromReview('${escapeHtml(item.id)}')">Cadastrar</button>
+              <button type="button" class="btn btn-secondary" style="padding:8px 12px;font-size:0.76rem;" onclick="openCadastroReviewMapping('${escapeHtml(item.id)}')">Vincular</button>
+            </div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+  `;
+}
+
+function startCadastroFromReview(reviewId) {
+  if (!hasPermission('manageCadastros')) {
+    showToast('Somente usuarios com privilegio podem cadastrar ou vincular itens.', true);
+    return;
+  }
+
+  const item = getCadastroReviewItemById(reviewId);
+  const cadastroTipo = document.getElementById('cadastroTipo');
+  if (!item || !cadastroTipo) return;
+
+  cadastroTipo.value = item.type;
+  cadastroEditingIndex = null;
+  onCadastroTipoChange();
+
+  if (item.type === 'tipos') {
+    document.getElementById('cadTipoNome').value = item.value || item.displayValue;
+    document.getElementById('cadTipoDescricao').value = '';
+    document.getElementById('cadTipoEmb').value = item.suggestionEmb ? 'SIM' : 'NAO';
+  } else if (item.type === 'eps') {
+    document.getElementById('cadEpsDeposito').value = item.deposito || item.displayValue;
+    document.getElementById('cadEpsNome').value = item.nome || item.deposito || item.displayValue;
+    document.getElementById('cadEpsClassificacao').value = inferDepositoType(`${item.deposito} ${item.nome}`);
+  } else if (item.type === 'fazendas') {
+    document.getElementById('cadProjetoId').value = '';
+    document.getElementById('cadCentroCodigo').value = item.centro || item.displayValue;
+    document.getElementById('cadCentroNome').value = item.nome || '';
+    document.getElementById('cadCentroMunicipio').value = item.municipio || '';
+  } else if (item.type === 'supervisores') {
+    document.getElementById('cadDescricao').value = item.value || item.displayValue;
+  } else if (item.type === 'motivosWriter') {
+    document.getElementById('cadMotivoWriter').value = item.value || item.displayValue;
+  } else if (item.type === 'materiais') {
+    document.getElementById('cadMatDesc').value = item.material || item.displayValue;
+    document.getElementById('cadMatCod').value = item.codProduto || '';
+    document.getElementById('cadMatGrupo').value = '';
+    document.getElementById('cadMatUnidade').value = item.unidade || '';
+    document.getElementById('cadMatEmb').value = 'N';
+    document.getElementById('cadMatQtdEmbPrimaria').value = '';
+  }
+
+  const form = document.getElementById('cadastroForm');
+  if (form) form.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  showToast('Formulario preenchido com a pendencia selecionada.');
+}
+
+function applyCadastroReviewLink(reviewId, targetValue) {
+  if (!hasPermission('manageCadastros')) {
+    showToast('Somente usuarios com privilegio podem vincular itens.', true);
+    return;
+  }
+
+  const item = getCadastroReviewItemById(reviewId);
+  if (!item || !targetValue) return;
+
+  const reviewMeta = getCadastroReviewMonthMeta();
+  let affected = 0;
+
+  movimentos.forEach((mov) => {
+    if (!mov || isCancelledMovement(mov)) return;
+    const movementDate = getDashboardMovementDate(mov);
+    if (!isDashboardDateWithin(movementDate, reviewMeta.start, reviewMeta.end)) return;
+
+    if (item.type === 'tipos') {
+      if (normalizeText(mov.tipo).toLowerCase() === item.key) {
+        mov.tipo = targetValue;
+        affected += 1;
+      }
+      return;
+    }
+
+    if (item.type === 'supervisores') {
+      const route = getMovementRouteData(mov);
+      if (normalizeText(route.supervisor).toLowerCase() === item.key) {
+        route.supervisor = targetValue;
+        applyRouteToMovement(mov, route);
+        affected += 1;
+      }
+      return;
+    }
+
+    if (item.type === 'motivosWriter') {
+      if (normalizeText(mov.motivo).toLowerCase() === item.key) {
+        mov.motivo = targetValue;
+        affected += 1;
+      }
+      return;
+    }
+
+    if (item.type === 'eps') {
+      const target = getDepositoByName(targetValue);
+      if (!target) return;
+      const route = getMovementRouteData(mov);
+      let changed = false;
+      if (normalizeText(route.depositoOrigem).toLowerCase() === item.key) {
+        route.depositoOrigem = target.deposito;
+        route.origem = target.nome;
+        changed = true;
+        affected += 1;
+      }
+      if (normalizeText(route.depositoDestino).toLowerCase() === item.key) {
+        route.depositoDestino = target.deposito;
+        route.destino = target.nome;
+        changed = true;
+        affected += 1;
+      }
+      if (changed) applyRouteToMovement(mov, route);
+      return;
+    }
+
+    if (item.type === 'fazendas') {
+      const target = getCentroById(targetValue);
+      if (!target) return;
+      const route = getMovementRouteData(mov);
+      let changed = false;
+      if (normalizeText(route.centroOrigem).toLowerCase() === item.key) {
+        route.centroOrigem = target.centro;
+        route.fazendaOrigem = target.nome;
+        changed = true;
+        affected += 1;
+      }
+      if (normalizeText(route.centroDestino).toLowerCase() === item.key) {
+        route.centroDestino = target.centro;
+        route.fazendaDestino = target.nome;
+        changed = true;
+        affected += 1;
+      }
+      if (changed) applyRouteToMovement(mov, route);
+      return;
+    }
+
+    if (item.type === 'materiais') {
+      const target = (DATA.materiais || []).find((material) => `${normalizeText(material.c)}|${normalizeText(material.d)}` === targetValue);
+      if (!target) return;
+      const rawMaterial = normalizeText(item.material).toLowerCase();
+      const rawCode = normalizeText(item.codProduto).toLowerCase();
+      let changed = false;
+      const updatedItems = getMovementMaterials(mov).map((material) => {
+        const sameMaterial = normalizeText(material.material).toLowerCase() === rawMaterial;
+        const sameCode = !rawCode || normalizeText(material.codProduto).toLowerCase() === rawCode;
+        if (!sameMaterial || !sameCode) return material;
+        changed = true;
+        affected += 1;
+        return normalizeMaterialItem({
+          ...material,
+          material: target.d,
+          codProduto: target.c,
+          unidade: target.u,
+          controlaEmbalagem: target.e,
+          quantidadeEmbalagemPrimaria: target.qp
+        });
+      });
+      if (changed) applyMaterialsToMovement(mov, updatedItems);
+    }
+  });
+
+  if (!affected) {
+    showToast('Nenhum registro de março foi encontrado para vincular.', true);
+    return;
+  }
+
+  saveToStorage('movimentos');
+  populateSelects();
+  updateDashboard();
+  renderTable();
+  renderPackagingControlTable();
+  renderSaldoEpsTab();
+  renderCadastroForm();
+  renderCadastroTable();
+  updateEmbalagemVisibility();
+  showToast(`${affected} vinculo(s) aplicado(s) em registros de março.`);
+}
+
+function openCadastroReviewMapping(reviewId) {
+  const item = getCadastroReviewItemById(reviewId);
+  if (!item) return;
+
+  const options = getCadastroReviewTargetOptions(item.type);
+  if (!options.length) {
+    showToast('Nao existe cadastro disponivel nesta categoria para vincular.', true);
+    return;
+  }
+
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal" style="max-width:560px;">
+      <div class="modal-title">Vincular pendencia de cadastro</div>
+      <div class="modal-text" style="text-align:left;">
+        <div style="margin-bottom:10px;"><strong>${escapeHtml(getCadastroReviewLabel(item.type))}:</strong> ${escapeHtml(item.displayValue)}</div>
+        <div style="margin-bottom:14px;color:var(--text-dim);">Escolha um item ja cadastrado para reaproveitar nos registros de março.</div>
+        <select class="form-select" id="cadastroReviewTargetSelect">
+          <option value="">Selecione um cadastro existente...</option>
+          ${options.map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`).join('')}
+        </select>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="cadastroReviewConfirmBtn">Vincular em Março</button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(overlay);
+  overlay.querySelector('#cadastroReviewConfirmBtn').addEventListener('click', () => {
+    const select = overlay.querySelector('#cadastroReviewTargetSelect');
+    const targetValue = normalizeText(select ? select.value : '');
+    if (!targetValue) {
+      showToast('Selecione um cadastro para concluir o vinculo.', true);
+      return;
+    }
+    overlay.remove();
+    applyCadastroReviewLink(reviewId, targetValue);
+  });
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) overlay.remove();
+  });
+}
+
 function renderCadastroForm() {
   const fields = document.getElementById('cadastroFields');
   if (!fields) return;
 
   const type = getCadastroType();
   updateCadastroInfoPanel(type);
+  fields.classList.toggle('cadastro-fields-material', type === 'materiais');
 
   let html = '';
   if (type === 'tipos') {
@@ -13529,7 +14614,7 @@ function renderCadastroForm() {
       </div>`;
   } else if (type === 'materiais') {
     html = `
-      <div class="form-group span-2">
+      <div class="form-group span-3">
         <label class="form-label">Descricao *</label>
         <input type="text" class="form-input" id="cadMatDesc" required>
       </div>
@@ -13552,7 +14637,7 @@ function renderCadastroForm() {
           <option value="S">SIM</option>
         </select>
       </div>
-      <div class="form-group span-2">
+      <div class="form-group span-3">
         <label class="form-label">Qtd. Embalagem Primaria</label>
         <input type="number" class="form-input" id="cadMatQtdEmbPrimaria" min="0" step="any">
       </div>`;
@@ -14086,6 +15171,67 @@ function deleteCadastroItem(index) {
       showToast('Item removido.');
     }
   );
+}
+
+function exportSaldoEpsCSV() {
+  const data = getSaldoEpsVisibleData().filter(e => e.retiradas > 0 || e.devolucoes > 0 || e.transferenciasIn > 0 || e.transferenciasOut > 0 || e.saldo > 0);
+  if (!data.length) {
+    showToast('Nenhum dado para exportar.', true);
+    return;
+  }
+
+  const orderedData = [...data].sort((a, b) => b.saldo - a.saldo);
+  const totalSaldo = orderedData.reduce((sum, item) => sum + (Number(item.saldo) || 0), 0);
+  const totalMateriais = orderedData.reduce((sum, item) => sum + (Number(item.totalMateriais) || 0), 0);
+  const rows = [];
+
+  orderedData.forEach((eps) => {
+    rows.push([
+      { value: eps.deposito || '-', className: 'group-cell' },
+      { value: eps.nome || '-', className: 'group-cell' },
+      { value: formatNumber(eps.retiradas || 0), className: 'pos' },
+      { value: formatNumber(eps.devolucoes || 0), className: 'muted' },
+      { value: formatNumber(eps.transferenciasIn || 0), className: 'pos' },
+      { value: formatNumber(eps.transferenciasOut || 0), className: 'neg' },
+      { value: formatNumber(eps.saldo || 0), className: (Number(eps.saldo) || 0) > 0 ? 'warn' : 'muted' },
+      { value: formatNumber(eps.totalMateriais || 0), className: 'group-cell' }
+    ]);
+
+    Object.values(eps.materiais || {})
+      .sort((a, b) => (Number(b.saldo) || 0) - (Number(a.saldo) || 0))
+      .forEach((material) => {
+        rows.push([
+          { value: '', className: 'muted' },
+          { value: `-> ${material.material || '-'}`, className: 'subrow' },
+          formatNumber(material.retiradas || 0),
+          formatNumber(material.devolucoes || 0),
+          formatNumber(material.transferenciasIn || 0),
+          formatNumber(material.transferenciasOut || 0),
+          {
+            value: formatNumber(material.saldo || 0),
+            className: (Number(material.saldo) || 0) > 0 ? 'warn subrow' : 'subrow'
+          },
+          { value: material.unidade || '-', className: 'subrow muted' }
+        ]);
+      });
+  });
+
+  downloadStyledWorksheet({
+    title: 'Saldo EPS',
+    subtitle: 'Visao consolidada das pendencias por deposito e material.',
+    fileName: `Saldo_EPS_${new Date().toISOString().split('T')[0]}.xls`,
+    accent: '#00d4ff',
+    summaryItems: [
+      { label: 'EPS com saldo', value: String(orderedData.length) },
+      { label: 'Saldo aberto', value: formatNumber(totalSaldo) },
+      { label: 'Materiais com saldo', value: formatNumber(totalMateriais) },
+      { label: 'Data base', value: formatDate(new Date().toISOString().slice(0, 10)) }
+    ],
+    headers: ['Deposito', 'EPS', 'Retiradas', 'Devolucoes', 'Transf. Recebidas', 'Transf. Enviadas', 'Saldo Pendente', 'Materiais / Unidade'],
+    rows
+  });
+
+  showToast('Planilha de Saldo EPS exportada com sucesso!');
 }
 
 function exportCSV() {
