@@ -309,6 +309,43 @@ body {
   letter-spacing: 0.6px;
 }
 
+.cloud-online-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255,255,255,0.08);
+  background: rgba(255,255,255,0.03);
+  color: var(--text-dim);
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.7px;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.cloud-online-badge-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: currentColor;
+  opacity: 0.65;
+  box-shadow: none;
+}
+
+.cloud-online-badge.is-online {
+  color: var(--neon);
+  border-color: rgba(57,255,20,0.28);
+  background: rgba(57,255,20,0.08);
+  box-shadow: 0 0 14px rgba(57,255,20,0.12);
+}
+
+.cloud-online-badge.is-online .cloud-online-badge-dot {
+  opacity: 1;
+  box-shadow: 0 0 10px rgba(57,255,20,0.75);
+}
+
 .btn-logout {
   background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
   color: var(--text-dim); padding: 7px 16px;
@@ -1792,6 +1829,10 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         <span class="user-name" id="userName"></span>
         <span class="user-role" id="userRole">USUARIO</span>
         <span id="areaBadgeHeader" style="display:none;font-size:0.55rem;font-weight:800;padding:2px 8px;border-radius:4px;letter-spacing:0.5px;"></span>
+      </div>
+      <div id="cloudOnlineBadge" class="cloud-online-badge" title="Status da conexão com o banco de dados">
+        <span class="cloud-online-badge-dot"></span>
+        <span id="cloudOnlineBadgeText">LOCAL</span>
       </div>
       <button class="btn-logout" onclick="exportFullBackup()" title="Exportar backup completo" style="background:rgba(57,255,20,0.15);color:var(--neon);border:1px solid rgba(57,255,20,0.3);font-size:0.75rem;padding:6px 10px;border-radius:8px;cursor:pointer;">
         <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:2px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
@@ -3378,8 +3419,23 @@ function buildCloudSyncPayload() {
   return payload;
 }
 
+function renderCloudOnlineIndicator() {
+  const badge = document.getElementById('cloudOnlineBadge');
+  const text = document.getElementById('cloudOnlineBadgeText');
+  if (!badge || !text) return;
+
+  const mode = cloudSyncState && cloudSyncState.mode ? cloudSyncState.mode : 'local-only';
+  const isOnline = mode === 'web-cloud';
+  badge.classList.toggle('is-online', isOnline);
+  text.textContent = isOnline ? 'Banco Online' : 'Modo Local';
+  badge.title = (cloudSyncState && cloudSyncState.reason)
+    ? cloudSyncState.reason
+    : (isOnline ? 'Sistema conectado ao banco de dados.' : 'Sistema operando sem conexão com o banco de dados.');
+}
+
 function renderCloudSyncCard() {
   const card = document.getElementById('cfgCloudSyncCard');
+  renderCloudOnlineIndicator();
   if (!card) return;
 
   const mode = cloudSyncState && cloudSyncState.mode ? cloudSyncState.mode : 'local-only';
