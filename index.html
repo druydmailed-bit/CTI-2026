@@ -9071,6 +9071,7 @@ function saveMasterData() {
     limiteLiberacaoTemporaria: DATA.limiteLiberacaoTemporaria || 3
   };
   localStorage.setItem(STORAGE_KEYS.master, JSON.stringify(master));
+  scheduleCloudSync('master-data');
 }
 
 function getDepositosList() {
