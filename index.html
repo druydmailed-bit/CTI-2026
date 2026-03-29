@@ -6006,15 +6006,20 @@ function registerUserLogin(user) {
 async function completeLogin(user) {
   const loginBtn = document.getElementById('loginBtn');
   const originalLabel = loginBtn ? loginBtn.textContent : '';
+  const loginProgress = createLoginProgressController(user && user.name);
   if (loginBtn) {
     loginBtn.disabled = true;
-    loginBtn.textContent = 'Carregando...';
+    loginBtn.textContent = 'Entrando...';
   }
+
+  await waitForPaint(2);
+  loginProgress.start();
 
   try {
     await ensureApplicationReady();
   } catch (error) {
     console.error('Falha ao preparar aplicacao apos o login:', error);
+    loginProgress.close();
     showToast('Nao foi possivel carregar os dados do sistema.', true);
     if (loginBtn) {
       loginBtn.disabled = false;
@@ -6026,6 +6031,13 @@ async function completeLogin(user) {
   currentUser = users.find((item) => item.id === user.id) || findUserByName(user.name) || user;
   registerUserLogin(currentUser);
   document.getElementById('loginPassword').value = '';
+  loginProgress.update({
+    percent: 88,
+    message: 'Aplicando seu perfil no sistema...',
+    detail: currentUser && currentUser.userType === 'eps'
+      ? 'Preparando sua visao de consulta e seus filtros.'
+      : 'Ajustando permissoes e atalhos da sua area.'
+  });
   document.getElementById('loginScreen').style.display = 'none';
   document.getElementById('app').style.display = 'block';
   syncCurrentUserSessionState();
@@ -6049,6 +6061,13 @@ async function completeLogin(user) {
   updateAccessRequestBadge();
   updateDesbloqueioRequestBadge();
   const defaultTab = (currentUser.userType === 'eps') ? 'registros' : 'dashboard';
+  loginProgress.update({
+    percent: 95,
+    message: 'Abrindo sua tela principal...',
+    detail: defaultTab === 'dashboard'
+      ? 'Carregando o dashboard inicial.'
+      : 'Abrindo seus registros mais recentes.'
+  });
   switchTab(defaultTab);
   if (defaultTab === 'dashboard') updateDashboard();
   renderTable();
@@ -6073,6 +6092,7 @@ async function completeLogin(user) {
       showRespostasDesbloqueioPopup(allReqs);
     }
   }
+  await loginProgress.complete('Tudo pronto para uso.', currentUser ? `Bem-vindo, ${currentUser.name}.` : 'Sessao carregada com sucesso.');
 }
 
 function showEpsBloqueadaPopup(user, blockedInfo) {
@@ -9107,7 +9127,7 @@ function createImportProgressOverlay(options = {}) {
         <div class="import-progress-track">
           <div class="import-progress-fill" data-import-progress-fill></div>
         </div>
-        <div class="import-progress-footnote">A importacao continua em segundo plano. Aguarde so mais um instante.</div>
+        <div class="import-progress-footnote">${escapeHtml(options.footnote || 'Aguarde so mais um instante enquanto finalizamos esta etapa.')}</div>
       </div>
     </div>
   `;
@@ -9119,18 +9139,44 @@ function createImportProgressOverlay(options = {}) {
   const detailEl = overlay.querySelector('[data-import-progress-detail]');
   const percentEl = overlay.querySelector('[data-import-progress-percent]');
   const fillEl = overlay.querySelector('[data-import-progress-fill]');
+  let currentPercent = 0;
+  let driftTimer = null;
+
+  const setPercent = (value) => {
+    currentPercent = clampProgressPercent(Number(value));
+    if (percentEl) percentEl.textContent = `${Math.round(currentPercent)}%`;
+    if (fillEl) fillEl.style.width = `${currentPercent}%`;
+  };
 
   const update = (state = {}) => {
-    const percent = clampProgressPercent(Number(state.percent));
     if (titleEl && state.title !== undefined) titleEl.textContent = normalizeText(state.title) || 'Importando arquivo';
     if (badgeEl && state.badge !== undefined) badgeEl.textContent = normalizeText(state.badge) || 'Processando';
     if (messageEl && state.message !== undefined) messageEl.textContent = normalizeText(state.message) || 'Preparando o arquivo para leitura...';
     if (detailEl && state.detail !== undefined) detailEl.textContent = normalizeText(state.detail);
-    if (percentEl) percentEl.textContent = `${Math.round(percent)}%`;
-    if (fillEl) fillEl.style.width = `${percent}%`;
+    if (state.percent !== undefined) setPercent(state.percent);
+  };
+
+  const stopDrift = () => {
+    if (driftTimer) {
+      clearInterval(driftTimer);
+      driftTimer = null;
+    }
+  };
+
+  const startDrift = (targetPercent, step = 1, interval = 160) => {
+    const safeTarget = clampProgressPercent(targetPercent);
+    stopDrift();
+    driftTimer = setInterval(() => {
+      if (currentPercent >= safeTarget) {
+        stopDrift();
+        return;
+      }
+      setPercent(Math.min(safeTarget, currentPercent + step));
+    }, Math.max(80, Number(interval) || 160));
   };
 
   const close = () => {
+    stopDrift();
     overlay.remove();
   };
 
@@ -9142,7 +9188,7 @@ function createImportProgressOverlay(options = {}) {
     percent: options.percent || 0
   });
 
-  return { overlay, update, close };
+  return { overlay, update, close, startDrift, stopDrift, getPercent: () => currentPercent };
 }
 
 async function finishImportProgress(progressOverlay, message, detail) {
@@ -9170,12 +9216,15 @@ function updateFoImportProgress(progressOverlay, state = {}) {
   let detail = fileLabel || 'Separando o arquivo para leitura em segundo plano.';
 
   if (phase === 'queued') {
+    progressOverlay.stopDrift();
     percent = 12;
     message = 'Organizando a leitura em segundo plano...';
   } else if (phase === 'reading-start') {
     percent = 18 + (completed / total) * 12;
     message = 'Lendo a planilha da F.O...';
+    progressOverlay.startDrift(52, 1.2, 150);
   } else if (phase === 'reading-done') {
+    progressOverlay.stopDrift();
     percent = 34 + (completed / total) * 18;
     message = 'Planilha lida. Validando colunas e datas...';
     if (rowCount > 0) {
@@ -9184,24 +9233,104 @@ function updateFoImportProgress(progressOverlay, state = {}) {
   } else if (phase === 'parsing') {
     percent = 58 + (completed / total) * 14;
     message = 'Montando os registros importados...';
+    progressOverlay.startDrift(82, 1.1, 160);
   } else if (phase === 'parsing-done') {
+    progressOverlay.stopDrift();
     percent = 74 + (completed / total) * 10;
     message = 'Registros montados. Conferindo depositos e materiais...';
     if (rowCount > 0) {
       detail = `${fileLabel}${fileLabel ? ' - ' : ''}${rowCount} linha(s) pronta(s) para integracao`;
     }
   } else if (phase === 'applying') {
+    progressOverlay.stopDrift();
     percent = 90;
     message = 'Atualizando o painel com os novos dados...';
   } else if (phase === 'saving') {
+    progressOverlay.stopDrift();
     percent = 96;
     message = 'Salvando e finalizando a importacao...';
   } else if (phase === 'done') {
+    progressOverlay.stopDrift();
     percent = 100;
     message = 'Importacao concluida.';
   }
 
   progressOverlay.update({ percent, message, detail });
+}
+
+function createLoginProgressController(userName) {
+  const progress = createImportProgressOverlay({
+    title: 'Entrando no sistema',
+    badge: 'Acesso liberado',
+    message: 'Validando seu perfil e preparando a sessao...',
+    detail: userName ? `Usuario: ${userName}` : 'Preparando seu ambiente de trabalho.',
+    percent: 10,
+    footnote: 'Estamos montando sua tela principal com os dados mais recentes.'
+  });
+
+  const stages = [
+    {
+      percent: 18,
+      message: 'Validando suas credenciais...',
+      detail: userName ? `Usuario: ${userName}` : 'Confirmando seus dados de acesso.'
+    },
+    {
+      percent: 36,
+      message: 'Conectando sua sessao...',
+      detail: 'Carregando permissoes, atalhos e configuracoes iniciais.'
+    },
+    {
+      percent: 58,
+      message: 'Montando a estrutura do aplicativo...',
+      detail: 'Preparando as abas e os dados principais para uso.'
+    },
+    {
+      percent: 78,
+      message: 'Abrindo o painel principal...',
+      detail: 'Falta bem pouco para concluir a entrada.'
+    }
+  ];
+
+  let stageIndex = 0;
+  let timer = null;
+
+  const start = () => {
+    progress.update(stages[stageIndex]);
+    stageIndex += 1;
+    timer = setInterval(() => {
+      if (stageIndex >= stages.length) {
+        clearInterval(timer);
+        timer = null;
+        return;
+      }
+      progress.update(stages[stageIndex]);
+      stageIndex += 1;
+    }, 240);
+  };
+
+  const stop = () => {
+    if (timer) {
+      clearInterval(timer);
+      timer = null;
+    }
+  };
+
+  const update = (state = {}) => {
+    stop();
+    progress.update(state);
+  };
+
+  const close = () => {
+    stop();
+    progress.close();
+  };
+
+  const complete = async (message, detail) => {
+    stop();
+    await finishImportProgress(progress, message, detail);
+  };
+
+  return { start, update, close, complete };
 }
 
 // ==================== DETAIL MODAL ====================
