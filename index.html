@@ -12183,10 +12183,7 @@ function extractFoPayloadFromSheet(sheet, fileName) {
 
 async function readFoPayloadInWorker(files) {
   if (!window.Worker) return null;
-  const payloadFiles = await Promise.all((Array.isArray(files) ? files : []).map(async (file) => ({
-    name: file.name,
-    data: await file.arrayBuffer()
-  })));
+  const payloadFiles = Array.isArray(files) ? files.filter(Boolean) : [];
   if (!payloadFiles.length) return [];
 
   const workerUrl = new URL('analysis-fo-worker.js', window.location.href);
@@ -12216,10 +12213,7 @@ async function readFoPayloadInWorker(files) {
     };
 
     try {
-      worker.postMessage(
-        { type: 'parse-fo-files', files: payloadFiles },
-        payloadFiles.map((item) => item.data).filter(Boolean)
-      );
+      worker.postMessage({ type: 'parse-fo-files', files: payloadFiles });
     } catch (error) {
       cleanup();
       reject(error);

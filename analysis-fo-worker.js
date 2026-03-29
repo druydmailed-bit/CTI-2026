@@ -71,8 +71,9 @@ function findWorkbookSheet(workbook, matcher, fallbackIndex) {
   return sheetName ? workbook.Sheets[sheetName] : null;
 }
 
-function extractFoPayload(file) {
-  const workbook = XLSX.read(file.data, { type: 'array', cellDates: true, dense: true });
+async function extractFoPayload(file) {
+  const data = await file.arrayBuffer();
+  const workbook = XLSX.read(data, { type: 'array', cellDates: true, dense: true });
   const sheet = findWorkbookSheet(workbook, 'fo', 0);
   if (!sheet) return null;
 
@@ -106,13 +107,13 @@ function extractFoPayload(file) {
   };
 }
 
-self.onmessage = function onMessage(event) {
+self.onmessage = async function onMessage(event) {
   const data = event && event.data ? event.data : {};
   if (data.type !== 'parse-fo-files') return;
 
   try {
     const files = Array.isArray(data.files) ? data.files : [];
-    const payloads = files.map(extractFoPayload).filter(Boolean);
+    const payloads = (await Promise.all(files.map(extractFoPayload))).filter(Boolean);
     self.postMessage({ files: payloads });
   } catch (error) {
     self.postMessage({ error: error && error.message ? error.message : String(error) });
