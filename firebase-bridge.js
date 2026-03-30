@@ -425,6 +425,53 @@
     return state.syncPromise;
   }
 
+  async function readDocument(docId, options) {
+    var ready = await init();
+    if (!ready || !state.collection) return { ok: false, mode: state.mode };
+
+    var readOptions = options && typeof options === "object" ? options : {};
+    if (!readOptions.force && state.docCache && Object.prototype.hasOwnProperty.call(state.docCache, docId)) {
+      return {
+        ok: !!state.docCache[docId],
+        mode: state.mode,
+        cached: true,
+        data: state.docCache[docId] || null
+      };
+    }
+
+    try {
+      var snapshot = await state.collection.doc(docId).get();
+      var data = snapshot.exists ? snapshot.data() : null;
+      state.docCache[docId] = data;
+      return {
+        ok: snapshot.exists,
+        mode: state.mode,
+        cached: false,
+        data: data
+      };
+    } catch (error) {
+      console.error("Falha ao ler documento do Firebase:", error);
+      return { ok: false, mode: state.mode, error: error };
+    }
+  }
+
+  async function writeDocument(docId, payload, options) {
+    var ready = await init();
+    if (!ready || !state.collection) return { ok: false, mode: state.mode };
+
+    try {
+      await state.collection.doc(docId).set(
+        payload && typeof payload === "object" ? payload : {},
+        { merge: !(options && options.merge === false) }
+      );
+      state.docCache[docId] = payload && typeof payload === "object" ? payload : {};
+      return { ok: true, mode: state.mode };
+    } catch (error) {
+      console.error("Falha ao gravar documento no Firebase:", error);
+      return { ok: false, mode: state.mode, error: error };
+    }
+  }
+
   function onStatusChange(listener) {
     if (typeof listener !== "function") return function () {};
     state.listeners.push(listener);
@@ -447,6 +494,8 @@
     hydrateLocalStorage: hydrateLocalStorage,
     queueUpload: queueUpload,
     flushUpload: flushUpload,
+    readDocument: readDocument,
+    writeDocument: writeDocument,
     getStatus: cloneStatus,
     onStatusChange: onStatusChange,
     onRemoteChange: onRemoteChange

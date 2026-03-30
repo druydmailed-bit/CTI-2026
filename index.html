@@ -1,10 +1,10 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="pt-BR">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="theme-color" content="#050505">
-<title>CTI 2026 - Controle de Transferência de Insumos</title>
+<title>CTI 2026 - Controle de TransferÃªncia de Insumos</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
@@ -1952,7 +1952,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
   <!-- Seletor de Area -->
   <div id="loginAreaSelector" class="login-box" style="max-width:480px;">
     <div class="login-logo">CTI</div>
-    <div class="login-sub">Controle de Transferência de Insumos — 2026</div>
+    <div class="login-sub">Controle de TransferÃªncia de Insumos â€” 2026</div>
     <div style="font-size:0.8rem;color:var(--text-dim);text-align:center;margin-bottom:24px;">Selecione a area de acesso</div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
       <!-- Area Restrita -->
@@ -1969,7 +1969,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <svg style="width:24px;height:24px;color:var(--blue)" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
         </div>
         <div style="font-size:0.9rem;font-weight:700;color:var(--blue);margin-bottom:4px;">Area de Consulta</div>
-        <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Para parceiros EPS — solicite acesso ao key user</div>
+        <div style="font-size:0.7rem;color:var(--text-dim);line-height:1.4;">Para parceiros EPS â€” solicite acesso ao key user</div>
       </button>
     </div>
   </div>
@@ -1986,7 +1986,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       <div id="loginAreaBadge" style="margin-left:auto;font-size:0.65rem;font-weight:700;padding:3px 10px;border-radius:6px;"></div>
     </div>
     <div id="loginAreaDesc" style="font-size:0.75rem;color:var(--text-dim);text-align:center;margin-bottom:16px;"></div>
-    <label>Identificação do Usuário</label>
+    <label>IdentificaÃ§Ã£o do UsuÃ¡rio</label>
     <select class="login-select" id="loginUser" onchange="updateLoginButtonState()">
       <option value="">Selecione seu nome...</option>
     </select>
@@ -2038,7 +2038,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       <div style="margin-bottom:12px;"><label class="form-label">Email *</label><input type="email" class="form-input" id="reqEmailEps" placeholder="email@empresa.com"></div>
     </div>
     <button type="button" class="login-btn" onclick="submitAccessRequest()" style="margin-top:16px;width:100%;">Enviar Solicitacao</button>
-    <div class="access-request-footer">Elaborado por <strong style="color:var(--neon);">Lucas Marques</strong> — 2026</div>
+    <div class="access-request-footer">Elaborado por <strong style="color:var(--neon);">Lucas Marques</strong> â€” 2026</div>
   </div>
 </div>
 
@@ -2049,7 +2049,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
     <div class="header-left">
       <div class="header-logo">CTI</div>
       <div class="header-divider"></div>
-      <div class="header-title">Controle de Transferência de Insumos — 2026</div>
+      <div class="header-title">Controle de TransferÃªncia de Insumos â€” 2026</div>
     </div>
     <div class="header-right">
       <div class="user-badge">
@@ -2058,7 +2058,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         <span class="user-role" id="userRole">USUARIO</span>
         <span id="areaBadgeHeader" style="display:none;font-size:0.55rem;font-weight:800;padding:2px 8px;border-radius:4px;letter-spacing:0.5px;"></span>
       </div>
-      <div id="cloudOnlineBadge" class="cloud-online-badge" title="Status da conexão com o banco de dados">
+      <div id="cloudOnlineBadge" class="cloud-online-badge" title="Status da conexÃ£o com o banco de dados">
         <span class="cloud-online-badge-dot"></span>
         <span id="cloudOnlineBadgeText">Modo Local</span>
       </div>
@@ -2074,7 +2074,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
     </button>
     <button class="nav-tab" id="tabBtnNovo" onclick="switchTab('novo', this)">
       <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="16"/><line x1="8" y1="12" x2="16" y2="12"/></svg>
-      Nova Movimentação
+      Nova MovimentaÃ§Ã£o
     </button>
     <button class="nav-tab" id="tabBtnRegistros" onclick="switchTab('registros', this)">
       <svg style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
@@ -2144,10 +2144,22 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         </div>
       </div>
 
-      <!-- KPIs principais — 2 linhas de 4 -->
+      <!-- KPIs principais â€” 2 linhas de 4 -->
+      <div class="form-section" style="margin-bottom:16px;">
+        <div class="form-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 2 4-8"/></svg>
+          Base MM60 e Graficos por Valor
+        </div>
+        <div class="hint-line" id="dashboardMm60Hint">Os precos MM60 sao carregados automaticamente do banco para habilitar os graficos financeiros, ignorando materiais zerados e consolidando repetidos pela media.</div>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:14px;">
+          <button type="button" class="btn btn-secondary" onclick="loadMm60PricingFromCloud(true)">Atualizar base do banco</button>
+          <span style="font-size:0.75rem;color:var(--text-dim);" id="dashboardMm60Status">Aguardando sincronizacao da base MM60.</span>
+        </div>
+      </div>
+
       <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;">
         <div style="background:var(--bg2);border:1px solid var(--glass-border);border-radius:12px;padding:16px;">
-          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Movimentações</div>
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">MovimentaÃ§Ãµes</div>
           <div style="font-size:1.6rem;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="statTotal">0</div>
           <div style="font-size:0.7rem;color:var(--text-dim);" id="statTotalDetail">-</div>
         </div>
@@ -2179,7 +2191,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardStatRetornoDetail">-</div>
         </div>
         <div style="background:var(--bg2);border:1px solid var(--glass-border);border-radius:12px;padding:16px;">
-          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Materiais de Saída</div>
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Materiais de SaÃ­da</div>
           <div style="font-size:1.6rem;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardStatMateriais">0</div>
           <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardStatMateriaisDetail">-</div>
         </div>
@@ -2190,12 +2202,35 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         </div>
       </div>
 
-      <!-- Gráficos 2 colunas -->
+      <!-- GrÃ¡ficos 2 colunas -->
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:20px;">
+        <div style="background:var(--bg2);border:1px solid rgba(24,220,255,0.15);border-radius:12px;padding:16px;">
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Base MM60</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--blue);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardValueBaseCount">0</div>
+          <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardValueBaseDetail">-</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid rgba(57,255,20,0.12);border-radius:12px;padding:16px;">
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Valor Movimentado</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--neon);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardValueTotal">R$ 0,00</div>
+          <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardValueTotalDetail">-</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid var(--glass-border);border-radius:12px;padding:16px;">
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Itens Precificados</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--text);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardValuePricedCount">0</div>
+          <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardValuePricedDetail">-</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid rgba(255,211,42,0.12);border-radius:12px;padding:16px;">
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Cobertura MM60</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardValueCoverage">0%</div>
+          <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardValueCoverageDetail">-</div>
+        </div>
+      </div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
         <div class="form-section" style="margin-bottom:0;">
           <div class="form-section-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
-            Movimentações por Tipo
+            MovimentaÃ§Ãµes por Tipo
           </div>
           <div class="bar-chart" id="chartTipos"></div>
         </div>
@@ -2229,7 +2264,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         <div class="form-section" style="margin-bottom:0;">
           <div class="form-section-title" id="dashboardTimelineTitle">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 2 4-6"/></svg>
-            Ritmo do Período
+            Ritmo do PerÃ­odo
           </div>
           <div class="bar-chart" id="dashboardChartTimeline"></div>
         </div>
@@ -2242,6 +2277,40 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         </div>
       </div>
 
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 3 2 4-7"/></svg>
+            Valor por Tipo
+          </div>
+          <div class="bar-chart" id="dashboardChartValueTypes"></div>
+        </div>
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20V10"/><path d="M18 20V4"/><path d="M6 20v-6"/></svg>
+            Top Materiais por Valor
+          </div>
+          <div class="bar-chart" id="dashboardChartValueMaterials"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 2 4-6"/></svg>
+            Ritmo Financeiro
+          </div>
+          <div class="bar-chart" id="dashboardChartValueTimeline"></div>
+        </div>
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7H4"/><path d="M20 12H8"/><path d="M20 17H12"/></svg>
+            Destinos com Maior Valor
+          </div>
+          <div class="bar-chart" id="dashboardChartValueDestinations"></div>
+        </div>
+      </div>
+
       <!-- Hidden chart for pendencias (data still populated by JS) -->
       <div id="dashboardChartPendencias" style="display:none;"></div>
       <div id="dashboardPendenciasTitle" style="display:none;"></div>
@@ -2251,7 +2320,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         <div style="background:var(--bg2);border:1px solid var(--glass-border);border-radius:12px;padding:16px;">
           <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
             <div style="width:8px;height:8px;border-radius:50%;background:var(--yellow);"></div>
-            <span style="font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Resolução Writer</span>
+            <span style="font-size:0.7rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">ResoluÃ§Ã£o Writer</span>
           </div>
           <div style="font-size:1.4rem;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace;" id="dashboardInsightWriterValue">0d</div>
           <div style="font-size:0.72rem;color:var(--text-dim);margin-top:6px;line-height:1.4;" id="dashboardInsightWriterText">-</div>
@@ -2299,11 +2368,11 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         </div>
       </div>
 
-      <!-- Últimas movimentações -->
+      <!-- Ãšltimas movimentaÃ§Ãµes -->
       <div class="form-section" style="display:none;">
         <div class="form-section-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
-          Últimas Movimentações
+          Ãšltimas MovimentaÃ§Ãµes
         </div>
         <div class="table-scroll" style="max-height:36vh">
           <table>
@@ -2318,17 +2387,17 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       </div>
     </div>
 
-    <!-- ========== NOVA MOVIMENTAÇÃO ========== -->
+    <!-- ========== NOVA MOVIMENTAÃ‡ÃƒO ========== -->
     <div class="tab-panel" id="tab-novo">
       <form id="movForm" onsubmit="return saveMovimento(event)">
         <div class="form-section">
           <div class="form-section-title">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
-            Informações da Movimentação
+            InformaÃ§Ãµes da MovimentaÃ§Ã£o
           </div>
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Data Mov. Físico *</label>
+              <label class="form-label">Data Mov. FÃ­sico *</label>
               <input type="date" class="form-input" id="fDataFisico" required>
             </div>
             <div class="form-group">
@@ -2370,7 +2439,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
               </select>
             </div>
             <div class="form-group">
-              <label class="form-label">Depósito</label>
+              <label class="form-label">DepÃ³sito</label>
               <select class="form-select" id="fDeposito">
                 <option value="">Selecione...</option>
               </select>
@@ -2388,19 +2457,19 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             <label class="form-label">Tipo de Nota Fiscal *</label>
             <div class="nf-toggle" id="nfToggle">
               <button type="button" class="nf-toggle-btn active" onclick="setNfTipo('pedido')">Via Pedido</button>
-              <button type="button" class="nf-toggle-btn" onclick="setNfTipo('writer')">WRITER (Sem mov. sistêmico)</button>
+              <button type="button" class="nf-toggle-btn" onclick="setNfTipo('writer')">WRITER (Sem mov. sistÃªmico)</button>
             </div>
           </div>
 
           <div class="writer-notice" id="writerNotice">
             <svg style="width:16px;height:16px;flex-shrink:0" viewBox="0 0 24 24" fill="none" stroke="#ff8800" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
-            Movimento físico sem registro no sistema. Ficará como pendência para finalizar depois (inserir Data Mov. Sistêmico e MIGO).
+            Movimento fÃ­sico sem registro no sistema. FicarÃ¡ como pendÃªncia para finalizar depois (inserir Data Mov. SistÃªmico e MIGO).
           </div>
 
           <div class="form-grid">
             <div class="form-group" id="fPedidoGroup">
-              <label class="form-label">Nº Pedido *</label>
-              <input type="text" class="form-input" id="fPedido" placeholder="Nº do pedido">
+              <label class="form-label">NÂº Pedido *</label>
+              <input type="text" class="form-input" id="fPedido" placeholder="NÂº do pedido">
             </div>
             <div class="form-group" id="fMotivoGroup" style="display:none">
               <label class="form-label">Motivo WRITER *</label>
@@ -2410,19 +2479,19 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             </div>
             <div class="form-group">
               <label class="form-label">Remessa</label>
-              <input type="text" class="form-input" id="fRemessa" placeholder="Nº da remessa">
+              <input type="text" class="form-input" id="fRemessa" placeholder="NÂº da remessa">
             </div>
             <div class="form-group">
               <label class="form-label">NF *</label>
-              <input type="text" class="form-input" id="fNF" placeholder="Nº da nota fiscal" required>
+              <input type="text" class="form-input" id="fNF" placeholder="NÂº da nota fiscal" required>
             </div>
             <div class="form-group" id="fDataSistemicoGroup">
-              <label class="form-label">Data Mov. Sistêmico</label>
+              <label class="form-label">Data Mov. SistÃªmico</label>
               <input type="date" class="form-input" id="fDataSistemico">
             </div>
             <div class="form-group" id="fMigoGroup">
               <label class="form-label">MIGO</label>
-              <input type="text" class="form-input" id="fMigo" placeholder="Nº MIGO">
+              <input type="text" class="form-input" id="fMigo" placeholder="NÂº MIGO">
             </div>
           </div>
         </div>
@@ -2441,7 +2510,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
               </div>
             </div>
             <div class="form-group">
-              <label class="form-label">Código Produto</label>
+              <label class="form-label">CÃ³digo Produto</label>
               <input type="text" class="form-input" id="fCodProduto" readonly style="opacity:0.6">
             </div>
             <div class="form-group">
@@ -2454,7 +2523,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             </div>
             <div class="form-group">
               <label class="form-label">Lote</label>
-              <input type="text" class="form-input" id="fLote" placeholder="Nº do lote">
+              <input type="text" class="form-input" id="fLote" placeholder="NÂº do lote">
             </div>
           </div>
         </div>
@@ -2466,7 +2535,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           </div>
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Data Devolução Embalagens</label>
+              <label class="form-label">Data DevoluÃ§Ã£o Embalagens</label>
               <input type="date" class="form-input" id="fDataDevEmb">
             </div>
             <div class="form-group">
@@ -2481,7 +2550,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
               <label class="form-label">Contabilizar Embalagem</label>
               <select class="form-select" id="fContEmb">
                 <option value="SIM">SIM</option>
-                <option value="NÃO">NÃO</option>
+                <option value="NÃƒO">NÃƒO</option>
               </select>
             </div>
           </div>
@@ -2491,7 +2560,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <button type="button" class="btn btn-secondary" onclick="resetForm()">Limpar</button>
           <button type="submit" class="btn btn-primary">
             <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-            Salvar Movimentação
+            Salvar MovimentaÃ§Ã£o
           </button>
         </div>
       </form>
@@ -2508,7 +2577,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <div style="display:flex;align-items:center;gap:6px;">
             <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">De:</label>
             <input type="date" class="form-input" id="filterDateStart" onchange="filterTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">Até:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">AtÃ©:</label>
             <input type="date" class="form-input" id="filterDateEnd" onchange="filterTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
           </div>
           <select class="filter-select" id="filterTipo" onchange="filterTable()">
@@ -2529,15 +2598,15 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             <option value="">Todos os materiais</option>
           </select>
           <select class="filter-select" id="filterUser" onchange="filterTable()">
-            <option value="">Todos os usuários</option>
+            <option value="">Todos os usuÃ¡rios</option>
           </select>
           <select class="filter-select" id="filterDebito" onchange="filterTable()">
             <option value="">Todos os debitos</option>
           </select>
           <div style="display:flex;align-items:center;gap:6px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">LanÃ§. de:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">LanÃƒÂ§. de:</label>
             <input type="date" class="form-input" id="filterLaunchStart" onchange="filterTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">atÃ©:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">atÃƒÂ©:</label>
             <input type="date" class="form-input" id="filterLaunchEnd" onchange="filterTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
           </div>
           <button class="btn btn-secondary" onclick="exportCSV()" style="padding:8px 16px;font-size:0.8rem">
@@ -2563,9 +2632,9 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                 <th onclick="sortTable('quantidade')">Qtd</th>
                 <th onclick="sortTable('debitoEm')">Debito em</th>
                 <th>Un</th>
-                <th onclick="sortTable('dataLancamento')">Data Lançamento</th>
+                <th onclick="sortTable('dataLancamento')">Data LanÃ§amento</th>
                 <th onclick="sortTable('inseridoPor')">Inserido por</th>
-                <th>Ações</th>
+                <th>AÃ§Ãµes</th>
               </tr>
             </thead>
             <tbody id="mainTable"></tbody>
@@ -2588,7 +2657,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <div style="display:flex;align-items:center;gap:6px;">
             <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">De:</label>
             <input type="date" class="form-input" id="legacyFilterDateStart" onchange="filterLegacyTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">AtÃ©:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">AtÃƒÂ©:</label>
             <input type="date" class="form-input" id="legacyFilterDateEnd" onchange="filterLegacyTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
           </div>
           <select class="filter-select" id="legacyFilterTipo" onchange="filterLegacyTable()">
@@ -2613,9 +2682,9 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             <option value="">Todos os atendentes</option>
           </select>
           <div style="display:flex;align-items:center;gap:6px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">LanÃ§. de:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">LanÃƒÂ§. de:</label>
             <input type="date" class="form-input" id="legacyFilterLaunchStart" onchange="filterLegacyTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">atÃ©:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">atÃƒÂ©:</label>
             <input type="date" class="form-input" id="legacyFilterLaunchEnd" onchange="filterLegacyTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
           </div>
           <button class="btn btn-secondary" onclick="exportLegacyCSV()" style="padding:8px 16px;font-size:0.8rem">
@@ -2639,7 +2708,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                 <th onclick="sortLegacyTable('material')">Material</th>
                 <th onclick="sortLegacyTable('quantidade')">Qtd</th>
                 <th onclick="sortLegacyTable('pedido')">Pedido</th>
-                <th onclick="sortLegacyTable('dataSistemico')">Data SistÃªmico</th>
+                <th onclick="sortLegacyTable('dataSistemico')">Data SistÃƒÂªmico</th>
                 <th onclick="sortLegacyTable('migo')">MIGO</th>
                 <th onclick="sortLegacyTable('atendente')">Atendente</th>
               </tr>
@@ -2779,11 +2848,11 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                 <th onclick="sortSaldoEps('deposito')">Deposito</th>
                 <th onclick="sortSaldoEps('nome')">EPS</th>
                 <th onclick="sortSaldoEps('retiradas')">Retiradas</th>
-                <th onclick="sortSaldoEps('devolucoes')">Devoluções</th>
+                <th onclick="sortSaldoEps('devolucoes')">DevoluÃ§Ãµes</th>
                 <th onclick="sortSaldoEps('transferenciasIn')">Transf. Rec.</th>
                 <th onclick="sortSaldoEps('transferenciasOut')">Transf. Env.</th>
                 <th onclick="sortSaldoEps('saldo')" style="min-width:100px">Saldo</th>
-                <th onclick="sortSaldoEps('saldoDevolucao')">Saldo Devolução</th>
+                <th onclick="sortSaldoEps('saldoDevolucao')">Saldo DevoluÃ§Ã£o</th>
                 <th onclick="sortSaldoEps('retorno')">% Retorno</th>
                 <th style="width:70px">Status</th>
               </tr>
@@ -2826,7 +2895,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                     <th>Cod. Produto</th>
                     <th>Unidade</th>
                     <th>Retiradas</th>
-                    <th>Devoluções</th>
+                    <th>DevoluÃ§Ãµes</th>
                     <th>Transf. In</th>
                     <th>Transf. Out</th>
                     <th>Saldo</th>
@@ -2838,9 +2907,9 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           </div>
         </div>
 
-        <!-- Histórico -->
+        <!-- HistÃ³rico -->
         <div style="padding:0 24px 24px;">
-          <div style="font-weight:600;font-size:0.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Histórico de Movimentações</div>
+          <div style="font-weight:600;font-size:0.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">HistÃ³rico de MovimentaÃ§Ãµes</div>
           <div class="table-container">
             <div class="table-scroll" style="max-height:32vh;">
               <table>
@@ -2860,7 +2929,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           </div>
         </div>
 
-        <!-- Histórico Bloqueio/Desbloqueio -->
+        <!-- HistÃ³rico Bloqueio/Desbloqueio -->
         <div style="padding:0 24px 24px;">
           <div style="font-weight:600;font-size:0.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Historico de Bloqueio / Desbloqueio</div>
           <div class="table-container">
@@ -3273,14 +3342,14 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         </div>
       </div>
 
-      <!-- ===== GESTÃO DE DADOS ===== -->
+      <!-- ===== GESTÃƒO DE DADOS ===== -->
       <div class="form-section" id="dataManagementPanel" style="margin-top:28px;">
         <div class="form-section-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M3 5v14c0 1.66 4.03 3 9 3s9-1.34 9-3V5"/><path d="M3 12c0 1.66 4.03 3 9 3s9-1.34 9-3"/></svg>
-          Gestão de Dados
+          GestÃ£o de Dados
         </div>
         <p style="color:var(--text-dim);font-size:0.85rem;margin-bottom:20px;line-height:1.6;">
-          Exporte e importe backups completos do sistema. O backup inclui todas as movimentações, embalagens, análises, usuários e dados cadastrais.
+          Exporte e importe backups completos do sistema. O backup inclui todas as movimentaÃ§Ãµes, embalagens, anÃ¡lises, usuÃ¡rios e dados cadastrais.
         </p>
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;margin-bottom:20px;">
@@ -3299,7 +3368,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
               </div>
             </div>
             <p style="font-size:0.8rem;color:var(--text-dim);line-height:1.5;margin-bottom:16px;">
-              Gera um arquivo JSON com todos os dados do sistema: movimentações, devoluções de embalagens, análises, usuários e dados mestres. Ideal para backup de segurança.
+              Gera um arquivo JSON com todos os dados do sistema: movimentaÃ§Ãµes, devoluÃ§Ãµes de embalagens, anÃ¡lises, usuÃ¡rios e dados mestres. Ideal para backup de seguranÃ§a.
             </p>
             <div id="backupStats" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px;">
               <!-- Preenchido via JS -->
@@ -3324,12 +3393,12 @@ button:focus-visible, input:focus-visible, select:focus-visible {
               </div>
             </div>
             <p style="font-size:0.8rem;color:var(--text-dim);line-height:1.5;margin-bottom:16px;">
-              Restaura o sistema a partir de um backup JSON exportado anteriormente. <strong style="color:var(--red);">Atenção:</strong> todos os dados atuais serão substituídos pelos dados do backup.
+              Restaura o sistema a partir de um backup JSON exportado anteriormente. <strong style="color:var(--red);">AtenÃ§Ã£o:</strong> todos os dados atuais serÃ£o substituÃ­dos pelos dados do backup.
             </p>
             <div style="background:rgba(255,71,87,0.08);border:1px solid rgba(255,71,87,0.2);border-radius:10px;padding:12px;margin-bottom:16px;">
               <div style="display:flex;align-items:flex-start;gap:8px;">
                 <svg style="width:16px;height:16px;color:var(--red);flex-shrink:0;margin-top:1px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
-                <span style="font-size:0.75rem;color:var(--red);line-height:1.4;">Recomendamos exportar um backup dos dados atuais antes de importar. Esta ação não pode ser desfeita.</span>
+                <span style="font-size:0.75rem;color:var(--red);line-height:1.4;">Recomendamos exportar um backup dos dados atuais antes de importar. Esta aÃ§Ã£o nÃ£o pode ser desfeita.</span>
               </div>
             </div>
             <button onclick="importFullBackup()" class="btn" style="width:100%;justify-content:center;background:rgba(24,220,255,0.12);color:var(--blue);border:1px solid rgba(24,220,255,0.3);">
@@ -3348,15 +3417,15 @@ button:focus-visible, input:focus-visible, select:focus-visible {
               </div>
               <div>
                 <div style="font-weight:700;font-size:1rem;color:var(--text);">Limpar Dados</div>
-                <div style="font-size:0.75rem;color:var(--text-dim);">Reset das movimentações</div>
+                <div style="font-size:0.75rem;color:var(--text-dim);">Reset das movimentaÃ§Ãµes</div>
               </div>
             </div>
             <p style="font-size:0.8rem;color:var(--text-dim);line-height:1.5;margin-bottom:16px;">
-              Remove todas as movimentações, devoluções de embalagens e dados de análise. Usuários e dados cadastrais são preservados.
+              Remove todas as movimentaÃ§Ãµes, devoluÃ§Ãµes de embalagens e dados de anÃ¡lise. UsuÃ¡rios e dados cadastrais sÃ£o preservados.
             </p>
             <button onclick="clearAllData()" class="btn" style="width:100%;justify-content:center;background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.3);">
               <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 01-2 2H8a2 2 0 01-2-2L5 6"/></svg>
-              Limpar Movimentações
+              Limpar MovimentaÃ§Ãµes
             </button>
           </div>
 
@@ -3371,7 +3440,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             <span style="font-size:0.75rem;color:var(--text-dim);margin-left:8px;">(Limite do navegador: ~5-10 MB)</span>
           </div>
           <div>
-            <span style="font-size:0.75rem;color:var(--text-dim);">Último backup: </span>
+            <span style="font-size:0.75rem;color:var(--text-dim);">Ãšltimo backup: </span>
             <span id="lastBackupDate" style="font-size:0.75rem;color:var(--yellow);font-weight:500;">Nunca</span>
           </div>
         </div>
@@ -3418,7 +3487,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 
     <!-- Footer -->
     <div style="text-align:center;padding:18px 0 12px;margin-top:24px;border-top:1px solid var(--border);font-size:0.7rem;color:var(--text-dim);letter-spacing:0.5px;">
-      Elaborado por <strong style="color:var(--neon);">Lucas Marques</strong> — 2026
+      Elaborado por <strong style="color:var(--neon);">Lucas Marques</strong> â€” 2026
     </div>
 
   </div>
@@ -3443,13 +3512,14 @@ const DATA = {
   tipos: [
     {nome:"Retirada", descricao:"Retirada de embalagens", moveEmbalagem:"SIM"},
     {nome:"Transferencia", descricao:"Transferencia de embalagens", moveEmbalagem:"SIM"},
+    {nome:"Baldeio", descricao:"Baldeio entre depositos", moveEmbalagem:"SIM"},
     {nome:"Devolucao", descricao:"Devolucao de embalagens", moveEmbalagem:"SIM"}
   ],
 
   eps: [
     {n:"AMADEO MS",d:"9526"},{n:"AMBIENT MS",d:"9506"},{n:"ASJ MS GODOY",d:"9504"},{n:"AVIAX MS",d:"9513"},
     {n:"CJ MS",d:"9520"},{n:"COSTA PINTO MS",d:"9519"},{n:"CR2 MS",d:"9528"},{n:"DIRETA MS",d:"9511"},
-    {n:"EMFLORA MS",d:"9505"},{n:"EMFLORS MS",d:"9501"},{n:"FORÇA DO CAMPO",d:"9510"},{n:"GARRA MS",d:"9518"},
+    {n:"EMFLORA MS",d:"9505"},{n:"EMFLORS MS",d:"9501"},{n:"FORÃ‡A DO CAMPO",d:"9510"},{n:"GARRA MS",d:"9518"},
     {n:"GM MS",d:"9521"},{n:"GN MS",d:"9529"},{n:"HP AEROAGRICOLA",d:"9527"},{n:"INOVESA MS",d:"9508"},
     {n:"JEMA MS",d:"9507"},{n:"JM MS",d:"9522"},{n:"JSF MS",d:"9500"},{n:"JV MS",d:"9523"},
     {n:"LARSIL MS",d:"9503"},{n:"LM MS",d:"9530"},{n:"MACER MS",d:"9517"},{n:"MARCONATO",d:"9525"},
@@ -3472,26 +3542,26 @@ const DATA = {
 
   centros: [
     {id:"9501",n:"MSFC - CAMPO GRANDE / MS"},{id:"9502",n:"MSFC - AGUA CLARA / MS"},
-    {id:"9503",n:"MSFC - BATAGUASSU / MS"},{id:"9504",n:"MSFC - BRASILÂNDIA / MS"},
-    {id:"9505",n:"MSFC - INOCÊNCIA / MS"},{id:"9506",n:"MSFC - JARAGUARI / MS"},
+    {id:"9503",n:"MSFC - BATAGUASSU / MS"},{id:"9504",n:"MSFC - BRASILÃ‚NDIA / MS"},
+    {id:"9505",n:"MSFC - INOCÃŠNCIA / MS"},{id:"9506",n:"MSFC - JARAGUARI / MS"},
     {id:"9507",n:"MSFC - RIBAS DO RIO PARDO / MS"},{id:"9508",n:"MSFC - SANTA RITA PARDO / MS"},
-    {id:"9510",n:"MSFC - TRÊS LAGOAS / MS"},{id:"9511",n:"MSFC - ÁGUA CLARA DIV. FLORESTAL"},
-    {id:"9513",n:"MSFC - ÁGUA CLARA ALM. AUTOMOTIVA"},{id:"9516",n:"MSFC - BATAGUASSU DIV. FLORESTAL"},
+    {id:"9510",n:"MSFC - TRÃŠS LAGOAS / MS"},{id:"9511",n:"MSFC - ÃGUA CLARA DIV. FLORESTAL"},
+    {id:"9513",n:"MSFC - ÃGUA CLARA ALM. AUTOMOTIVA"},{id:"9516",n:"MSFC - BATAGUASSU DIV. FLORESTAL"},
     {id:"9517",n:"MSFC - NOVA ANDRADINA / MS"},{id:"9518",n:"MSFC - BANDEIRANTES / MS"},
-    {id:"9519",n:"MSFC - PRES. VENCESLAU / SP"},{id:"9520",n:"MSFC - MARABÁ PAULISTA / SP"},
-    {id:"9521",n:"MSFC - CAIUÁ / SP"},{id:"9522",n:"MSFC - PRES. EPITÁCIO / SP"},
-    {id:"9527",n:"MSFC - ANAURILÂNDIA / MS"},{id:"9528",n:"MSFC - ROSANA / SP"},
+    {id:"9519",n:"MSFC - PRES. VENCESLAU / SP"},{id:"9520",n:"MSFC - MARABÃ PAULISTA / SP"},
+    {id:"9521",n:"MSFC - CAIUÃ / SP"},{id:"9522",n:"MSFC - PRES. EPITÃCIO / SP"},
+    {id:"9527",n:"MSFC - ANAURILÃ‚NDIA / MS"},{id:"9528",n:"MSFC - ROSANA / SP"},
     {id:"9529",n:"MSFC - NOVA ALVORADA SUL / MS"}
   ],
 
   origens: [
-    "Almoxarifado Água Clara","Almoxarifado Bataguassu","CONQUISTA GLEBA A - RRP","CONQUISTA GLEBA B - RRP",
-    "FLORESTA II - SRP","GALILÉIA - SRP","GUARUJÁ I - RRP","HP AEROAGRICOLA","MACHADO - ACL",
+    "Almoxarifado Ãgua Clara","Almoxarifado Bataguassu","CONQUISTA GLEBA A - RRP","CONQUISTA GLEBA B - RRP",
+    "FLORESTA II - SRP","GALILÃ‰IA - SRP","GUARUJÃ I - RRP","HP AEROAGRICOLA","MACHADO - ACL",
     "MSFC - MODULO I","NOSSA SENHORA APARECIDA V - INC","NOSSA SENHORA APARECIDA VI GLEBA B - SRP",
     "PACAEMBU - SRP","PARATY - RRP","RECREIO - SRP","SAN REMO - ACL","SANTA LUZIA III - SRP",
-    "SANTA RITA - RRP","SANTA ROSA II - BTG","SÃO GUILHERME - RRP","SÃO JOSÉ II - BTG",
-    "SÃO JOSÉ III - SRP","SÃO JOÃO II - BDR","SÃO MANOEL II - BRS","SÃO PEDRO - RRP",
-    "TRÊS MENINAS - RRP","UNIÃO - BRS","VILLELA MS","VIVEIRO MSFC BTG"
+    "SANTA RITA - RRP","SANTA ROSA II - BTG","SÃƒO GUILHERME - RRP","SÃƒO JOSÃ‰ II - BTG",
+    "SÃƒO JOSÃ‰ III - SRP","SÃƒO JOÃƒO II - BDR","SÃƒO MANOEL II - BRS","SÃƒO PEDRO - RRP",
+    "TRÃŠS MENINAS - RRP","UNIÃƒO - BRS","VILLELA MS","VIVEIRO MSFC BTG"
   ],
 
   supervisores: [
@@ -3504,7 +3574,7 @@ const DATA = {
     "ROBERTO LIMA","WAGNER CARVALHO","WAGNER GARCIA","WENDELL FERREIRA","YASMIM GOBBO"
   ],
 
-  usuarios: ["Francine","Davi","Junior","Carlos","Sabrina","Luciano","João Pedro","Ana Luiza"],
+  usuarios: ["Francine","Davi","Junior","Carlos","Sabrina","Luciano","JoÃ£o Pedro","Ana Luiza"],
 
   motivosDesbloqueio: [
     "Pendencia Regularizada",
@@ -3579,35 +3649,35 @@ const FAZENDAS_LIST = [
   "A C PRUDENTINA - RRP","AGUINHA - NAD","ALEGRIA - CPG","ALEGRIA II GLEBA A - ANR",
   "ALEGRIA II GLEBA B - ANR","ALVORADA - TLS","ALVORADA II - RRP","ALVORADA III - SRP",
   "ALVORADA IV - CPG","ALVORADA V - SRP","ALVORADA VI - SRP","ALVORADA VII - SRP",
-  "ARCO ÍRIS GLEBA A - ANR","ARUANDA E UNIÃO - RRP","ÁGUA BRANCA - SRP","ÁGUA LIMPA - SRP",
-  "BARRA DO BURITI - TLS","BARRO BRANCO - SRP","BOA ESPERANÇA - SRP","BOA VISTA I - RRP",
-  "BOA VISTA II - BRS","BRASILÂNDIA I - BDR","BRASILÂNDIA II - BDR","BUGIO - BTG",
+  "ARCO ÃRIS GLEBA A - ANR","ARUANDA E UNIÃƒO - RRP","ÃGUA BRANCA - SRP","ÃGUA LIMPA - SRP",
+  "BARRA DO BURITI - TLS","BARRO BRANCO - SRP","BOA ESPERANÃ‡A - SRP","BOA VISTA I - RRP",
+  "BOA VISTA II - BRS","BRASILÃ‚NDIA I - BDR","BRASILÃ‚NDIA II - BDR","BUGIO - BTG",
   "BURITI I - RRP","BURITI II - SRP","CACHOEIRA - CPG","CAMPO AZUL - RRP",
   "CAMPO BELO - SRP","CAMPINA - SRP","CAPIM BRANCO - ACL","CERVO - BTG",
-  "CHAPADA - CPG","CHAPADÃO - RRP","CONQUISTA GLEBA A - RRP","CONQUISTA GLEBA B - RRP",
-  "COTIA - NAS","CRISTALINA - TLS","DUAS IRMÃS - PRV","DUAS IRMÃS II - PRV",
-  "ESTÂNCIA ELIZA - SRP","ESTÂNCIA GALILÉIA - SRP","FAZENDA MODELO - CPG","FLORESTA - SRP",
-  "FLORESTA II - SRP","GALILÉIA - SRP","GUARUJÁ - RRP","GUARUJÁ I - RRP",
-  "GUARUJÁ II - RRP","GUATAMBU - NAD","IBIRAPUERA - CPG","IPANEMA - SRP",
-  "IPIRANGA - CPG","JABORANDI - SRP","JATAÍ - TLS","JEQUITIBÁ - ACL",
+  "CHAPADA - CPG","CHAPADÃƒO - RRP","CONQUISTA GLEBA A - RRP","CONQUISTA GLEBA B - RRP",
+  "COTIA - NAS","CRISTALINA - TLS","DUAS IRMÃƒS - PRV","DUAS IRMÃƒS II - PRV",
+  "ESTÃ‚NCIA ELIZA - SRP","ESTÃ‚NCIA GALILÃ‰IA - SRP","FAZENDA MODELO - CPG","FLORESTA - SRP",
+  "FLORESTA II - SRP","GALILÃ‰IA - SRP","GUARUJÃ - RRP","GUARUJÃ I - RRP",
+  "GUARUJÃ II - RRP","GUATAMBU - NAD","IBIRAPUERA - CPG","IPANEMA - SRP",
+  "IPIRANGA - CPG","JABORANDI - SRP","JATAÃ - TLS","JEQUITIBÃ - ACL",
   "LAGOA AZUL - RRP","LAGOA GRANDE - ANR","MACHADO - ACL","MELANCIA - RRP",
-  "MEMÓRIA GLEBA A - SRP","MEMÓRIA GLEBA B - SRP","MIRASSOL - CPG","MONTE ALEGRE - SRP",
-  "NOVA ESPERANÇA - SRP","NOVO HORIZONTE - SRP","NOSSA SENHORA APARECIDA V - INC",
+  "MEMÃ“RIA GLEBA A - SRP","MEMÃ“RIA GLEBA B - SRP","MIRASSOL - CPG","MONTE ALEGRE - SRP",
+  "NOVA ESPERANÃ‡A - SRP","NOVO HORIZONTE - SRP","NOSSA SENHORA APARECIDA V - INC",
   "NOSSA SENHORA APARECIDA VI GLEBA B - SRP","PACAEMBU - SRP","PAINEIRA - ACL",
   "PANORAMA I - PRE","PANORAMA II - PRE","PARATY - RRP","PERDIZES - BTG",
   "RANCHO GRANDE - SRP","RECANTO DO LONTRA - CPG","RECREIO - SRP","RIO CLARO - SRP",
-  "SAN REMO - ACL","SANTA CLARA I - NAD","SANTA CLARA II - SRP","SANTA ELÁDIA - BRS",
+  "SAN REMO - ACL","SANTA CLARA I - NAD","SANTA CLARA II - SRP","SANTA ELÃDIA - BRS",
   "SANTA HELENA - SRP","SANTA HELENA II - SRP","SANTA HELENA III GLEBA A - SRP",
   "SANTA HELENA III GLEBA B - SRP","SANTA IZABEL - SRP","SANTA LUZIA - SRP",
   "SANTA LUZIA II - SRP","SANTA LUZIA III - SRP","SANTA MARIA - RRP",
   "SANTA MARIA II - RRP","SANTA MARIA III - RRP","SANTA RITA - RRP",
-  "SANTA ROSA - BTG","SANTA ROSA II - BTG","SANTO ANTÔNIO - RRP",
-  "SÃO FRANCISCO - ACL","SÃO GUILHERME - RRP","SÃO JOÃO II - BDR",
-  "SÃO JOSÉ - SRP","SÃO JOSÉ II - BTG","SÃO JOSÉ III - SRP",
-  "SÃO MANOEL - BRS","SÃO MANOEL II - BRS","SÃO PEDRO - RRP",
-  "SÃO PEDRO II - NAD","TABAPUÃ - RRP","TRÊS MENINAS - RRP",
-  "TUCANO - TLS","TUCANO II - TLS","TUCANO III - TLS","UNIÃO - BRS",
-  "VALE DO ANHANDUÍ - CPG","VITÓRIA - RRP"
+  "SANTA ROSA - BTG","SANTA ROSA II - BTG","SANTO ANTÃ”NIO - RRP",
+  "SÃƒO FRANCISCO - ACL","SÃƒO GUILHERME - RRP","SÃƒO JOÃƒO II - BDR",
+  "SÃƒO JOSÃ‰ - SRP","SÃƒO JOSÃ‰ II - BTG","SÃƒO JOSÃ‰ III - SRP",
+  "SÃƒO MANOEL - BRS","SÃƒO MANOEL II - BRS","SÃƒO PEDRO - RRP",
+  "SÃƒO PEDRO II - NAD","TABAPUÃƒ - RRP","TRÃŠS MENINAS - RRP",
+  "TUCANO - TLS","TUCANO II - TLS","TUCANO III - TLS","UNIÃƒO - BRS",
+  "VALE DO ANHANDUÃ - CPG","VITÃ“RIA - RRP"
 ];
 
 // ==================== STATE ====================
@@ -3717,7 +3787,7 @@ function renderCloudOnlineIndicator() {
   text.textContent = isOnline ? 'Em Nuvem' : 'Modo Local';
   badge.title = (cloudSyncState && cloudSyncState.reason)
     ? cloudSyncState.reason
-    : (isOnline ? 'Sistema conectado ao banco de dados.' : 'Sistema operando sem conexão com o banco de dados.');
+    : (isOnline ? 'Sistema conectado ao banco de dados.' : 'Sistema operando sem conexÃ£o com o banco de dados.');
 }
 
 function renderCloudSyncCard() {
@@ -4080,25 +4150,70 @@ let dashboardState = {
     return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
   })()
 };
-let analysisState = {
-  inventoryRows: [],
-  foRows: [],
-  inventoryFileName: '',
-  foFileNames: [],
-  periodStart: '',
-  periodEnd: '',
-  inventoryWarnings: [],
-  inventoryUnresolvedMappings: [],
-  inventoryConversionWarnings: [],
-  foWarnings: [],
-  foUnresolvedMappings: [],
-  foConversionWarnings: [],
-  mappingOverrides: {},
-  acknowledgedWarnings: [],
-  warnings: [],
-  unresolvedMappings: [],
-  conversionWarnings: []
-};
+function createEmptyAnalysisState() {
+  return {
+    inventoryRows: [],
+    foRows: [],
+    inventoryFileName: '',
+    foFileNames: [],
+    periodStart: '',
+    periodEnd: '',
+    inventoryWarnings: [],
+    inventoryUnresolvedMappings: [],
+    inventoryConversionWarnings: [],
+    foWarnings: [],
+    foUnresolvedMappings: [],
+    foConversionWarnings: [],
+    mappingOverrides: {},
+    acknowledgedWarnings: [],
+    warnings: [],
+    unresolvedMappings: [],
+    conversionWarnings: [],
+    mm60PriceRows: [],
+    mm60FileName: '',
+    mm60UpdatedAt: '',
+    mm60Source: ''
+  };
+}
+
+function hydrateAnalysisState(parsed) {
+  const source = parsed && typeof parsed === 'object' ? parsed : {};
+  return {
+    inventoryRows: Array.isArray(source.inventoryRows) ? source.inventoryRows : [],
+    foRows: Array.isArray(source.foRows) ? source.foRows : [],
+    inventoryFileName: normalizeText(source.inventoryFileName || ''),
+    foFileNames: Array.isArray(source.foFileNames) ? source.foFileNames.map(normalizeText).filter(Boolean) : [],
+    periodStart: normalizeText(source.periodStart || ''),
+    periodEnd: normalizeText(source.periodEnd || ''),
+    inventoryWarnings: Array.isArray(source.inventoryWarnings) ? source.inventoryWarnings : [],
+    inventoryUnresolvedMappings: Array.isArray(source.inventoryUnresolvedMappings) ? source.inventoryUnresolvedMappings : [],
+    inventoryConversionWarnings: Array.isArray(source.inventoryConversionWarnings) ? source.inventoryConversionWarnings : [],
+    foWarnings: Array.isArray(source.foWarnings) ? source.foWarnings : [],
+    foUnresolvedMappings: Array.isArray(source.foUnresolvedMappings) ? source.foUnresolvedMappings : [],
+    foConversionWarnings: Array.isArray(source.foConversionWarnings) ? source.foConversionWarnings : [],
+    mappingOverrides: source.mappingOverrides && typeof source.mappingOverrides === 'object' ? source.mappingOverrides : {},
+    acknowledgedWarnings: Array.isArray(source.acknowledgedWarnings) ? source.acknowledgedWarnings.map(normalizeText).filter(Boolean) : [],
+    warnings: Array.isArray(source.warnings) ? source.warnings : [],
+    unresolvedMappings: Array.isArray(source.unresolvedMappings) ? source.unresolvedMappings : [],
+    conversionWarnings: Array.isArray(source.conversionWarnings) ? source.conversionWarnings : [],
+    mm60PriceRows: Array.isArray(source.mm60PriceRows)
+      ? source.mm60PriceRows
+          .map((row) => ({
+            materialCode: normalizeText(row && (row.materialCode || row.material || '')),
+            materialName: normalizeText(row && (row.materialName || row.textoBreve || row.descricao || '')),
+            unitPrice: Number(row && row.unitPrice) || 0,
+            rowCount: Number(row && row.rowCount) || 0,
+            currency: normalizeText(row && (row.currency || 'BRL')) || 'BRL'
+          }))
+          .filter((row) => (row.materialCode || row.materialName) && row.unitPrice > 0)
+      : [],
+    mm60FileName: normalizeText(source.mm60FileName || ''),
+    mm60UpdatedAt: normalizeText(source.mm60UpdatedAt || ''),
+    mm60Source: normalizeText(source.mm60Source || '')
+  };
+}
+
+let analysisState = createEmptyAnalysisState();
 let analysisCache = {
   summaryRows: [],
   foPendingRows: [],
@@ -4431,25 +4546,8 @@ function loadFromStorage(targetKeys = null) {
       if (saved) {
         const parsed = JSON.parse(saved);
         if (parsed && typeof parsed === 'object') {
-          analysisState = {
-            inventoryRows: Array.isArray(parsed.inventoryRows) ? parsed.inventoryRows : [],
-            foRows: Array.isArray(parsed.foRows) ? parsed.foRows : [],
-            inventoryFileName: normalizeText(parsed.inventoryFileName || ''),
-            foFileNames: Array.isArray(parsed.foFileNames) ? parsed.foFileNames.map(normalizeText).filter(Boolean) : [],
-            periodStart: normalizeText(parsed.periodStart || ''),
-            periodEnd: normalizeText(parsed.periodEnd || ''),
-            inventoryWarnings: Array.isArray(parsed.inventoryWarnings) ? parsed.inventoryWarnings : [],
-            inventoryUnresolvedMappings: Array.isArray(parsed.inventoryUnresolvedMappings) ? parsed.inventoryUnresolvedMappings : [],
-            inventoryConversionWarnings: Array.isArray(parsed.inventoryConversionWarnings) ? parsed.inventoryConversionWarnings : [],
-            foWarnings: Array.isArray(parsed.foWarnings) ? parsed.foWarnings : [],
-            foUnresolvedMappings: Array.isArray(parsed.foUnresolvedMappings) ? parsed.foUnresolvedMappings : [],
-            foConversionWarnings: Array.isArray(parsed.foConversionWarnings) ? parsed.foConversionWarnings : [],
-            mappingOverrides: parsed.mappingOverrides && typeof parsed.mappingOverrides === 'object' ? parsed.mappingOverrides : {},
-            acknowledgedWarnings: Array.isArray(parsed.acknowledgedWarnings) ? parsed.acknowledgedWarnings.map(normalizeText).filter(Boolean) : [],
-            warnings: Array.isArray(parsed.warnings) ? parsed.warnings : [],
-            unresolvedMappings: Array.isArray(parsed.unresolvedMappings) ? parsed.unresolvedMappings : [],
-            conversionWarnings: Array.isArray(parsed.conversionWarnings) ? parsed.conversionWarnings : []
-          };
+          analysisState = hydrateAnalysisState(parsed);
+          invalidateMm60PriceCache();
         }
       }
     } catch(e) { console.error('Erro ao carregar analise:', e); corruptedKeys.push('Analise'); }
@@ -4487,6 +4585,7 @@ function saveToStorage(reason = 'storage') {
 }
 
 function saveAnalysisState() {
+  invalidateMm60PriceCache();
   localStorage.setItem(STORAGE_KEYS.analise, JSON.stringify(analysisState));
   scheduleCloudSync('analysis');
   queueDailyBackupRun();
@@ -4966,24 +5065,25 @@ function exportFullBackup() {
 function clearAllData() {
   const total = movimentos.length + legacyOverlay.length + legacyMovements.length + embalagemDevolucoes.length;
   if (total === 0) {
-    showToast('Não há dados para limpar.', true);
+    showToast('NÃ£o hÃ¡ dados para limpar.', true);
     return;
   }
-  const msg = 'ATENÇÃO: Esta ação irá remover permanentemente:\n\n' +
-    '• ' + movimentos.length + ' movimentação(ões)\n' +
-    '• ' + embalagemDevolucoes.length + ' registro(s) de embalagem\n' +
-    '• Todos os dados de análise\n\n' +
-    'Usuários e dados cadastrais serão preservados.\n\n' +
+  const msg = 'ATENÃ‡ÃƒO: Esta aÃ§Ã£o irÃ¡ remover permanentemente:\n\n' +
+    'â€¢ ' + movimentos.length + ' movimentaÃ§Ã£o(Ãµes)\n' +
+    'â€¢ ' + embalagemDevolucoes.length + ' registro(s) de embalagem\n' +
+    'â€¢ Todos os dados de anÃ¡lise\n\n' +
+    'UsuÃ¡rios e dados cadastrais serÃ£o preservados.\n\n' +
     'Deseja continuar? (Recomendamos exportar um backup antes)';
   if (!confirm(msg)) return;
-  if (!confirm('Confirme novamente: TODOS os dados de movimentações serão apagados. Tem certeza?')) return;
+  if (!confirm('Confirme novamente: TODOS os dados de movimentaÃ§Ãµes serÃ£o apagados. Tem certeza?')) return;
   movimentos = [];
   legacyOverlay = [];
   legacyMovements = [];
   embalagemDevolucoes = [];
-  analysisState = { inventoryRows:[], foRows:[], inventoryFileName:'', foFileNames:[], periodStart:'', periodEnd:'', inventoryWarnings:[], inventoryUnresolvedMappings:[], inventoryConversionWarnings:[], foWarnings:[], foUnresolvedMappings:[], foConversionWarnings:[], mappingOverrides:{}, acknowledgedWarnings:[], warnings:[], unresolvedMappings:[], conversionWarnings:[] };
+  analysisState = createEmptyAnalysisState();
+  invalidateMm60PriceCache();
   saveToStorage('storage');
-  showToast('Todos os dados de movimentações foram removidos. Recarregando...');
+  showToast('Todos os dados de movimentaÃ§Ãµes foram removidos. Recarregando...');
   setTimeout(() => location.reload(), 1500);
 }
 
@@ -4997,7 +5097,7 @@ function updateBackupPanel() {
     statsEl.innerHTML =
       '<div style="background:var(--bg3);border-radius:8px;padding:8px 12px;text-align:center;">' +
         '<div style="font-size:1.1rem;font-weight:700;color:var(--neon);">' + movCount + '</div>' +
-        '<div style="font-size:0.7rem;color:var(--text-dim);">Movimentações</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-dim);">MovimentaÃ§Ãµes</div>' +
       '</div>' +
       '<div style="background:var(--bg3);border-radius:8px;padding:8px 12px;text-align:center;">' +
         '<div style="font-size:1.1rem;font-weight:700;color:var(--blue);">' + embCount + '</div>' +
@@ -5005,11 +5105,11 @@ function updateBackupPanel() {
       '</div>' +
       '<div style="background:var(--bg3);border-radius:8px;padding:8px 12px;text-align:center;">' +
         '<div style="font-size:1.1rem;font-weight:700;color:var(--yellow);">' + userCount + '</div>' +
-        '<div style="font-size:0.7rem;color:var(--text-dim);">Usuários</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-dim);">UsuÃ¡rios</div>' +
       '</div>' +
       '<div style="background:var(--bg3);border-radius:8px;padding:8px 12px;text-align:center;">' +
         '<div style="font-size:1.1rem;font-weight:700;color:var(--text);">' + (analysisState && analysisState.inventoryRows ? analysisState.inventoryRows.length : 0) + '</div>' +
-        '<div style="font-size:0.7rem;color:var(--text-dim);">Itens Análise</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-dim);">Itens AnÃ¡lise</div>' +
       '</div>';
   }
   // Storage usage
@@ -5039,7 +5139,7 @@ function updateBackupPanel() {
     if (last) {
       try {
         const d = new Date(last);
-        lastEl.textContent = d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+        lastEl.textContent = d.toLocaleDateString('pt-BR') + ' Ã s ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
         lastEl.style.color = 'var(--neon)';
       } catch(e) { lastEl.textContent = 'Desconhecido'; }
     } else {
@@ -5068,7 +5168,10 @@ function importFullBackup() {
         if (Array.isArray(backup.movimentos)) movimentos = backup.movimentos;
         if (Array.isArray(backup.legacyOverlay)) legacyOverlay = backup.legacyOverlay;
         if (Array.isArray(backup.embalagens)) embalagemDevolucoes = backup.embalagens.map(normalizePackagingReturnRecord).filter(item => item.quantidade > 0);
-        if (backup.analise && typeof backup.analise === 'object') analysisState = backup.analise;
+        if (backup.analise && typeof backup.analise === 'object') {
+          analysisState = hydrateAnalysisState(backup.analise);
+          invalidateMm60PriceCache();
+        }
         if (Array.isArray(backup.users) && backup.users.length > 0) {
           users = backup.users;
           ensureLucasAdmin(users);
@@ -5162,6 +5265,15 @@ let _analysisDepositoCatalogCache = null;
 function invalidateAnalysisDepositoCatalog() { _analysisDepositoCatalogCache = null; }
 let _analysisPackagingRowsCache = null;
 function invalidateAnalysisPackagingRowsCache() { _analysisPackagingRowsCache = null; }
+let _mm60PriceCache = null;
+function invalidateMm60PriceCache() { _mm60PriceCache = null; }
+const MM60_CLOUD_DOC_ID = (window.CTI_FIREBASE_OPTIONS && window.CTI_FIREBASE_OPTIONS.mm60DocId) || 'asset__mm60_prices_v1';
+const mm60AutoLoadState = {
+  attempted: false,
+  loading: false,
+  promise: null,
+  lastError: ''
+};
 function getAnalysisPackagingRows() {
   if (!_analysisPackagingRowsCache) {
     _analysisPackagingRowsCache = buildEmbalagemExtractRows();
@@ -5187,6 +5299,14 @@ function parseLocaleNumber(value) {
   const normalized = String(value).trim().replace(/\s+/g, '').replace(',', '.');
   const parsed = parseFloat(normalized);
   return Number.isNaN(parsed) ? NaN : parsed;
+}
+
+function formatCurrencyBRL(value) {
+  const amount = Number(value) || 0;
+  return amount.toLocaleString('pt-BR', {
+    style: 'currency',
+    currency: 'BRL'
+  });
 }
 
 function formatNumberInputValue(value) {
@@ -6632,7 +6752,7 @@ function openAccessEntityDetail(kind, id) {
           <span class="badge ${kind === 'request' ? 'badge-writer' : 'badge-transferencia'}">${kind === 'request' ? 'Solicitacao' : 'Usuario'}</span>
           <span class="status-finalizado" style="font-size:0.68rem">${escapeHtml(profileLabel)}</span>
         </div>
-        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">Ã—</button>
       </div>
       <div class="detail-body">
         <div class="detail-section">
@@ -6723,13 +6843,13 @@ function approveAccessRequest(reqId) {
     const appUrl = window.location.href;
     const subject = encodeURIComponent('Bem-vindo ao CTI 2026 - Acesso Liberado');
     const body = encodeURIComponent(
-      'Olá ' + req.nome + ',\r\n\r\n' +
+      'OlÃ¡ ' + req.nome + ',\r\n\r\n' +
       'Seu acesso ao sistema CTI 2026 foi aprovado!\r\n\r\n' +
       'Dados de acesso:\r\n' +
-      '- Usuário: ' + req.nome + '\r\n' +
-      '- Senha temporária: ' + pwd + '\r\n' +
+      '- UsuÃ¡rio: ' + req.nome + '\r\n' +
+      '- Senha temporÃ¡ria: ' + pwd + '\r\n' +
       '- Link do sistema: ' + appUrl + '\r\n\r\n' +
-      'No primeiro acesso, você será solicitado a criar uma nova senha.\r\n\r\n' +
+      'No primeiro acesso, vocÃª serÃ¡ solicitado a criar uma nova senha.\r\n\r\n' +
       'Atenciosamente,\r\n' +
       'Equipe CTI - MS Florestal'
     );
@@ -7006,7 +7126,7 @@ function buildEPSAccountData() {
     // If it's a known name, resolve to code
     const code = nameToCode[dep.toLowerCase()];
     if (code) return { deposito: code, nome: codeToName[code] || dep };
-    // Unknown — use as-is (custom deposit or name not in master)
+    // Unknown â€” use as-is (custom deposit or name not in master)
     return { deposito: dep, nome: dep };
   }
 
@@ -7479,7 +7599,7 @@ function abrirDetalheEps(deposito) {
     ' <span style="color:var(--text-dim);font-weight:400;font-size:0.8rem;">Dep. ' + escapeHtml(eps.deposito) + '</span>' +
     (blocked ? ' <span style="color:var(--red);font-size:0.7rem;font-weight:700;background:rgba(255,71,87,0.15);padding:2px 8px;border-radius:4px;margin-left:8px;">BLOQUEADA</span>' : '');
 
-  // Bloqueio button — hide for EPS/consulta users
+  // Bloqueio button â€” hide for EPS/consulta users
   const bloqBtn = document.getElementById('saldoEpsBloqBtn');
   const canBlock = currentUser && (currentUser.isAdmin || currentUser.userType === 'msfc');
   bloqBtn.style.display = canBlock ? '' : 'none';
@@ -7505,7 +7625,7 @@ function abrirDetalheEps(deposito) {
       '<div style="font-size:1.2rem;font-weight:700;color:var(--red);font-family:\'JetBrains Mono\',monospace;">+' + formatNumber(eps.retiradas) + '</div>' +
     '</div>' +
     '<div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">' +
-      '<div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">Devoluções</div>' +
+      '<div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">DevoluÃ§Ãµes</div>' +
       '<div style="font-size:1.2rem;font-weight:700;color:var(--neon);font-family:\'JetBrains Mono\',monospace;">-' + formatNumber(eps.devolucoes) + '</div>' +
     '</div>' +
     '<div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">' +
@@ -7550,7 +7670,7 @@ function abrirDetalheEps(deposito) {
   // History table
   const histTbody = document.getElementById('saldoEpsHistoricoTable');
   if (!eps.historico.length) {
-    histTbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhuma movimentação registrada.</td></tr>';
+    histTbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhuma movimentaÃ§Ã£o registrada.</td></tr>';
   } else {
     histTbody.innerHTML = eps.historico.slice(0, 100).map(h => {
       const qtyColor = h.quantidade > 0 ? 'var(--red)' : 'var(--neon)';
@@ -7696,7 +7816,7 @@ function buildStyledWorksheet(config) {
         <tbody>${tableRowsHtml}</tbody>
       </table>
     </div>
-    <div class="sheet-footer">CTI 2026 • Elaborado por Lucas Marques</div>
+    <div class="sheet-footer">CTI 2026 â€¢ Elaborado por Lucas Marques</div>
   </div>
 </body>
 </html>`;
@@ -7782,7 +7902,7 @@ function exportSaldoEpsCSV() {
     Object.values(eps.materiais).sort((a, b) => b.saldo - a.saldo).forEach(m => {
       lines.push([
         '',
-        '  → ' + m.material,
+        '  â†’ ' + m.material,
         m.retiradas,
         m.devolucoes,
         m.transferenciasIn,
@@ -7881,7 +8001,7 @@ function setNfTipo(tipo) {
 function onTipoChange() {
   updateEmbalagemVisibility();
   return;
-  const embTypes = ['Retirada', 'Devolução', 'Transferencia Entre EPS'];
+  const embTypes = ['Retirada', 'DevoluÃ§Ã£o', 'Transferencia Entre EPS'];
   if (embTypes.includes(tipo)) {
     document.getElementById('embSection').style.display = 'block';
   }
@@ -7891,7 +8011,7 @@ function updateEmbalagemVisibility() {
   const embSection = document.getElementById('embSection');
   if (!embSection) return;
   const tipo = document.getElementById('fTipo').value;
-  const embTypes = ['Retirada', 'DevoluÃ§Ã£o', 'Transferencia Entre EPS'];
+  const embTypes = ['Retirada', 'DevoluÃƒÂ§ÃƒÂ£o', 'Transferencia Entre EPS'];
   const hasPackagingMaterial = getMaterialRows().some(row => row.dataset.controlaEmbalagem === 'S');
   embSection.style.display = (tipo === 'Retirada' || tipo.includes('Devolu') || tipo === 'Transferencia Entre EPS' || hasPackagingMaterial) ? 'block' : 'none';
 }
@@ -7947,12 +8067,12 @@ function saveMovimento(e) {
     const idx = movimentos.findIndex(m => m.id === editingId);
     if (idx !== -1) movimentos[idx] = mov;
     editingId = null;
-    showToast('Movimentação atualizada com sucesso!');
+    showToast('MovimentaÃ§Ã£o atualizada com sucesso!');
   } else {
     movimentos.push(mov);
     showToast(isWriter
-      ? 'WRITER registrada! Ficará pendente até finalizar.'
-      : 'Movimentação registrada com sucesso!');
+      ? 'WRITER registrada! FicarÃ¡ pendente atÃ© finalizar.'
+      : 'MovimentaÃ§Ã£o registrada com sucesso!');
   }
 
   saveToStorage('movimentos');
@@ -7973,22 +8093,22 @@ function finalizarWriter(id) {
     <div class="modal">
       <div class="modal-title" style="color:#ff8800">Finalizar WRITER</div>
       <div class="modal-text">
-        <strong>${mov.material}</strong> — ${mov.quantidade.toLocaleString('pt-BR')} ${mov.unidade}<br>
-        ${mov.origem} → ${mov.destino}<br>
+        <strong>${mov.material}</strong> â€” ${mov.quantidade.toLocaleString('pt-BR')} ${mov.unidade}<br>
+        ${mov.origem} â†’ ${mov.destino}<br>
         NF: ${mov.nf} | Motivo: ${mov.motivo || '-'}
         ${getMovementMaterials(mov).length > 1 ? `<br><br>Itens: ${getMovementMaterials(mov).map(item => `${item.material} (${formatNumber(item.quantidade)} ${item.unidade || ''})`).join(' | ')}` : ''}
       </div>
       <div class="modal-form-group">
-        <label>Data Mov. Sistêmico *</label>
+        <label>Data Mov. SistÃªmico *</label>
         <input type="date" id="finDataSist">
       </div>
       <div class="modal-form-group">
         <label>MIGO *</label>
-        <input type="text" id="finMigo" placeholder="Nº MIGO">
+        <input type="text" id="finMigo" placeholder="NÂº MIGO">
       </div>
       <div class="modal-form-group">
-        <label>Nº Pedido (se houver)</label>
-        <input type="text" id="finPedido" placeholder="Nº do pedido" value="${mov.pedido === 'WRITER' ? '' : mov.pedido}">
+        <label>NÂº Pedido (se houver)</label>
+        <input type="text" id="finPedido" placeholder="NÂº do pedido" value="${mov.pedido === 'WRITER' ? '' : mov.pedido}">
       </div>
       <div class="modal-actions">
         <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
@@ -8004,7 +8124,7 @@ function finalizarWriter(id) {
     const pedido = overlay.querySelector('#finPedido').value;
 
     if (!dataSist || !migo) {
-      showToast('Preencha Data Mov. Sistêmico e MIGO para finalizar.', true);
+      showToast('Preencha Data Mov. SistÃªmico e MIGO para finalizar.', true);
       return;
     }
 
@@ -8065,7 +8185,7 @@ function editMov(id) {
   // Restore NF tipo
   setNfTipo(mov.nfTipo === 'writer' ? 'writer' : 'pedido');
 
-  const embTypes = ['Retirada', 'Devolução', 'Transferencia Entre EPS'];
+  const embTypes = ['Retirada', 'DevoluÃ§Ã£o', 'Transferencia Entre EPS'];
   if (embTypes.includes(mov.tipo) || mov.embDevolver > 0) {
     document.getElementById('embSection').style.display = 'block';
   }
@@ -8074,7 +8194,7 @@ function editMov(id) {
   // Switch to form tab
   switchTab('novo');
 
-  showToast('Editando movimentação #' + id);
+  showToast('Editando movimentaÃ§Ã£o #' + id);
 }
 
 function deleteMov(id) {
@@ -8084,14 +8204,14 @@ function deleteMov(id) {
   }
 
   showModal(
-    'Confirmar Exclusão',
-    'Deseja realmente excluir esta movimentação? Esta ação não pode ser desfeita.',
+    'Confirmar ExclusÃ£o',
+    'Deseja realmente excluir esta movimentaÃ§Ã£o? Esta aÃ§Ã£o nÃ£o pode ser desfeita.',
     () => {
       movimentos = movimentos.filter(m => m.id !== id);
       saveToStorage('movimentos');
       updateDashboard();
       renderTable();
-      showToast('Movimentação excluída.');
+      showToast('MovimentaÃ§Ã£o excluÃ­da.');
     }
   );
 }
@@ -8157,8 +8277,8 @@ function getFilteredData() {
 function getBadgeClass(tipo) {
   if (!tipo) return 'badge-other';
   if (tipo.includes('Retirada')) return 'badge-retirada';
-  if (tipo.includes('Devolução') || tipo.includes('Devolu')) return 'badge-devolucao';
-  if (tipo.includes('Transferencia') || tipo.includes('Transfer')) return 'badge-transferencia';
+  if (tipo.includes('DevoluÃ§Ã£o') || tipo.includes('Devolu')) return 'badge-devolucao';
+  if (tipo.includes('Transferencia') || tipo.includes('Transfer') || tipo.includes('Baldeio')) return 'badge-transferencia';
   if (tipo.includes('Cancelada')) return 'badge-cancelada';
   return 'badge-other';
 }
@@ -8219,7 +8339,7 @@ function renderTable() {
 
   // Page info
   document.getElementById('pageInfo').textContent =
-    `Mostrando ${data.length > 0 ? start + 1 : 0}–${Math.min(start + PAGE_SIZE, data.length)} de ${data.length} registros`;
+    `Mostrando ${data.length > 0 ? start + 1 : 0}â€“${Math.min(start + PAGE_SIZE, data.length)} de ${data.length} registros`;
 
   // Pagination buttons
   const pgContainer = document.getElementById('paginationBtns');
@@ -8264,7 +8384,7 @@ function filterTable() {
 function updateDashboard() {
   const total = movimentos.length;
   const retiradas = movimentos.filter(m => m.tipo === 'Retirada').length;
-  const devolucoes = movimentos.filter(m => m.tipo === 'Devolução').length;
+  const devolucoes = movimentos.filter(m => m.tipo === 'DevoluÃ§Ã£o').length;
   const writers = movimentos.filter(m => m.status === 'pendente').length;
   const pendEmb = movimentos.filter(m => m.contEmb === 'SIM' && m.embDevolver > 0).length;
 
@@ -8449,7 +8569,7 @@ function showPasswordActions(userName, password) {
       '<button class="btn btn-secondary" onclick="navigator.clipboard.writeText(\'' + escapeHtml(password) + '\');showToast(\'Senha copiada!\');document.getElementById(\'passwordActionsPanel\').remove();" style="flex:1;padding:8px 12px;font-size:0.78rem;">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
         'Copiar Senha</button>' +
-      '<button class="btn btn-primary" onclick="window.open(\'mailto:?subject=Credenciais%20de%20Acesso%20CTI&body=Olá%20' + encodeURIComponent(userName) + ',%0A%0ASuas%20credenciais%20de%20acesso%20ao%20CTI:%0AUsuario:%20' + encodeURIComponent(userName) + '%0ASenha%20temporaria:%20' + encodeURIComponent(password) + '%0A%0AVoce%20devera%20alterar%20a%20senha%20no%20primeiro%20acesso.\');document.getElementById(\'passwordActionsPanel\').remove();" style="flex:1;padding:8px 12px;font-size:0.78rem;">' +
+      '<button class="btn btn-primary" onclick="window.open(\'mailto:?subject=Credenciais%20de%20Acesso%20CTI&body=OlÃ¡%20' + encodeURIComponent(userName) + ',%0A%0ASuas%20credenciais%20de%20acesso%20ao%20CTI:%0AUsuario:%20' + encodeURIComponent(userName) + '%0ASenha%20temporaria:%20' + encodeURIComponent(password) + '%0A%0AVoce%20devera%20alterar%20a%20senha%20no%20primeiro%20acesso.\');document.getElementById(\'passwordActionsPanel\').remove();" style="flex:1;padding:8px 12px;font-size:0.78rem;">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>' +
         'Enviar por Email (Outlook)</button>' +
     '</div>';
@@ -9001,7 +9121,7 @@ function exportCSVLegacy() {
   const data = getFilteredData();
   if (data.length === 0) { showToast('Nenhum registro para exportar.', true); return; }
 
-  const headers = ['Data Mov. Físico','Tipo','Status','Origem','Destino','EPS Destino','Supervisor','Centro','Depósito','Pedido','Motivo','Remessa','NF','Data Mov. Sistêmico','MIGO','Cód. Produto','Material','Quantidade','Unidade','Lote','Data Dev. Emb.','Emb. Devolver','Caixas Devolver','Cont. Embalagem','Inserido por','Inserido em','Finalizado por','Finalizado em'];
+  const headers = ['Data Mov. FÃ­sico','Tipo','Status','Origem','Destino','EPS Destino','Supervisor','Centro','DepÃ³sito','Pedido','Motivo','Remessa','NF','Data Mov. SistÃªmico','MIGO','CÃ³d. Produto','Material','Quantidade','Unidade','Lote','Data Dev. Emb.','Emb. Devolver','Caixas Devolver','Cont. Embalagem','Inserido por','Inserido em','Finalizado por','Finalizado em'];
   const keys = ['dataFisico','tipo','status','origem','destino','epsDestino','supervisor','centro','deposito','pedido','motivo','remessa','nf','dataSistemico','migo','codProduto','material','quantidade','unidade','lote','dataDevEmb','embDevolver','caixasDevolver','contEmb','inseridoPor','inseridoEm','finalizadoPor','finalizadoEm'];
 
   let csv = '\uFEFF' + headers.join(';') + '\n';
@@ -9451,7 +9571,7 @@ function showDetail(id) {
     const cls = val ? (isMono ? 'mono' : '') : 'empty';
     return `<div class="detail-field">
       <div class="detail-field-label">${label}</div>
-      <div class="detail-field-value ${cls}">${val || '—'}</div>
+      <div class="detail-field-value ${cls}">${val || 'â€”'}</div>
     </div>`;
   }
 
@@ -9464,33 +9584,33 @@ function showDetail(id) {
           <span class="badge ${getBadgeClass(m.tipo)}" style="font-size:0.75rem">${m.tipo}</span>
           ${statusBadge}
         </div>
-        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">✕</button>
+        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">âœ•</button>
       </div>
       <div class="detail-body">
 
         <div class="detail-section">
-          <div class="detail-section-title">Movimentação</div>
+          <div class="detail-section-title">MovimentaÃ§Ã£o</div>
           <div class="detail-grid">
-            ${field('Data Mov. Físico', formatDate(m.dataFisico))}
+            ${field('Data Mov. FÃ­sico', formatDate(m.dataFisico))}
             ${field('Tipo', m.tipo)}
             ${field('Origem / EPS Fornecedora', m.origem)}
             ${field('Destino (Fazenda)', m.destino)}
             ${field('EPS Destino', m.epsDestino)}
             ${field('Supervisor', m.supervisor)}
             ${field('Centro Destino', m.centro, true)}
-            ${field('Depósito', m.deposito, true)}
+            ${field('DepÃ³sito', m.deposito, true)}
           </div>
         </div>
 
         <div class="detail-section">
           <div class="detail-section-title">Pedido / Nota Fiscal</div>
           <div class="detail-grid">
-            ${field('Tipo NF', m.nfTipo === 'writer' ? 'WRITER (sem mov. sistêmico)' : 'Via Pedido')}
+            ${field('Tipo NF', m.nfTipo === 'writer' ? 'WRITER (sem mov. sistÃªmico)' : 'Via Pedido')}
             ${field('Pedido', m.pedido, true)}
             ${field('Motivo', m.motivo)}
             ${field('Remessa', m.remessa, true)}
             ${field('NF', m.nf, true)}
-            ${field('Data Mov. Sistêmico', formatDate(m.dataSistemico))}
+            ${field('Data Mov. SistÃªmico', formatDate(m.dataSistemico))}
             ${field('MIGO', m.migo, true)}
           </div>
         </div>
@@ -9500,9 +9620,9 @@ function showDetail(id) {
           <div class="detail-grid">
             <div class="detail-field full">
               <div class="detail-field-label">Texto Breve Material</div>
-              <div class="detail-field-value" style="font-size:1rem;font-weight:600">${m.material || '—'}</div>
+              <div class="detail-field-value" style="font-size:1rem;font-weight:600">${m.material || 'â€”'}</div>
             </div>
-            ${field('Código Produto', m.codProduto, true)}
+            ${field('CÃ³digo Produto', m.codProduto, true)}
             ${field('Quantidade', formatNumber(m.quantidade), true)}
             ${field('Unidade', m.unidade)}
             ${field('Lote', m.lote, true)}
@@ -9530,7 +9650,7 @@ function showDetail(id) {
         <div class="detail-section">
           <div class="detail-section-title">Controle de Embalagens</div>
           <div class="detail-grid">
-            ${field('Data Devolução Embalagens', formatDate(m.dataDevEmb))}
+            ${field('Data DevoluÃ§Ã£o Embalagens', formatDate(m.dataDevEmb))}
             ${field('Embalagens a Devolver', m.embDevolver ? String(m.embDevolver) : '', true)}
             ${field('Caixas a Devolver', m.caixasDevolver ? String(m.caixasDevolver) : '', true)}
             ${field('Contabilizar Embalagem', m.contEmb)}
@@ -9542,7 +9662,7 @@ function showDetail(id) {
         <div>
           Inserido por <strong style="color:var(--neon)">${m.inseridoPor}</strong>
           ${m.inseridoEm ? ' em ' + new Date(m.inseridoEm).toLocaleString('pt-BR') : ''}
-          ${m.finalizadoPor ? ` · Finalizado por <strong style="color:var(--neon)">${m.finalizadoPor}</strong>` : ''}
+          ${m.finalizadoPor ? ` Â· Finalizado por <strong style="color:var(--neon)">${m.finalizadoPor}</strong>` : ''}
         </div>
         <div class="detail-actions">
           ${isPendente ? `<button class="btn-finalizar" onclick="this.closest('.modal-overlay').remove(); finalizarWriter(${m.id})">Finalizar</button>` : ''}
@@ -10286,7 +10406,8 @@ function isCancelledMovement(value) {
 }
 
 function isTransferenciaSaldoType(tipo) {
-  return normalizeText(tipo).toLowerCase().includes('transfer');
+  const normalized = normalizeText(tipo).toLowerCase();
+  return normalized.includes('transfer') || normalized.includes('baldeio');
 }
 
 function isDevolucaoSaldoType(tipo) {
@@ -10889,7 +11010,7 @@ function saveMovimento(e) {
   const blockedDest = route.depositoDestino && isEpsBlocked(route.depositoDestino);
   if (blockedOrigin || blockedDest) {
     const blockedName = blockedOrigin ? route.depositoOrigem : route.depositoDestino;
-    showToast('⚠️ EPS ' + blockedName + ' está BLOQUEADA. Regularize a situação antes de registrar movimentações.', true);
+    showToast('âš ï¸ EPS ' + blockedName + ' estÃ¡ BLOQUEADA. Regularize a situaÃ§Ã£o antes de registrar movimentaÃ§Ãµes.', true);
     return false;
   }
 
@@ -12217,7 +12338,7 @@ function normalizeAnalysisLookupKey(value, loose) {
   text = text.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase();
   text = text.replace(/[_\-./]+/g, ' ').replace(/\s+/g, ' ').trim();
   if (loose) {
-    text = text.replace(/\b(ms|servicos|servi[cç]os|agroflorestal|i|ii|iii|iv|v|vi|vii|viii|ix|x)\b/g, ' ');
+    text = text.replace(/\b(ms|servicos|servi[cÃ§]os|agroflorestal|i|ii|iii|iv|v|vi|vii|viii|ix|x)\b/g, ' ');
     text = text.replace(/\s+/g, ' ').trim();
   }
   return text;
@@ -12647,6 +12768,205 @@ async function readWorkbookFromFile(file) {
   return XLSX.read(data, { type: 'array', cellDates: true });
 }
 
+function readWorkbookFromArrayBuffer(data) {
+  if (!window.XLSX) throw new Error('Biblioteca XLSX nao carregada.');
+  return XLSX.read(data, { type: 'array', cellDates: true });
+}
+
+function normalizeMm60LookupKey(value) {
+  return normalizeText(value)
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .replace(/[_./-]+/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
+}
+
+function getMm60PriceRows() {
+  return Array.isArray(analysisState.mm60PriceRows)
+    ? analysisState.mm60PriceRows.filter((row) => Number(row.unitPrice) > 0)
+    : [];
+}
+
+function getMm60PriceMaps() {
+  if (_mm60PriceCache) return _mm60PriceCache;
+  const byCode = new Map();
+  const byName = new Map();
+  getMm60PriceRows().forEach((row) => {
+    const codeKey = normalizeText(row.materialCode || '').toLowerCase();
+    const nameKey = normalizeMm60LookupKey(row.materialName || '');
+    if (codeKey && !byCode.has(codeKey)) byCode.set(codeKey, row);
+    if (nameKey && !byName.has(nameKey)) byName.set(nameKey, row);
+  });
+  _mm60PriceCache = { byCode, byName };
+  return _mm60PriceCache;
+}
+
+function getMm60PriceForMaterial(item) {
+  const source = item && typeof item === 'object' ? item : {};
+  const materialName = normalizeText(source.material || source.d || '');
+  const materialMeta = materialName ? getMaterialMetaByName(materialName) : null;
+  const materialCode = normalizeText(source.codProduto || source.materialCode || (materialMeta ? materialMeta.c : ''));
+  const maps = getMm60PriceMaps();
+  if (materialCode) {
+    const byCode = maps.byCode.get(materialCode.toLowerCase());
+    if (byCode) return byCode;
+  }
+  if (materialName) {
+    const byName = maps.byName.get(normalizeMm60LookupKey(materialName));
+    if (byName) return byName;
+  }
+  return null;
+}
+
+function parseMm60Workbook(workbook, fileName = 'MM60.xlsx') {
+  if (!workbook || !Array.isArray(workbook.SheetNames) || !workbook.SheetNames.length) {
+    throw new Error('A planilha MM60 nao possui abas validas.');
+  }
+
+  const sheet = workbook.Sheets[workbook.SheetNames[0]];
+  const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: true });
+  const grouped = new Map();
+  let ignoredZero = 0;
+
+  rawRows.forEach((row) => {
+    const materialCode = normalizeText(getObjectValueByKeys(row, ['Material', 'Codigo material', 'CÃ³digo material']));
+    const materialName = normalizeText(getObjectValueByKeys(row, ['Texto breve material', 'Descricao do material', 'DescriÃ§Ã£o do material']));
+    const rawPrice = parseLocaleNumber(getObjectValueByKeys(row, ['Preco', 'PreÃ§o']));
+    const rawPriceUnit = parseLocaleNumber(getObjectValueByKeys(row, ['Unidade preco', 'Unidade preÃ§o']));
+
+    if ((!materialCode && !materialName) || !Number.isFinite(rawPrice) || rawPrice <= 0) {
+      if (Number.isFinite(rawPrice) && rawPrice <= 0) ignoredZero += 1;
+      return;
+    }
+
+    const divisor = Number.isFinite(rawPriceUnit) && rawPriceUnit > 0 ? rawPriceUnit : 1;
+    const unitPrice = rawPrice / divisor;
+    if (!Number.isFinite(unitPrice) || unitPrice <= 0) return;
+
+    const key = materialCode
+      ? `code:${materialCode.toLowerCase()}`
+      : `name:${normalizeMm60LookupKey(materialName)}`;
+
+    if (!grouped.has(key)) {
+      grouped.set(key, {
+        materialCode,
+        materialName,
+        unitPriceTotal: 0,
+        rowCount: 0
+      });
+    }
+
+    const entry = grouped.get(key);
+    if (!entry.materialCode && materialCode) entry.materialCode = materialCode;
+    if (!entry.materialName && materialName) entry.materialName = materialName;
+    entry.unitPriceTotal += unitPrice;
+    entry.rowCount += 1;
+  });
+
+  const priceRows = [...grouped.values()]
+    .map((entry) => ({
+      materialCode: normalizeText(entry.materialCode || ''),
+      materialName: normalizeText(entry.materialName || ''),
+      unitPrice: Number((entry.unitPriceTotal / Math.max(1, entry.rowCount)).toFixed(6)),
+      rowCount: entry.rowCount,
+      currency: 'BRL'
+    }))
+    .filter((row) => (row.materialCode || row.materialName) && row.unitPrice > 0)
+    .sort((a, b) => {
+      const labelA = a.materialName || a.materialCode;
+      const labelB = b.materialName || b.materialCode;
+      return labelA.localeCompare(labelB, 'pt-BR');
+    });
+
+  return {
+    fileName: normalizeText(fileName || 'MM60.xlsx') || 'MM60.xlsx',
+    priceRows,
+    rawCount: rawRows.length,
+    ignoredZero
+  };
+}
+
+function applyMm60Pricing(parsed, source = 'manual') {
+  analysisState.mm60PriceRows = Array.isArray(parsed && parsed.priceRows) ? parsed.priceRows : [];
+  analysisState.mm60FileName = normalizeText(parsed && parsed.fileName ? parsed.fileName : 'MM60.xlsx') || 'MM60.xlsx';
+  analysisState.mm60UpdatedAt = normalizeText(parsed && parsed.updatedAt ? parsed.updatedAt : new Date().toISOString());
+  analysisState.mm60Source = normalizeText(source || 'manual') || 'manual';
+  saveAnalysisState();
+}
+
+function normalizeMm60CloudPayload(payload) {
+  const source = payload && typeof payload === 'object' ? payload : {};
+  const priceRows = Array.isArray(source.priceRows)
+    ? source.priceRows
+        .map((row) => ({
+          materialCode: normalizeText(row && (row.materialCode || row.material || '')),
+          materialName: normalizeText(row && (row.materialName || row.descricao || row.textoBreve || '')),
+          unitPrice: Number(row && row.unitPrice) || 0,
+          rowCount: Number(row && row.rowCount) || 0,
+          currency: normalizeText(row && (row.currency || 'BRL')) || 'BRL'
+        }))
+        .filter((row) => (row.materialCode || row.materialName) && row.unitPrice > 0)
+    : [];
+
+  return {
+    fileName: normalizeText(source.fileName || 'MM60.xlsx') || 'MM60.xlsx',
+    updatedAt: normalizeText(source.updatedAt || source.updatedAtClient || source.generatedAt || ''),
+    rawCount: Number(source.rawCount) || 0,
+    ignoredZero: Number(source.ignoredZero) || 0,
+    priceRows
+  };
+}
+
+async function loadMm60PricingFromCloud(force = false) {
+  if (mm60AutoLoadState.promise) return mm60AutoLoadState.promise;
+
+  const isWeb = location.protocol === 'http:' || location.protocol === 'https:';
+  if (!isWeb) {
+    mm60AutoLoadState.attempted = true;
+    mm60AutoLoadState.loading = false;
+    if (force) showToast('A base MM60 do banco so pode ser sincronizada na versao web.', true);
+    return { ok: false, skipped: true, reason: 'local' };
+  }
+
+  if (!force && mm60AutoLoadState.attempted) return { ok: false, skipped: true, reason: mm60AutoLoadState.lastError || 'already-attempted' };
+
+  mm60AutoLoadState.attempted = true;
+  mm60AutoLoadState.loading = true;
+  mm60AutoLoadState.promise = (async () => {
+    try {
+      if (!window.CTICloudSync || typeof window.CTICloudSync.readDocument !== 'function') {
+        throw new Error('Leitura do Firebase indisponivel.');
+      }
+      const response = await window.CTICloudSync.readDocument(MM60_CLOUD_DOC_ID, { force });
+      if (!response || !response.ok || !response.data) {
+        throw new Error('Base MM60 ainda nao foi publicada no Firebase.');
+      }
+      const parsed = normalizeMm60CloudPayload(response.data);
+      if (!parsed.priceRows.length) {
+        throw new Error('Base MM60 no Firebase esta vazia.');
+      }
+      mm60AutoLoadState.lastError = '';
+      applyMm60Pricing(parsed, 'cloud');
+      if (force) {
+        showToast(`Base MM60 atualizada do banco: ${parsed.priceRows.length} materiais com preco medio.`);
+      }
+      return { ok: true, parsed };
+    } catch (error) {
+      mm60AutoLoadState.lastError = error && error.message ? error.message : String(error);
+      if (force) showToast(mm60AutoLoadState.lastError, true);
+      return { ok: false, error };
+    } finally {
+      mm60AutoLoadState.loading = false;
+      mm60AutoLoadState.promise = null;
+      updateDashboard();
+    }
+  })();
+
+  return mm60AutoLoadState.promise;
+}
+
 function findWorkbookSheet(workbook, matcher, fallbackIndex) {
   const sheetName = workbook.SheetNames.find(name => normalizeAnalysisLookupKey(name, false).includes(matcher)) || workbook.SheetNames[fallbackIndex || 0];
   return sheetName ? workbook.Sheets[sheetName] : null;
@@ -12722,9 +13042,9 @@ function extractFoPayloadFromSheet(sheet, fileName) {
     index,
     epsText: normalizeText(getObjectValueByKeys(row, ['EPS', 'Equipe/EPS'])),
     productText: normalizeText(getObjectValueByKeys(row, ['PRODUTO', 'INSUMO'])),
-    materialCode: normalizeText(getObjectValueByKeys(row, ['CÓDIGO SAP', 'CODIGO SAP', 'SAP'])),
+    materialCode: normalizeText(getObjectValueByKeys(row, ['CÃ“DIGO SAP', 'CODIGO SAP', 'SAP'])),
     rawQuantity: parseLocaleNumber(getObjectValueByKeys(row, ['QUANTIDADE'])),
-    operationDate: parseSpreadsheetDate(getObjectValueByKeys(row, ['DATA OPERAÇÃO', 'DATA OPERACAO']))
+    operationDate: parseSpreadsheetDate(getObjectValueByKeys(row, ['DATA OPERAÃ‡ÃƒO', 'DATA OPERACAO']))
   }));
 
   return {
@@ -12968,7 +13288,7 @@ async function parseAnalysisFoFiles(files) {
     rows.forEach((row, index) => {
       const epsText = normalizeText(getObjectValueByKeys(row, ['EPS', 'Equipe/EPS']));
       const productText = normalizeText(getObjectValueByKeys(row, ['PRODUTO', 'INSUMO']));
-      const materialCode = normalizeText(getObjectValueByKeys(row, ['CÓDIGO SAP', 'CODIGO SAP', 'SAP']));
+      const materialCode = normalizeText(getObjectValueByKeys(row, ['CÃ“DIGO SAP', 'CODIGO SAP', 'SAP']));
       const rawQuantity = parseLocaleNumber(getObjectValueByKeys(row, ['QUANTIDADE']));
       if (!epsText || !productText || !Number.isFinite(rawQuantity) || rawQuantity <= 0) return;
 
@@ -12999,7 +13319,7 @@ async function parseAnalysisFoFiles(files) {
         });
       }
 
-      let date = parseSpreadsheetDate(getObjectValueByKeys(row, ['DATA OPERAÇÃO', 'DATA OPERACAO']));
+      let date = parseSpreadsheetDate(getObjectValueByKeys(row, ['DATA OPERAÃ‡ÃƒO', 'DATA OPERACAO']));
       if (!date && firstDateFromColJ) {
         date = firstDateFromColJ;
       }
@@ -13438,7 +13758,7 @@ async function handleFoImportForDeposit(fileList, deposito) {
     updateFoImportProgress(progress, { phase: 'parsing', completed: 0, total: 1, currentFile: files[0] ? files[0].name : '' });
     rows.forEach((row, index) => {
       const productText = normalizeText(getObjectValueByKeys(row, ['PRODUTO', 'INSUMO']));
-      const materialCode = normalizeText(getObjectValueByKeys(row, ['CÓDIGO SAP', 'CODIGO SAP', 'SAP']));
+      const materialCode = normalizeText(getObjectValueByKeys(row, ['CÃ“DIGO SAP', 'CODIGO SAP', 'SAP']));
       const rawQuantity = parseLocaleNumber(getObjectValueByKeys(row, ['QUANTIDADE']));
       if (!productText || !Number.isFinite(rawQuantity) || rawQuantity <= 0) return;
 
@@ -14027,7 +14347,7 @@ function openAnalysisFoDetail(deposito) {
   overlay.innerHTML = `
     <div class="modal" style="max-width:min(1180px,96vw);width:min(1180px,96vw)">
       <div class="modal-title">${escapeHtml(`F.O. de ${row.deposito} - ${row.epsNome}`)}</div>
-      <div class="modal-text">${batches.length} lote(s) de F.O. importado(s) — ${totalRows} linha(s) no total.</div>
+      <div class="modal-text">${batches.length} lote(s) de F.O. importado(s) â€” ${totalRows} linha(s) no total.</div>
       <div style="margin-top:16px">
         ${contentHtml}
       </div>
@@ -14528,6 +14848,145 @@ function buildDashboardPackagingSnapshot(rows) {
   };
 }
 
+function buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd) {
+  const baseRows = getMm60PriceRows();
+  const emptyState = {
+    available: baseRows.length > 0,
+    fileName: normalizeText(analysisState.mm60FileName || ''),
+    updatedAt: normalizeText(analysisState.mm60UpdatedAt || ''),
+    source: normalizeText(analysisState.mm60Source || ''),
+    totalBaseCount: baseRows.length,
+    totalValue: 0,
+    pricedItemCount: 0,
+    totalItemCount: 0,
+    missingItemCount: 0,
+    coverageRate: 0,
+    typeItems: [],
+    materialItems: [],
+    destinationItems: [],
+    timelineItems: [],
+    isLoading: mm60AutoLoadState.loading,
+    lastError: normalizeText(mm60AutoLoadState.lastError || '')
+  };
+
+  if (!baseRows.length) return emptyState;
+
+  const typeMap = new Map();
+  const materialMap = new Map();
+  const destinationMap = new Map();
+  const timelineMap = new Map();
+  let totalValue = 0;
+  let pricedItemCount = 0;
+  let totalItemCount = 0;
+
+  filteredMovs.forEach((mov) => {
+    const movementDate = getDashboardMovementDate(mov);
+    if (!movementDate) return;
+    const timelineKey = period.mode === 'monthly' ? movementDate : movementDate.slice(0, 7);
+    const destinationLabel = getRouteSummary(mov, 'destino') || getRouteSummary(mov, 'origem') || 'Sem destino';
+    const typeLabel = normalizeText(mov.tipo || 'Sem tipo') || 'Sem tipo';
+
+    getMovementMaterials(mov).forEach((item) => {
+      const materialName = normalizeText(item.material || '');
+      const quantity = Math.abs(parseLocaleNumber(item.quantidade));
+      if (!materialName || !Number.isFinite(quantity) || quantity <= 0) return;
+
+      totalItemCount += 1;
+      const priceRow = getMm60PriceForMaterial(item);
+      if (!priceRow) return;
+
+      const itemValue = quantity * Number(priceRow.unitPrice || 0);
+      if (!Number.isFinite(itemValue) || itemValue <= 0) return;
+
+      pricedItemCount += 1;
+      totalValue += itemValue;
+
+      const materialCode = normalizeText(item.codProduto || priceRow.materialCode || '');
+      const materialLabel = materialCode ? `${materialName} (${materialCode})` : materialName;
+      const materialKey = `${materialName.toLowerCase()}|${materialCode.toLowerCase()}`;
+
+      if (!typeMap.has(typeLabel)) typeMap.set(typeLabel, 0);
+      typeMap.set(typeLabel, typeMap.get(typeLabel) + itemValue);
+
+      if (!materialMap.has(materialKey)) materialMap.set(materialKey, { label: materialLabel, value: 0 });
+      materialMap.get(materialKey).value += itemValue;
+
+      if (!destinationMap.has(destinationLabel)) destinationMap.set(destinationLabel, 0);
+      destinationMap.set(destinationLabel, destinationMap.get(destinationLabel) + itemValue);
+
+      if (!timelineMap.has(timelineKey)) timelineMap.set(timelineKey, 0);
+      timelineMap.set(timelineKey, timelineMap.get(timelineKey) + itemValue);
+    });
+  });
+
+  const toValueItems = (entries) => entries
+    .map(([label, value]) => ({
+      label,
+      value: Number(value.toFixed(2)),
+      display: formatCurrencyBRL(value)
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
+
+  const timelineItems = (() => {
+    if (period.mode === 'monthly') {
+      const items = [];
+      let cursor = new Date(`${period.start}T00:00:00`);
+      const endDate = new Date(`${snapshotEnd}T00:00:00`);
+      while (cursor <= endDate) {
+        const iso = cursor.toISOString().slice(0, 10);
+        const value = timelineMap.get(iso) || 0;
+        items.push({
+          label: iso.slice(8, 10),
+          value: Number(value.toFixed(2)),
+          display: formatCurrencyBRL(value)
+        });
+        cursor.setDate(cursor.getDate() + 1);
+      }
+      return items;
+    }
+
+    return [...timelineMap.entries()]
+      .sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'))
+      .slice(-12)
+      .map(([label, value]) => ({
+        label: `${label.slice(5, 7)}/${label.slice(0, 4)}`,
+        value: Number(value.toFixed(2)),
+        display: formatCurrencyBRL(value)
+      }));
+  })();
+
+  const coverageRate = totalItemCount
+    ? Number(((pricedItemCount / totalItemCount) * 100).toFixed(2))
+    : 0;
+
+  return {
+    available: true,
+    fileName: normalizeText(analysisState.mm60FileName || ''),
+    updatedAt: normalizeText(analysisState.mm60UpdatedAt || ''),
+    source: normalizeText(analysisState.mm60Source || ''),
+    totalBaseCount: baseRows.length,
+    totalValue: Number(totalValue.toFixed(2)),
+    pricedItemCount,
+    totalItemCount,
+    missingItemCount: Math.max(0, totalItemCount - pricedItemCount),
+    coverageRate,
+    typeItems: toValueItems([...typeMap.entries()]),
+    materialItems: [...materialMap.values()]
+      .map((item) => ({
+        ...item,
+        value: Number(item.value.toFixed(2)),
+        display: formatCurrencyBRL(item.value)
+      }))
+      .sort((a, b) => b.value - a.value)
+      .slice(0, 8),
+    destinationItems: toValueItems([...destinationMap.entries()]),
+    timelineItems,
+    isLoading: mm60AutoLoadState.loading,
+    lastError: normalizeText(mm60AutoLoadState.lastError || '')
+  };
+}
+
 function buildDashboardData() {
   const period = getDashboardPeriod();
   const snapshotEnd = getDashboardSnapshotEnd(period);
@@ -14554,6 +15013,7 @@ function buildDashboardData() {
   const filteredPackagingRows = dashboardPackagingRows.filter((row) => isDashboardDateWithin(row.data, periodStart, snapshotEnd));
   const packagingRowsToDate = dashboardPackagingRows.filter((row) => isDashboardDateWithin(row.data, '', snapshotEnd));
   const packagingSnapshot = buildDashboardPackagingSnapshot(packagingRowsToDate);
+  const valueSnapshot = buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd);
 
   const nfCount = new Set(filteredMovs.map(mov => normalizeText(mov.nf)).filter(Boolean)).size;
   const activeDeposits = new Set();
@@ -14779,6 +15239,7 @@ function buildDashboardData() {
     typeItems,
     outMaterialCount: materialOutMap.size,
     topMaterialItems,
+    valueSnapshot,
     packagingFlow,
     packagingSnapshot,
     packagingDebtItems,
@@ -14797,6 +15258,9 @@ function buildDashboardData() {
 }
 
 function updateDashboard() {
+  if (!mm60AutoLoadState.loading && !mm60AutoLoadState.attempted) {
+    loadMm60PricingFromCloud(false);
+  }
   setDashboardCardIdentity();
   const data = buildDashboardData();
   const packagingReturnRate = data.packagingFlow.retiradas > 0
@@ -14805,6 +15269,9 @@ function updateDashboard() {
   const topDebt = data.packagingSnapshot.depositRows[0] || null;
   const topType = data.typeItems[0] || null;
   const topMaterial = data.topMaterialItems[0] || null;
+  const valueSnapshot = data.valueSnapshot;
+  const topValueMaterial = valueSnapshot.materialItems[0] || null;
+  const topValueDestination = valueSnapshot.destinationItems[0] || null;
 
   syncDashboardControls(data.period);
 
@@ -14850,6 +15317,42 @@ function updateDashboard() {
   setDashboardText('dashboardStatMateriaisDetail', topMaterial ? `lider: ${topMaterial.label}` : 'sem saidas de material no recorte');
   setDashboardText('dashboardStatEpsAtivas', String(data.activeDeposits.size));
   setDashboardText('dashboardStatEpsAtivasDetail', `${data.packagingSnapshot.depositRows.length} EPS/depositos com saldo aberto`);
+  setDashboardText('dashboardMm60Status',
+    valueSnapshot.isLoading
+      ? 'Sincronizando precos MM60 do banco...'
+      : (valueSnapshot.available
+          ? `${valueSnapshot.fileName || 'MM60.xlsx'} • ${valueSnapshot.totalBaseCount} materiais precificados`
+          : (valueSnapshot.lastError ? `MM60 indisponivel: ${valueSnapshot.lastError}` : 'Aguardando sincronizacao da base MM60.'))
+  );
+  setDashboardText('dashboardMm60Hint',
+    valueSnapshot.available
+      ? `Base ${valueSnapshot.fileName || 'MM60.xlsx'} atualizada em ${getBackupTimestampLabel(valueSnapshot.updatedAt)}. Materiais com preco zero foram ignorados e os repetidos ficaram com preco medio.`
+      : 'Os precos MM60 sao carregados automaticamente do banco para habilitar os graficos financeiros, ignorando materiais zerados e consolidando repetidos pela media.'
+  );
+  setDashboardText('dashboardValueBaseCount', String(valueSnapshot.totalBaseCount || 0));
+  setDashboardText('dashboardValueBaseDetail',
+    valueSnapshot.available
+      ? `${valueSnapshot.source === 'cloud' ? 'base do banco' : 'cache local'} • ${getBackupTimestampLabel(valueSnapshot.updatedAt)}`
+      : 'aguardando base MM60 do banco'
+  );
+  setDashboardText('dashboardValueTotal', formatCurrencyBRL(valueSnapshot.totalValue || 0));
+  setDashboardText('dashboardValueTotalDetail',
+    valueSnapshot.available
+      ? (topValueMaterial ? `lider financeiro: ${topValueMaterial.label}` : 'sem valor calculado no recorte')
+      : 'sincronize a base MM60 para calcular valor'
+  );
+  setDashboardText('dashboardValuePricedCount', `${valueSnapshot.pricedItemCount}/${valueSnapshot.totalItemCount}`);
+  setDashboardText('dashboardValuePricedDetail',
+    valueSnapshot.totalItemCount
+      ? `${valueSnapshot.missingItemCount} item(ns) sem preco encontrado`
+      : 'nenhuma linha elegivel no recorte'
+  );
+  setDashboardText('dashboardValueCoverage', `${formatNumber(valueSnapshot.coverageRate)}%`);
+  setDashboardText('dashboardValueCoverageDetail',
+    valueSnapshot.available
+      ? (topValueDestination ? `maior destino: ${topValueDestination.label}` : 'sem destino financeiro relevante')
+      : 'cobertura financeira indisponivel'
+  );
 
   renderGenericBarChart('chartTipos', data.typeItems, 'Sem movimentacoes no recorte.');
   renderGenericBarChart('chartUsuarios', data.topMaterialItems, 'Sem saidas relevantes no recorte.');
@@ -14862,6 +15365,10 @@ function updateDashboard() {
   renderGenericBarChart('dashboardChartEpsDevida', data.packagingDebtItems, 'Nenhuma EPS com embalagem devida.');
   renderGenericBarChart('dashboardChartTimeline', data.timelineItems, 'Sem volume suficiente para mostrar o ritmo do periodo.');
   renderGenericBarChart('dashboardChartWriterMotivos', data.writerReasonItems, 'Nenhum writer pendente no recorte.');
+  renderGenericBarChart('dashboardChartValueTypes', valueSnapshot.typeItems, 'Sem valores calculados para os tipos no recorte.');
+  renderGenericBarChart('dashboardChartValueMaterials', valueSnapshot.materialItems, 'Nenhum material com valor calculado no recorte.');
+  renderGenericBarChart('dashboardChartValueTimeline', valueSnapshot.timelineItems, 'Sem base MM60 ou valores suficientes para mostrar o ritmo financeiro.');
+  renderGenericBarChart('dashboardChartValueDestinations', valueSnapshot.destinationItems, 'Nenhum destino com valor calculado no recorte.');
 
   setDashboardText('dashboardInsightWriterValue', formatDashboardDuration(data.avgWriterLead));
   setDashboardText('dashboardInsightWriterText',
@@ -14996,7 +15503,7 @@ function isCadastroReviewIgnoredValue(value) {
     || text === 'n/a'
     || text === '-'
     || text === 'cancelada'
-    || text === 'sem informação'
+    || text === 'sem informaÃ§Ã£o'
     || text === 'sem informacao'
     || text === 'sem dado'
     || text === 'sem info';
@@ -15054,7 +15561,7 @@ function getCadastroReviewItemsByMonth() {
       register('tipos', tipo, {
         value: tipo,
         displayValue: tipo,
-        detail: 'Usado nas movimentacoes de março.',
+        detail: 'Usado nas movimentacoes de marÃ§o.',
         sampleDate: movementDate,
         suggestionEmb: normalizeText(tipo).toLowerCase().includes('embal')
       });
@@ -15115,7 +15622,7 @@ function getCadastroReviewItemsByMonth() {
       register('supervisores', supervisor, {
         value: supervisor,
         displayValue: supervisor,
-        detail: 'Supervisor informado em março sem cadastro.',
+        detail: 'Supervisor informado em marÃ§o sem cadastro.',
         sampleDate: movementDate
       });
     }
@@ -15125,7 +15632,7 @@ function getCadastroReviewItemsByMonth() {
       register('motivosWriter', motivo, {
         value: motivo,
         displayValue: motivo,
-        detail: 'Motivo writer usado em março sem cadastro.',
+        detail: 'Motivo writer usado em marÃ§o sem cadastro.',
         sampleDate: movementDate
       });
     }
@@ -15140,7 +15647,7 @@ function getCadastroReviewItemsByMonth() {
         codProduto,
         unidade: normalizeText(item.unidade || ''),
         displayValue: codProduto ? `${material} (${codProduto})` : material,
-        detail: 'Material movimentado em março sem cadastro.',
+        detail: 'Material movimentado em marÃ§o sem cadastro.',
         sampleDate: movementDate
       });
     });
@@ -15207,7 +15714,7 @@ function renderMarchMissingCadastrosReview() {
     panel.innerHTML = `
       <div class="cadastro-review-card">
         <div class="cadastro-review-title">Pendencias de cadastro em ${escapeHtml(review.meta.label)}</div>
-        <div class="hint-line">Tudo o que foi usado em março ja esta vinculado aos cadastros atuais.</div>
+        <div class="hint-line">Tudo o que foi usado em marÃ§o ja esta vinculado aos cadastros atuais.</div>
       </div>
     `;
     return;
@@ -15223,7 +15730,7 @@ function renderMarchMissingCadastrosReview() {
             <div class="cadastro-review-chip">${escapeHtml(getCadastroReviewLabel(item.type))}</div>
             <div style="font-weight:700;color:var(--text);font-size:0.95rem;">${escapeHtml(item.displayValue)}</div>
             <div class="hint-line" style="margin-top:6px;">${escapeHtml(item.detail || 'Sem detalhe adicional.')}</div>
-            <div class="hint-line" style="margin-top:4px;">${escapeHtml(item.count)} ocorrencia(s) em março${item.sampleDate ? ` • primeiro em ${escapeHtml(formatDate(item.sampleDate))}` : ''}</div>
+            <div class="hint-line" style="margin-top:4px;">${escapeHtml(item.count)} ocorrencia(s) em marÃ§o${item.sampleDate ? ` â€¢ primeiro em ${escapeHtml(formatDate(item.sampleDate))}` : ''}</div>
             <div class="cadastro-review-actions">
               ${item.type === 'tipoNf' ? '' : `<button type="button" class="btn btn-primary" style="padding:8px 12px;font-size:0.76rem;" onclick="startCadastroFromReview('${escapeHtml(item.id)}')">Cadastrar</button>`}
               <button type="button" class="btn btn-secondary" style="padding:8px 12px;font-size:0.76rem;" onclick="openCadastroReviewMapping('${escapeHtml(item.id)}')">${item.type === 'tipoNf' ? 'Padronizar' : 'Vincular'}</button>
@@ -15407,7 +15914,7 @@ function applyCadastroReviewLink(reviewId, targetValue) {
   });
 
   if (!affected) {
-    showToast('Nenhum registro de março foi encontrado para vincular.', true);
+    showToast('Nenhum registro de marÃ§o foi encontrado para vincular.', true);
     return;
   }
 
@@ -15420,7 +15927,7 @@ function applyCadastroReviewLink(reviewId, targetValue) {
   renderCadastroForm();
   renderCadastroTable();
   updateEmbalagemVisibility();
-  showToast(`${affected} vinculo(s) aplicado(s) em registros de março.`);
+  showToast(`${affected} vinculo(s) aplicado(s) em registros de marÃ§o.`);
 }
 
 function openCadastroReviewMapping(reviewId) {
@@ -15440,7 +15947,7 @@ function openCadastroReviewMapping(reviewId) {
       <div class="modal-title">Vincular pendencia de cadastro</div>
       <div class="modal-text" style="text-align:left;">
         <div style="margin-bottom:10px;"><strong>${escapeHtml(getCadastroReviewLabel(item.type))}:</strong> ${escapeHtml(item.displayValue)}</div>
-        <div style="margin-bottom:14px;color:var(--text-dim);">Escolha um item ja cadastrado para reaproveitar nos registros de março.</div>
+        <div style="margin-bottom:14px;color:var(--text-dim);">Escolha um item ja cadastrado para reaproveitar nos registros de marÃ§o.</div>
         <select class="form-select" id="cadastroReviewTargetSelect">
           <option value="">Selecione um cadastro existente...</option>
           ${options.map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`).join('')}
@@ -15448,7 +15955,7 @@ function openCadastroReviewMapping(reviewId) {
       </div>
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="cadastroReviewConfirmBtn">Vincular em Março</button>
+        <button type="button" class="btn btn-primary" id="cadastroReviewConfirmBtn">Vincular em MarÃ§o</button>
       </div>
     </div>
   `;
@@ -16249,7 +16756,7 @@ function showDetail(id) {
     const cls = val ? (isMono ? 'mono' : '') : 'empty';
     return `<div class="detail-field">
       <div class="detail-field-label">${label}</div>
-      <div class="detail-field-value ${cls}">${val || '—'}</div>
+      <div class="detail-field-value ${cls}">${val || 'â€”'}</div>
     </div>`;
   }
 
@@ -16262,7 +16769,7 @@ function showDetail(id) {
           <div class="detail-title">Movimentacao #${m.id}</div>
           <div class="detail-subtitle">${statusBadge}</div>
         </div>
-        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">×</button>
+        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">Ã—</button>
       </div>
 
       <div class="detail-body">
@@ -16301,7 +16808,7 @@ function showDetail(id) {
           <div class="detail-grid">
             <div class="detail-field full">
               <div class="detail-field-label">Texto Breve Material</div>
-              <div class="detail-field-value" style="font-size:1rem;font-weight:600">${m.material || '—'}</div>
+              <div class="detail-field-value" style="font-size:1rem;font-weight:600">${m.material || 'â€”'}</div>
             </div>
             ${field('Codigo Produto', m.codProduto, true)}
             ${field('Quantidade', formatNumber(m.quantidade), true)}
@@ -16351,7 +16858,7 @@ function showDetail(id) {
         <div>
           Inserido por <strong style="color:var(--neon)">${m.inseridoPor}</strong>
           ${m.inseridoEm ? ' em ' + new Date(m.inseridoEm).toLocaleString('pt-BR') : ''}
-          ${m.finalizadoPor ? ` · Finalizado por <strong style="color:var(--neon)">${m.finalizadoPor}</strong>` : ''}
+          ${m.finalizadoPor ? ` Â· Finalizado por <strong style="color:var(--neon)">${m.finalizadoPor}</strong>` : ''}
         </div>
         <div class="detail-actions">
           ${isPendente ? `<button class="btn-finalizar" onclick="this.closest('.modal-overlay').remove(); finalizarWriter(${m.id})">Finalizar</button>` : ''}
@@ -16394,3 +16901,4 @@ init();
 </script>
 </body>
 </html>
+
