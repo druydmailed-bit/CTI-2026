@@ -2018,7 +2018,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       <button onclick="closeAccessRequestModal()" style="background:none;border:none;color:var(--text-dim);font-size:1.2rem;cursor:pointer;">&times;</button>
     </div>
     <div style="margin-bottom:16px;">
-      <label class="form-label">Tipo de Usuario *</label>
+      <label class="form-label">Tipo de Usuário *</label>
       <select class="form-input" id="reqUserType" onchange="toggleAccessRequestFields()">
         <option value="">Selecione...</option>
         <option value="msfc">MS Florestal (Colaborador)</option>
@@ -2027,7 +2027,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
     </div>
     <div id="reqFieldsMsfc" style="display:none;">
       <div style="margin-bottom:12px;"><label class="form-label">Nome Completo *</label><input type="text" class="form-input" id="reqNomeMsfc" placeholder="Seu nome completo"></div>
-      <div style="margin-bottom:12px;"><label class="form-label">Area do Colaborador *</label><input type="text" class="form-input" id="reqArea" placeholder="Ex: Operacoes, Logistica..."></div>
+      <div style="margin-bottom:12px;"><label class="form-label">Área do Colaborador *</label><input type="text" class="form-input" id="reqArea" placeholder="Ex: Operações, Logística..."></div>
       <div style="margin-bottom:12px;"><label class="form-label">Contato *</label><input type="text" class="form-input" id="reqContatoMsfc" placeholder="Telefone ou ramal"></div>
       <div style="margin-bottom:12px;"><label class="form-label">Email (opcional)</label><input type="email" class="form-input" id="reqEmailMsfc" placeholder="email@empresa.com"></div>
     </div>
@@ -2055,7 +2055,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       <div class="user-badge">
         <div class="user-avatar" id="userAvatar"></div>
         <span class="user-name" id="userName"></span>
-        <span class="user-role" id="userRole">USUARIO</span>
+        <span class="user-role" id="userRole">USUÁRIO</span>
         <span id="areaBadgeHeader" style="display:none;font-size:0.55rem;font-weight:800;padding:2px 8px;border-radius:4px;letter-spacing:0.5px;"></span>
       </div>
       <div id="cloudOnlineBadge" class="cloud-online-badge" title="Status da conexão com o banco de dados">
@@ -2565,7 +2565,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <div style="display:flex;align-items:center;gap:6px;">
             <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">De:</label>
             <input type="date" class="form-input" id="filterDateStart" onchange="filterTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">AtÃ©:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">Até:</label>
             <input type="date" class="form-input" id="filterDateEnd" onchange="filterTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
           </div>
           <select class="filter-select" id="filterTipo" onchange="filterTable()">
@@ -2586,15 +2586,15 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             <option value="">Todos os materiais</option>
           </select>
           <select class="filter-select" id="filterUser" onchange="filterTable()">
-            <option value="">Todos os usuÃ¡rios</option>
+            <option value="">Todos os usuários</option>
           </select>
           <select class="filter-select" id="filterDebito" onchange="filterTable()">
             <option value="">Todos os debitos</option>
           </select>
           <div style="display:flex;align-items:center;gap:6px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">LanÃƒÂ§. de:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">Lanç. de:</label>
             <input type="date" class="form-input" id="filterLaunchStart" onchange="filterTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">atÃƒÂ©:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">até:</label>
             <input type="date" class="form-input" id="filterLaunchEnd" onchange="filterTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
           </div>
           <button class="btn btn-secondary" onclick="exportCSV()" style="padding:8px 16px;font-size:0.8rem">
@@ -2620,9 +2620,9 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                 <th onclick="sortTable('quantidade')">Qtd</th>
                 <th onclick="sortTable('debitoEm')">Debito em</th>
                 <th>Un</th>
-                <th onclick="sortTable('dataLancamento')">Data LanÃ§amento</th>
+                <th onclick="sortTable('dataLancamento')">Data Lançamento</th>
                 <th onclick="sortTable('inseridoPor')">Inserido por</th>
-                <th>AÃ§Ãµes</th>
+                <th>Ações</th>
               </tr>
             </thead>
             <tbody id="mainTable"></tbody>
@@ -2645,7 +2645,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <div style="display:flex;align-items:center;gap:6px;">
             <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">De:</label>
             <input type="date" class="form-input" id="legacyFilterDateStart" onchange="filterLegacyTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">AtÃƒÂ©:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">Até:</label>
             <input type="date" class="form-input" id="legacyFilterDateEnd" onchange="filterLegacyTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
           </div>
           <select class="filter-select" id="legacyFilterTipo" onchange="filterLegacyTable()">
@@ -2670,9 +2670,9 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             <option value="">Todos os atendentes</option>
           </select>
           <div style="display:flex;align-items:center;gap:6px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">LanÃƒÂ§. de:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">Lanç. de:</label>
             <input type="date" class="form-input" id="legacyFilterLaunchStart" onchange="filterLegacyTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
-            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">atÃƒÂ©:</label>
+            <label style="font-size:0.7rem;color:var(--text-dim);white-space:nowrap;">até:</label>
             <input type="date" class="form-input" id="legacyFilterLaunchEnd" onchange="filterLegacyTable()" style="padding:6px 8px;font-size:0.75rem;max-width:150px;">
           </div>
           <button class="btn btn-secondary" onclick="exportLegacyCSV()" style="padding:8px 16px;font-size:0.8rem">
@@ -2696,7 +2696,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                 <th onclick="sortLegacyTable('material')">Material</th>
                 <th onclick="sortLegacyTable('quantidade')">Qtd</th>
                 <th onclick="sortLegacyTable('pedido')">Pedido</th>
-                <th onclick="sortLegacyTable('dataSistemico')">Data SistÃƒÂªmico</th>
+                <th onclick="sortLegacyTable('dataSistemico')">Data Sistêmico</th>
                 <th onclick="sortLegacyTable('migo')">MIGO</th>
                 <th onclick="sortLegacyTable('atendente')">Atendente</th>
               </tr>
@@ -2716,17 +2716,17 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       <div class="table-toolbar">
         <div class="search-box">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-          <input type="text" class="search-input" id="packagingSearchInput" placeholder="Buscar por deposito, origem, material ou devolvedor..." oninput="filterPackagingTable()">
+          <input type="text" class="search-input" id="packagingSearchInput" placeholder="Buscar por depósito, origem, material ou devolvedor..." oninput="filterPackagingTable()">
         </div>
         <div class="filter-group">
           <select class="filter-select" id="packagingFilterStatus" onchange="filterPackagingTable()">
             <option value="">Todos os status</option>
-            <option value="pendente">Pendencias abertas</option>
-            <option value="devolvida">Devolucoes registradas</option>
-            <option value="baixada">Pendencias baixadas</option>
+            <option value="pendente">Pendências abertas</option>
+            <option value="devolvida">Devoluções registradas</option>
+            <option value="baixada">Pendências baixadas</option>
           </select>
           <select class="filter-select" id="packagingFilterDeposito" onchange="filterPackagingTable()">
-            <option value="">Todos os depositos</option>
+            <option value="">Todos os depósitos</option>
           </select>
           <button class="btn btn-secondary" onclick="exportPackagingControlSheet()">
             <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 01-2 2H5a2 2 0 01-2-2v-4"></path><polyline points="7 10 12 15 17 10"></polyline><line x1="12" y1="15" x2="12" y2="3"></line></svg>
@@ -2734,7 +2734,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           </button>
           <button class="btn btn-primary" onclick="openPackagingReturnModal()">
             <svg style="width:14px;height:14px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-            Registrar Devolucao de Embalagem
+            Registrar Devolução de Embalagem
           </button>
         </div>
       </div>
@@ -2836,11 +2836,11 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                 <th onclick="sortSaldoEps('deposito')">Deposito</th>
                 <th onclick="sortSaldoEps('nome')">EPS</th>
                 <th onclick="sortSaldoEps('retiradas')">Retiradas</th>
-                <th onclick="sortSaldoEps('devolucoes')">DevoluÃ§Ãµes</th>
+                <th onclick="sortSaldoEps('devolucoes')">Devoluções</th>
                 <th onclick="sortSaldoEps('transferenciasIn')">Transf. Rec.</th>
                 <th onclick="sortSaldoEps('transferenciasOut')">Transf. Env.</th>
                 <th onclick="sortSaldoEps('saldo')" style="min-width:100px">Saldo</th>
-                <th onclick="sortSaldoEps('saldoDevolucao')">Saldo DevoluÃ§Ã£o</th>
+                <th onclick="sortSaldoEps('saldoDevolucao')">Saldo Devolução</th>
                 <th onclick="sortSaldoEps('retorno')">% Retorno</th>
                 <th style="width:70px">Status</th>
               </tr>
@@ -2883,7 +2883,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                     <th>Cod. Produto</th>
                     <th>Unidade</th>
                     <th>Retiradas</th>
-                    <th>DevoluÃ§Ãµes</th>
+                <th>Devoluções</th>
                     <th>Transf. In</th>
                     <th>Transf. Out</th>
                     <th>Saldo</th>
@@ -2897,7 +2897,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 
         <!-- HistÃ³rico -->
         <div style="padding:0 24px 24px;">
-          <div style="font-weight:600;font-size:0.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">HistÃ³rico de MovimentaÃ§Ãµes</div>
+      <div style="font-weight:600;font-size:0.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Histórico de Movimentações</div>
           <div class="table-container">
             <div class="table-scroll" style="max-height:32vh;">
               <table>
@@ -2919,7 +2919,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
 
         <!-- HistÃ³rico Bloqueio/Desbloqueio -->
         <div style="padding:0 24px 24px;">
-          <div style="font-weight:600;font-size:0.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Historico de Bloqueio / Desbloqueio</div>
+      <div style="font-weight:600;font-size:0.8rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:8px;">Histórico de Bloqueio / Desbloqueio</div>
           <div class="table-container">
             <div class="table-scroll" style="max-height:24vh;">
               <table>
@@ -2996,16 +2996,16 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
           Extrato Gerencial
         </div>
-        <div class="hint-line" id="extractHint">Selecione uma EPS para visualizar o saldo atual e o historico gerencial de insumos ou embalagens.</div>
+          <div class="hint-line" id="extractHint">Selecione uma EPS para visualizar o saldo atual e o histórico gerencial de insumos ou embalagens.</div>
         <div class="form-grid">
           <div class="form-group span-2">
-            <label class="form-label">EPS / Deposito</label>
+            <label class="form-label">EPS / Depósito</label>
             <select class="form-select" id="extractEps" onchange="renderExtratoTab()">
               <option value="">Selecione a EPS...</option>
             </select>
           </div>
           <div class="form-group">
-            <label class="form-label">Visao</label>
+            <label class="form-label">Visão</label>
             <select class="form-select" id="extractMode" onchange="renderExtratoTab()">
               <option value="insumo">Insumo</option>
               <option value="embalagem">Embalagem</option>
@@ -3033,7 +3033,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         <div class="stat-card orange">
           <div class="stat-label" id="extractStatSaidasLabel">Saidas</div>
           <div class="stat-value" id="extractStatSaidas">0</div>
-          <div class="stat-detail" id="extractStatSaidasDetail">saidas acumuladas da EPS</div>
+          <div class="stat-detail" id="extractStatSaidasDetail">saídas acumuladas da EPS</div>
         </div>
       </div>
 
@@ -3061,12 +3061,12 @@ button:focus-visible, input:focus-visible, select:focus-visible {
               <thead>
                 <tr>
                   <th>Material</th>
-                  <th>Codigo</th>
+                  <th>Código</th>
                   <th>Saldo</th>
                   <th>Entradas</th>
                   <th>Saidas</th>
                   <th>Un</th>
-                  <th>Ultima Mov.</th>
+                  <th>Última Mov.</th>
                 </tr>
               </thead>
               <tbody id="extractBalanceTable"></tbody>
@@ -3098,12 +3098,12 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l3-3 3 2 4-6"/></svg>
           Analise de Embalagens
         </div>
-        <div class="hint-line" id="analysisHint">Importe a planilha do inventario e uma ou mais F.O.s para calcular embalagens em campo, pendencias e percentual devolvido por deposito/EPS.</div>
+          <div class="hint-line" id="analysisHint">Importe a planilha do inventário e uma ou mais F.O.s para calcular embalagens em campo, pendências e percentual devolvido por depósito/EPS.</div>
         <div class="form-grid">
           <div class="form-group span-2">
-            <label class="form-label">Planilha de Inventario</label>
+            <label class="form-label">Planilha de Inventário</label>
             <input type="file" class="form-input" id="analysisInventoryFile" accept=".xlsx,.xls,.xlsb" onchange="handleAnalysisInventoryImport(this.files)">
-            <div class="hint-line" id="analysisInventoryInfo">Nenhuma planilha de inventario importada.</div>
+            <div class="hint-line" id="analysisInventoryInfo">Nenhuma planilha de inventário importada.</div>
           </div>
           <div class="form-group span-2">
             <div class="hint-line" id="analysisFoInfo" style="margin-top:8px;">Insira a F.O. de cada frente diretamente na tabela de Pendencias de F.O. abaixo.</div>
@@ -3144,7 +3144,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         <div class="stat-card yellow">
           <div class="stat-label">Pendencias</div>
           <div class="stat-value" id="analysisStatPendencias">0</div>
-          <div class="stat-detail">eps com devolucao pendente</div>
+              <div class="stat-detail">EPS com devolução pendente</div>
         </div>
         <div class="stat-card red">
           <div class="stat-label">Avisos</div>
@@ -3213,7 +3213,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
                 <th>Qtd Em Campo</th>
                 <th>Qtd F.O.</th>
                 <th>Saldo Justificado</th>
-                <th>Devolucao</th>
+                <th>Devolução</th>
                 <th>Total %</th>
                 <th>Status</th>
                 <th style="width:100px">Acao</th>
@@ -3291,23 +3291,23 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       <div class="form-section">
         <div class="form-section-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>
-          Novo Usuario
+          Novo Usuário
         </div>
         <form onsubmit="return createUser(event)">
           <div class="form-grid">
             <div class="form-group">
-              <label class="form-label">Nome do usuario *</label>
+              <label class="form-label">Nome do usuário *</label>
               <input type="text" class="form-input" id="newUserName" placeholder="Ex: Maria Silva" required>
             </div>
             <div class="form-group">
-              <label class="form-label">Senha temporaria</label>
-              <input type="text" class="form-input" id="newUserTempPassword" placeholder="Padrao: 123456">
+              <label class="form-label">Senha temporária</label>
+              <input type="text" class="form-input" id="newUserTempPassword" placeholder="Padrão: 123456">
             </div>
           </div>
           <div class="form-actions">
             <button type="submit" class="btn btn-primary">
               <svg style="width:16px;height:16px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
-              Cadastrar Usuario
+              Cadastrar Usuário
             </button>
           </div>
         </form>
@@ -3317,11 +3317,11 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           <table>
             <thead>
               <tr>
-                <th>Usuario</th>
+                <th>Usuário</th>
                 <th>Perfil</th>
-                <th>Gerenciar Usuarios</th>
+                <th>Gerenciar Usuários</th>
                 <th>Gerenciar Cadastros</th>
-                <th>Excluir Movimentacoes</th>
+                <th>Excluir Movimentações</th>
                 <th>Acoes</th>
               </tr>
             </thead>
@@ -3783,7 +3783,7 @@ function renderCloudOnlineIndicator() {
   text.textContent = isOnline ? 'Em Nuvem' : 'Modo Local';
   badge.title = (cloudSyncState && cloudSyncState.reason)
     ? cloudSyncState.reason
-    : (isOnline ? 'Sistema conectado ao banco de dados.' : 'Sistema operando sem conexÃ£o com o banco de dados.');
+    : (isOnline ? 'Sistema conectado ao banco de dados.' : 'Sistema operando sem conexão com o banco de dados.');
 }
 
 function renderCloudSyncCard() {
@@ -4234,17 +4234,58 @@ let customDepositos = [];
 const PAGE_SIZE = 25;
 
 const _normalizeTextCache = new Map();
-function repairMojibake(value) {
-  const text = typeof value === 'string' ? value : String(value || '');
-  if (!text || !/[ÃÂâï]/.test(text) || typeof TextDecoder === 'undefined') return text;
+const MOJIBAKE_PATTERN = /[ÃÂâïÐ�]/;
+const MOJIBAKE_ATTRIBUTE_NAMES = ['placeholder', 'title', 'aria-label'];
+
+function cleanupMojibakeArtifacts(text) {
+  return String(text || '')
+    .replace(/Â·/g, '·')
+    .replace(/Âº/g, 'º')
+    .replace(/Âª/g, 'ª')
+    .replace(/Â /g, ' ')
+    .replace(/â€¢/g, '•')
+    .replace(/â†’/g, '→')
+    .replace(/â€”/g, '—')
+    .replace(/â€“/g, '–')
+    .replace(/â€œ/g, '“')
+    .replace(/â€�/g, '”')
+    .replace(/â€˜/g, '‘')
+    .replace(/â€™/g, '’')
+    .replace(/âœ•/g, '×')
+    .replace(/âœ“/g, '✓')
+    .replace(/âš ï¸/g, '⚠️');
+}
+
+function attemptMojibakeDecode(text) {
   try {
-    const bytes = Uint8Array.from(text, (char) => char.charCodeAt(0) & 0xff);
-    const decoded = new TextDecoder('utf-8').decode(bytes);
-    if (!decoded || decoded.includes('\uFFFD')) return text;
-    return decoded;
+    const decoded = decodeURIComponent(escape(text));
+    if (decoded && !decoded.includes('\uFFFD')) return decoded;
   } catch (error) {
-    return text;
+    // Fallback below.
   }
+  if (typeof TextDecoder !== 'undefined') {
+    try {
+      const bytes = Uint8Array.from(text, (char) => char.charCodeAt(0) & 0xff);
+      const decoded = new TextDecoder('utf-8').decode(bytes);
+      if (decoded && !decoded.includes('\uFFFD')) return decoded;
+    } catch (error) {
+      // Keep original text when decoding fails.
+    }
+  }
+  return text;
+}
+
+function repairMojibake(value) {
+  let text = typeof value === 'string' ? value : String(value || '');
+  if (!text) return text;
+  text = cleanupMojibakeArtifacts(text);
+  for (let i = 0; i < 4; i += 1) {
+    if (!MOJIBAKE_PATTERN.test(text)) break;
+    const decoded = attemptMojibakeDecode(text);
+    if (!decoded || decoded === text) break;
+    text = cleanupMojibakeArtifacts(decoded);
+  }
+  return cleanupMojibakeArtifacts(text);
 }
 function repairDomMojibake(root = document.body) {
   if (!root || typeof document === 'undefined') return;
@@ -4252,14 +4293,16 @@ function repairDomMojibake(root = document.body) {
   const textNodes = [];
   while (walker.nextNode()) {
     const current = walker.currentNode;
-    if (current && /[ÃÂâï]/.test(current.nodeValue || '')) textNodes.push(current);
+    const parentTag = current && current.parentElement ? current.parentElement.tagName : '';
+    if (parentTag && ['SCRIPT', 'STYLE', 'NOSCRIPT', 'TEXTAREA'].includes(parentTag)) continue;
+    if (current && MOJIBAKE_PATTERN.test(current.nodeValue || '')) textNodes.push(current);
   }
   textNodes.forEach((node) => {
     const repaired = repairMojibake(node.nodeValue || '');
     if (repaired && repaired !== node.nodeValue) node.nodeValue = repaired;
   });
-  root.querySelectorAll('[placeholder],[title]').forEach((element) => {
-    ['placeholder', 'title'].forEach((attr) => {
+  root.querySelectorAll('[placeholder],[title],[aria-label]').forEach((element) => {
+    MOJIBAKE_ATTRIBUTE_NAMES.forEach((attr) => {
       if (!element.hasAttribute(attr)) return;
       const current = element.getAttribute(attr) || '';
       const repaired = repairMojibake(current);
@@ -4272,6 +4315,19 @@ function startMojibakeObserver() {
   if (_mojibakeObserver || typeof MutationObserver === 'undefined' || !document.body) return;
   _mojibakeObserver = new MutationObserver((mutations) => {
     mutations.forEach((mutation) => {
+      if (mutation.type === 'characterData' && mutation.target && mutation.target.nodeType === Node.TEXT_NODE) {
+        const repaired = repairMojibake(mutation.target.nodeValue || '');
+        if (repaired && repaired !== mutation.target.nodeValue) mutation.target.nodeValue = repaired;
+        return;
+      }
+      if (mutation.type === 'attributes' && mutation.target && mutation.target.nodeType === Node.ELEMENT_NODE) {
+        const attr = mutation.attributeName;
+        if (!attr || !MOJIBAKE_ATTRIBUTE_NAMES.includes(attr)) return;
+        const current = mutation.target.getAttribute(attr) || '';
+        const repaired = repairMojibake(current);
+        if (repaired && repaired !== current) mutation.target.setAttribute(attr, repaired);
+        return;
+      }
       mutation.addedNodes.forEach((node) => {
         if (!node) return;
         if (node.nodeType === Node.TEXT_NODE) {
@@ -4283,7 +4339,13 @@ function startMojibakeObserver() {
       });
     });
   });
-  _mojibakeObserver.observe(document.body, { childList: true, subtree: true });
+  _mojibakeObserver.observe(document.body, {
+    childList: true,
+    subtree: true,
+    characterData: true,
+    attributes: true,
+    attributeFilter: MOJIBAKE_ATTRIBUTE_NAMES
+  });
 }
 function normalizeText(value) {
   if (value === null || value === undefined || value === '') return '';
@@ -4312,12 +4374,12 @@ function hasPermission(permissionKey) {
 }
 
 function getUserRoleLabel(user) {
-  if (!user) return 'USUARIO';
+  if (!user) return 'USUÁRIO';
   if (user.isAdmin) return 'ADMIN';
   if (user.userType === 'eps') return 'EPS';
   if (user.permissions && (user.permissions.manageUsers || user.permissions.manageCadastros || user.permissions.deleteMovements)) return 'PRIVILEGIADO';
   if (user.userType === 'msfc') return 'MSFC';
-  return 'USUARIO';
+  return 'USUÁRIO';
 }
 
 function replaceArray(target, source) {
@@ -5113,17 +5175,17 @@ function exportFullBackup() {
 function clearAllData() {
   const total = movimentos.length + legacyOverlay.length + legacyMovements.length + embalagemDevolucoes.length;
   if (total === 0) {
-    showToast('NÃ£o hÃ¡ dados para limpar.', true);
+    showToast('Não há dados para limpar.', true);
     return;
   }
-  const msg = 'ATENÃ‡ÃƒO: Esta aÃ§Ã£o irÃ¡ remover permanentemente:\n\n' +
-    'â€¢ ' + movimentos.length + ' movimentaÃ§Ã£o(Ãµes)\n' +
-    'â€¢ ' + embalagemDevolucoes.length + ' registro(s) de embalagem\n' +
-    'â€¢ Todos os dados de anÃ¡lise\n\n' +
-    'UsuÃ¡rios e dados cadastrais serÃ£o preservados.\n\n' +
+  const msg = 'ATENÇÃO: Esta ação irá remover permanentemente:\n\n' +
+    '• ' + movimentos.length + ' movimentação(ões)\n' +
+    '• ' + embalagemDevolucoes.length + ' registro(s) de embalagem\n' +
+    '• Todos os dados de análise\n\n' +
+    'Usuários e dados cadastrais serão preservados.\n\n' +
     'Deseja continuar? (Recomendamos exportar um backup antes)';
   if (!confirm(msg)) return;
-  if (!confirm('Confirme novamente: TODOS os dados de movimentaÃ§Ãµes serÃ£o apagados. Tem certeza?')) return;
+  if (!confirm('Confirme novamente: TODOS os dados de movimentações serão apagados. Tem certeza?')) return;
   movimentos = [];
   legacyOverlay = [];
   legacyMovements = [];
@@ -5131,7 +5193,7 @@ function clearAllData() {
   analysisState = createEmptyAnalysisState();
   invalidateMm60PriceCache();
   saveToStorage('storage');
-  showToast('Todos os dados de movimentaÃ§Ãµes foram removidos. Recarregando...');
+  showToast('Todos os dados de movimentações foram removidos. Recarregando...');
   setTimeout(() => location.reload(), 1500);
 }
 
@@ -5145,7 +5207,7 @@ function updateBackupPanel() {
     statsEl.innerHTML =
       '<div style="background:var(--bg3);border-radius:8px;padding:8px 12px;text-align:center;">' +
         '<div style="font-size:1.1rem;font-weight:700;color:var(--neon);">' + movCount + '</div>' +
-        '<div style="font-size:0.7rem;color:var(--text-dim);">MovimentaÃ§Ãµes</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-dim);">Movimentações</div>' +
       '</div>' +
       '<div style="background:var(--bg3);border-radius:8px;padding:8px 12px;text-align:center;">' +
         '<div style="font-size:1.1rem;font-weight:700;color:var(--blue);">' + embCount + '</div>' +
@@ -5153,11 +5215,11 @@ function updateBackupPanel() {
       '</div>' +
       '<div style="background:var(--bg3);border-radius:8px;padding:8px 12px;text-align:center;">' +
         '<div style="font-size:1.1rem;font-weight:700;color:var(--yellow);">' + userCount + '</div>' +
-        '<div style="font-size:0.7rem;color:var(--text-dim);">UsuÃ¡rios</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-dim);">Usuários</div>' +
       '</div>' +
       '<div style="background:var(--bg3);border-radius:8px;padding:8px 12px;text-align:center;">' +
         '<div style="font-size:1.1rem;font-weight:700;color:var(--text);">' + (analysisState && analysisState.inventoryRows ? analysisState.inventoryRows.length : 0) + '</div>' +
-        '<div style="font-size:0.7rem;color:var(--text-dim);">Itens AnÃ¡lise</div>' +
+        '<div style="font-size:0.7rem;color:var(--text-dim);">Itens Análise</div>' +
       '</div>';
   }
   // Storage usage
@@ -5187,7 +5249,7 @@ function updateBackupPanel() {
     if (last) {
       try {
         const d = new Date(last);
-        lastEl.textContent = d.toLocaleDateString('pt-BR') + ' Ã s ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
+        lastEl.textContent = d.toLocaleDateString('pt-BR') + ' às ' + d.toLocaleTimeString('pt-BR', {hour:'2-digit',minute:'2-digit'});
         lastEl.style.color = 'var(--neon)';
       } catch(e) { lastEl.textContent = 'Desconhecido'; }
     } else {
@@ -5281,14 +5343,14 @@ function populateSelects() {
 
   const usersInMovements = [...new Set(movimentos.map(m => normalizeText(m.inseridoPor)).filter(Boolean))];
   const allUsers = [...new Set([...DATA.usuarios, ...usersInMovements])];
-  setSelectOptions(document.getElementById('filterUser'), allUsers.map(u => ({ label: u, value: u })), 'Todos os usuarios', '');
+  setSelectOptions(document.getElementById('filterUser'), allUsers.map(u => ({ label: u, value: u })), 'Todos os usuários', '');
 
   getMaterialRows().forEach(row => syncMaterialRowMeta(row, false));
   updateLoginButtonState();
 }
 
 function escapeHtml(value) {
-  return String(value === null || value === undefined ? '' : value)
+  return repairMojibake(value === null || value === undefined ? '' : value)
     .replace(/&/g, '&amp;')
     .replace(/</g, '&lt;')
     .replace(/>/g, '&gt;')
@@ -5794,8 +5856,8 @@ function createMaterialRowMarkup(item, index) {
             <div class="select-search-dropdown material-dropdown"></div>
           </div>
         </div>
-        <div class="form-group">
-          <label class="form-label">Codigo Produto</label>
+      <div class="form-group">
+          <label class="form-label">Código Produto</label>
           <input type="text" class="form-input material-code-input" readonly style="opacity:0.6" value="${escapeHtml(material.codProduto)}">
         </div>
         <div class="form-group">
@@ -5808,14 +5870,14 @@ function createMaterialRowMarkup(item, index) {
         </div>
         <div class="form-group">
           <label class="form-label">Lote</label>
-          <input type="text" class="form-input material-lote-input" placeholder="No do lote" value="${escapeHtml(material.lote)}">
+          <input type="text" class="form-input material-lote-input" placeholder="Nº do lote" value="${escapeHtml(material.lote)}">
         </div>
       </div>
       <div class="material-packaging-section" style="display:none; margin-top:14px; padding-top:14px; border-top:1px solid var(--border)">
         <div class="route-group-tag">Controle de Embalagem</div>
         <div class="form-grid">
           <div class="form-group">
-            <label class="form-label">Data Devolucao Embalagens</label>
+            <label class="form-label">Data Devolução Embalagens</label>
             <input type="date" class="form-input material-pack-date-input" value="${escapeHtml(material.dataDevEmb)}">
           </div>
           <div class="form-group">
@@ -6049,7 +6111,7 @@ function collectMaterialRows(validate) {
 
     if (row.dataset.controlaEmbalagem === 'S') {
       if (validate && !dataDevEmb) {
-        showToast(`Informe a data de devolucao das embalagens do item ${i + 1} ou cadastre o lead time.`, true);
+        showToast(`Informe a data de devolução das embalagens do item ${i + 1} ou cadastre o lead time.`, true);
         return null;
       }
       if (validate && embalagemManual && (!embDevolverText || Number.isNaN(embDevolver) || embDevolver <= 0)) {
@@ -6073,7 +6135,7 @@ function collectMaterialRows(validate) {
   }
 
   if (validate && !items.length) {
-    showToast('Adicione pelo menos um material na movimentacao.', true);
+    showToast('Adicione pelo menos um material na movimentação.', true);
     return null;
   }
   return items;
@@ -6142,7 +6204,7 @@ function upgradeMaterialSection() {
       <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"></path></svg>
       Materiais
     </div>
-    <div class="hint-line">Inclua um ou mais materiais na mesma movimentacao.</div>
+    <div class="hint-line">Inclua um ou mais materiais na mesma movimentação.</div>
     <div class="material-items-container" id="materialItemsContainer"></div>
     <div class="material-actions-inline">
       <button type="button" class="btn btn-secondary" onclick="addMaterialRow()">
@@ -6490,7 +6552,7 @@ async function doLogin() {
   const userName = normalizeText(document.getElementById('loginUser').value);
   const password = document.getElementById('loginPassword').value;
   if (!userName) {
-    showToast('Selecione o usuario para entrar.', true);
+    showToast('Selecione o usuário para entrar.', true);
     return;
   }
   if (!password) {
@@ -6500,12 +6562,12 @@ async function doLogin() {
 
   const user = findUserByName(userName);
   if (!user) {
-    showToast('Usuario nao encontrado.', true);
+    showToast('Usuário não encontrado.', true);
     return;
   }
 
   if (String(user.password) !== String(password)) {
-    showToast('Senha invalida.', true);
+    showToast('Senha inválida.', true);
     return;
   }
 
@@ -6526,7 +6588,7 @@ function doLogout() {
   document.getElementById('loginFormBox').style.display = 'none';
   document.getElementById('loginAreaSelector').style.display = 'block';
   document.getElementById('loginPassword').value = '';
-  document.getElementById('userRole').textContent = 'USUARIO';
+  document.getElementById('userRole').textContent = 'USUÁRIO';
   populateSelects();
   updateLoginButtonState();
 }
@@ -6534,7 +6596,7 @@ function doLogout() {
 // ==================== ACCESS REQUEST MODAL ====================
 function openAccessRequestModal() {
   document.getElementById('accessRequestModal').style.display = 'block';
-  // Pre-select EPS if coming from Area de Consulta
+  // Pre-select EPS if coming from Área de Consulta
   if (loginArea === 'consulta') {
     document.getElementById('reqUserType').value = 'eps';
     toggleAccessRequestFields();
@@ -6564,26 +6626,26 @@ function toggleAccessRequestFields() {
 }
 function submitAccessRequest() {
   const type = document.getElementById('reqUserType').value;
-  if (!type) { showToast('Selecione o tipo de usuario.', true); return; }
+  if (!type) { showToast('Selecione o tipo de usuário.', true); return; }
   let req = { id: safeId('req'), userType: type, status: 'pendente', createdAt: new Date().toISOString() };
   if (type === 'msfc') {
     req.nome = normalizeText(document.getElementById('reqNomeMsfc').value);
     req.area = normalizeText(document.getElementById('reqArea').value);
     req.contato = normalizeText(document.getElementById('reqContatoMsfc').value);
     req.email = normalizeText(document.getElementById('reqEmailMsfc').value);
-    if (!req.nome || !req.area || !req.contato) { showToast('Preencha Nome, Area e Contato.', true); return; }
+    if (!req.nome || !req.area || !req.contato) { showToast('Preencha Nome, Área e Contato.', true); return; }
   } else {
     req.nome = normalizeText(document.getElementById('reqNomeEps').value);
     req.epsVinculada = document.getElementById('reqEps').value;
     req.contato = normalizeText(document.getElementById('reqContatoEps').value);
     req.email = normalizeText(document.getElementById('reqEmailEps').value);
-    if (!req.nome || !req.epsVinculada || !req.contato || !req.email) { showToast('Preencha todos os campos obrigatorios.', true); return; }
+    if (!req.nome || !req.epsVinculada || !req.contato || !req.email) { showToast('Preencha todos os campos obrigatórios.', true); return; }
   }
   const requests = loadAccessRequests();
   requests.push(req);
   saveAccessRequests(requests);
   closeAccessRequestModal();
-  showToast('Solicitacao enviada! Aguarde aprovacao do administrador.');
+  showToast('Solicitação enviada! Aguarde aprovação do administrador.');
 }
 
 function applyPermissionsUI() {
@@ -6628,11 +6690,11 @@ function applyPermissionsUI() {
 // ==================== TABS ====================
 function switchTab(tab, btn) {
   if (tab === 'cadastros' && !hasPermission('manageCadastros')) {
-    showToast('Voce nao tem permissao para gerenciar cadastros.', true);
+    showToast('Você não tem permissão para gerenciar cadastros.', true);
     return;
   }
   if (tab === 'controle' && !hasPermission('manageUsers')) {
-    showToast('Voce nao tem permissao para gerenciar usuarios.', true);
+    showToast('Você não tem permissão para gerenciar usuários.', true);
     return;
   }
 
@@ -6775,9 +6837,9 @@ function openAccessEntityDetail(kind, id) {
     : users.find(item => item.id === id);
   if (!data) return;
 
-  const title = kind === 'request' ? 'Solicitacao de Acesso' : 'Cadastro do Usuario';
+  const title = kind === 'request' ? 'Solicitação de Acesso' : 'Cadastro do Usuário';
   const profileLabel = kind === 'request'
-    ? 'Pendente de aprovacao'
+    ? 'Pendente de aprovação'
     : getUserRoleLabel(data);
   const fields = [
     ['Nome', data.nome || data.name || '-'],
@@ -6785,10 +6847,10 @@ function openAccessEntityDetail(kind, id) {
     ['Tipo', getAccessUserTypeLabel(data.userType || (data.isAdmin ? 'admin' : 'msfc'))],
     ['Email', data.email || '-'],
     ['Contato', data.contato || '-'],
-    ['Area', data.area || '-'],
+    ['Área', data.area || '-'],
     ['EPS', data.epsVinculada || '-'],
     ['Registro', data.createdAt ? getBackupTimestampLabel(data.createdAt) : '-'],
-    ['Ultimo login', kind === 'user' && data.lastLoginAt ? getBackupTimestampLabel(data.lastLoginAt) : '-']
+    ['Último login', kind === 'user' && data.lastLoginAt ? getBackupTimestampLabel(data.lastLoginAt) : '-']
   ];
 
   const overlay = document.createElement('div');
@@ -6797,10 +6859,10 @@ function openAccessEntityDetail(kind, id) {
     <div class="detail-modal" style="max-width:760px;">
       <div class="detail-header">
         <div class="detail-header-left">
-          <span class="badge ${kind === 'request' ? 'badge-writer' : 'badge-transferencia'}">${kind === 'request' ? 'Solicitacao' : 'Usuario'}</span>
+          <span class="badge ${kind === 'request' ? 'badge-writer' : 'badge-transferencia'}">${kind === 'request' ? 'Solicitação' : 'Usuário'}</span>
           <span class="status-finalizado" style="font-size:0.68rem">${escapeHtml(profileLabel)}</span>
         </div>
-        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">Ã—</button>
+        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">×</button>
       </div>
       <div class="detail-body">
         <div class="detail-section">
@@ -6891,13 +6953,13 @@ function approveAccessRequest(reqId) {
     const appUrl = window.location.href;
     const subject = encodeURIComponent('Bem-vindo ao CTI 2026 - Acesso Liberado');
     const body = encodeURIComponent(
-      'OlÃ¡ ' + req.nome + ',\r\n\r\n' +
+      'Olá ' + req.nome + ',\r\n\r\n' +
       'Seu acesso ao sistema CTI 2026 foi aprovado!\r\n\r\n' +
       'Dados de acesso:\r\n' +
-      '- UsuÃ¡rio: ' + req.nome + '\r\n' +
-      '- Senha temporÃ¡ria: ' + pwd + '\r\n' +
+      '- Usuário: ' + req.nome + '\r\n' +
+      '- Senha temporária: ' + pwd + '\r\n' +
       '- Link do sistema: ' + appUrl + '\r\n\r\n' +
-      'No primeiro acesso, vocÃª serÃ¡ solicitado a criar uma nova senha.\r\n\r\n' +
+      'No primeiro acesso, você será solicitado a criar uma nova senha.\r\n\r\n' +
       'Atenciosamente,\r\n' +
       'Equipe CTI - MS Florestal'
     );
@@ -7673,7 +7735,7 @@ function abrirDetalheEps(deposito) {
       '<div style="font-size:1.2rem;font-weight:700;color:var(--red);font-family:\'JetBrains Mono\',monospace;">+' + formatNumber(eps.retiradas) + '</div>' +
     '</div>' +
     '<div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">' +
-      '<div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">DevoluÃ§Ãµes</div>' +
+      '<div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;margin-bottom:4px;">Devoluções</div>' +
       '<div style="font-size:1.2rem;font-weight:700;color:var(--neon);font-family:\'JetBrains Mono\',monospace;">-' + formatNumber(eps.devolucoes) + '</div>' +
     '</div>' +
     '<div style="background:var(--bg3);border-radius:10px;padding:12px;text-align:center;">' +
@@ -7718,7 +7780,7 @@ function abrirDetalheEps(deposito) {
   // History table
   const histTbody = document.getElementById('saldoEpsHistoricoTable');
   if (!eps.historico.length) {
-    histTbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhuma movimentaÃ§Ã£o registrada.</td></tr>';
+    histTbody.innerHTML = '<tr><td colspan="6" class="empty-state">Nenhuma movimentação registrada.</td></tr>';
   } else {
     histTbody.innerHTML = eps.historico.slice(0, 100).map(h => {
       const qtyColor = h.quantidade > 0 ? 'var(--red)' : 'var(--neon)';
@@ -7864,7 +7926,7 @@ function buildStyledWorksheet(config) {
         <tbody>${tableRowsHtml}</tbody>
       </table>
     </div>
-    <div class="sheet-footer">CTI 2026 â€¢ Elaborado por Lucas Marques</div>
+    <div class="sheet-footer">CTI 2026 • Elaborado por Lucas Marques</div>
   </div>
 </body>
 </html>`;
@@ -7950,7 +8012,7 @@ function exportSaldoEpsCSV() {
     Object.values(eps.materiais).sort((a, b) => b.saldo - a.saldo).forEach(m => {
       lines.push([
         '',
-        '  â†’ ' + m.material,
+        '  → ' + m.material,
         m.retiradas,
         m.devolucoes,
         m.transferenciasIn,
@@ -8052,7 +8114,7 @@ function setNfTipo(tipo) {
 function onTipoChange() {
   updateEmbalagemVisibility();
   return;
-  const embTypes = ['Retirada', 'DevoluÃ§Ã£o', 'Transferencia Entre EPS'];
+  const embTypes = ['Retirada', 'Devolução', 'Transferencia Entre EPS'];
   if (embTypes.includes(tipo)) {
     document.getElementById('embSection').style.display = 'block';
   }
@@ -8062,7 +8124,7 @@ function updateEmbalagemVisibility() {
   const embSection = document.getElementById('embSection');
   if (!embSection) return;
   const tipo = document.getElementById('fTipo').value;
-  const embTypes = ['Retirada', 'DevoluÃƒÂ§ÃƒÂ£o', 'Transferencia Entre EPS'];
+  const embTypes = ['Retirada', 'Devolução', 'Transferencia Entre EPS'];
   const hasPackagingMaterial = getMaterialRows().some(row => row.dataset.controlaEmbalagem === 'S');
   embSection.style.display = (tipo === 'Retirada' || tipo.includes('Devolu') || tipo === 'Transferencia Entre EPS' || hasPackagingMaterial) ? 'block' : 'none';
 }
@@ -8070,7 +8132,7 @@ function updateEmbalagemVisibility() {
 function saveMovimento(e) {
   e.preventDefault();
   if (!currentUser) {
-    showToast('Faca login para registrar movimentacoes.', true);
+    showToast('Faça login para registrar movimentações.', true);
     return false;
   }
 
@@ -8118,12 +8180,12 @@ function saveMovimento(e) {
     const idx = movimentos.findIndex(m => m.id === editingId);
     if (idx !== -1) movimentos[idx] = mov;
     editingId = null;
-    showToast('MovimentaÃ§Ã£o atualizada com sucesso!');
+    showToast('Movimentação atualizada com sucesso!');
   } else {
     movimentos.push(mov);
     showToast(isWriter
-      ? 'WRITER registrada! FicarÃ¡ pendente atÃ© finalizar.'
-      : 'MovimentaÃ§Ã£o registrada com sucesso!');
+      ? 'WRITER registrada! Ficará pendente até finalizar.'
+      : 'Movimentação registrada com sucesso!');
   }
 
   saveToStorage('movimentos');
@@ -8144,22 +8206,22 @@ function finalizarWriter(id) {
     <div class="modal">
       <div class="modal-title" style="color:#ff8800">Finalizar WRITER</div>
       <div class="modal-text">
-        <strong>${mov.material}</strong> â€” ${mov.quantidade.toLocaleString('pt-BR')} ${mov.unidade}<br>
-        ${mov.origem} â†’ ${mov.destino}<br>
-        NF: ${mov.nf} | Motivo: ${mov.motivo || '-'}
-        ${getMovementMaterials(mov).length > 1 ? `<br><br>Itens: ${getMovementMaterials(mov).map(item => `${item.material} (${formatNumber(item.quantidade)} ${item.unidade || ''})`).join(' | ')}` : ''}
+        <strong>${escapeHtml(mov.material)}</strong> — ${mov.quantidade.toLocaleString('pt-BR')} ${escapeHtml(mov.unidade)}<br>
+        ${escapeHtml(mov.origem)} → ${escapeHtml(mov.destino)}<br>
+        NF: ${escapeHtml(mov.nf)} | Motivo: ${escapeHtml(mov.motivo || '-')}
+        ${getMovementMaterials(mov).length > 1 ? `<br><br>Itens: ${getMovementMaterials(mov).map(item => `${escapeHtml(item.material)} (${escapeHtml(formatNumber(item.quantidade))} ${escapeHtml(item.unidade || '')})`).join(' | ')}` : ''}
       </div>
       <div class="modal-form-group">
-        <label>Data Mov. SistÃªmico *</label>
+        <label>Data Mov. Sistêmico *</label>
         <input type="date" id="finDataSist">
       </div>
       <div class="modal-form-group">
         <label>MIGO *</label>
-        <input type="text" id="finMigo" placeholder="NÂº MIGO">
+        <input type="text" id="finMigo" placeholder="Nº MIGO">
       </div>
       <div class="modal-form-group">
-        <label>NÂº Pedido (se houver)</label>
-        <input type="text" id="finPedido" placeholder="NÂº do pedido" value="${mov.pedido === 'WRITER' ? '' : mov.pedido}">
+        <label>Nº Pedido (se houver)</label>
+        <input type="text" id="finPedido" placeholder="Nº do pedido" value="${mov.pedido === 'WRITER' ? '' : escapeHtml(mov.pedido)}">
       </div>
       <div class="modal-actions">
         <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
@@ -8175,7 +8237,7 @@ function finalizarWriter(id) {
     const pedido = overlay.querySelector('#finPedido').value;
 
     if (!dataSist || !migo) {
-      showToast('Preencha Data Mov. SistÃªmico e MIGO para finalizar.', true);
+      showToast('Preencha Data Mov. Sistêmico e MIGO para finalizar.', true);
       return;
     }
 
@@ -8236,7 +8298,7 @@ function editMov(id) {
   // Restore NF tipo
   setNfTipo(mov.nfTipo === 'writer' ? 'writer' : 'pedido');
 
-  const embTypes = ['Retirada', 'DevoluÃ§Ã£o', 'Transferencia Entre EPS'];
+  const embTypes = ['Retirada', 'Devolução', 'Transferencia Entre EPS'];
   if (embTypes.includes(mov.tipo) || mov.embDevolver > 0) {
     document.getElementById('embSection').style.display = 'block';
   }
@@ -8245,24 +8307,24 @@ function editMov(id) {
   // Switch to form tab
   switchTab('novo');
 
-  showToast('Editando movimentaÃ§Ã£o #' + id);
+  showToast('Editando movimentação #' + id);
 }
 
 function deleteMov(id) {
   if (!hasPermission('deleteMovements')) {
-    showToast('Somente usuarios com privilegio podem excluir movimentacoes.', true);
+    showToast('Somente usuários com privilégio podem excluir movimentações.', true);
     return;
   }
 
   showModal(
-    'Confirmar ExclusÃ£o',
-    'Deseja realmente excluir esta movimentaÃ§Ã£o? Esta aÃ§Ã£o nÃ£o pode ser desfeita.',
+    'Confirmar Exclusão',
+    'Deseja realmente excluir esta movimentação? Esta ação não pode ser desfeita.',
     () => {
       movimentos = movimentos.filter(m => m.id !== id);
       saveToStorage('movimentos');
       updateDashboard();
       renderTable();
-      showToast('MovimentaÃ§Ã£o excluÃ­da.');
+      showToast('Movimentação excluída.');
     }
   );
 }
@@ -8328,7 +8390,7 @@ function getFilteredData() {
 function getBadgeClass(tipo) {
   if (!tipo) return 'badge-other';
   if (tipo.includes('Retirada')) return 'badge-retirada';
-  if (tipo.includes('DevoluÃ§Ã£o') || tipo.includes('Devolu')) return 'badge-devolucao';
+  if (tipo.includes('Devolu')) return 'badge-devolucao';
   if (tipo.includes('Transferencia') || tipo.includes('Transfer') || tipo.includes('Baldeio')) return 'badge-transferencia';
   if (tipo.includes('Cancelada')) return 'badge-cancelada';
   return 'badge-other';
@@ -8390,7 +8452,7 @@ function renderTable() {
 
   // Page info
   document.getElementById('pageInfo').textContent =
-    `Mostrando ${data.length > 0 ? start + 1 : 0}â€“${Math.min(start + PAGE_SIZE, data.length)} de ${data.length} registros`;
+    `Mostrando ${data.length > 0 ? start + 1 : 0}–${Math.min(start + PAGE_SIZE, data.length)} de ${data.length} registros`;
 
   // Pagination buttons
   const pgContainer = document.getElementById('paginationBtns');
@@ -8435,7 +8497,7 @@ function filterTable() {
 function updateDashboard() {
   const total = movimentos.length;
   const retiradas = movimentos.filter(m => m.tipo === 'Retirada').length;
-  const devolucoes = movimentos.filter(m => m.tipo === 'DevoluÃ§Ã£o').length;
+  const devolucoes = movimentos.filter(m => normalizeText(m.tipo).toLowerCase().includes('devolu')).length;
   const writers = movimentos.filter(m => m.status === 'pendente').length;
   const pendEmb = movimentos.filter(m => m.contEmb === 'SIM' && m.embDevolver > 0).length;
 
@@ -8620,7 +8682,7 @@ function showPasswordActions(userName, password) {
       '<button class="btn btn-secondary" onclick="navigator.clipboard.writeText(\'' + escapeHtml(password) + '\');showToast(\'Senha copiada!\');document.getElementById(\'passwordActionsPanel\').remove();" style="flex:1;padding:8px 12px;font-size:0.78rem;">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px;"><rect x="9" y="9" width="13" height="13" rx="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>' +
         'Copiar Senha</button>' +
-      '<button class="btn btn-primary" onclick="window.open(\'mailto:?subject=Credenciais%20de%20Acesso%20CTI&body=OlÃ¡%20' + encodeURIComponent(userName) + ',%0A%0ASuas%20credenciais%20de%20acesso%20ao%20CTI:%0AUsuario:%20' + encodeURIComponent(userName) + '%0ASenha%20temporaria:%20' + encodeURIComponent(password) + '%0A%0AVoce%20devera%20alterar%20a%20senha%20no%20primeiro%20acesso.\');document.getElementById(\'passwordActionsPanel\').remove();" style="flex:1;padding:8px 12px;font-size:0.78rem;">' +
+      '<button class="btn btn-primary" onclick="window.open(\'mailto:?subject=Credenciais%20de%20Acesso%20CTI&body=Ol%C3%A1%20' + encodeURIComponent(userName) + ',%0A%0ASuas%20credenciais%20de%20acesso%20ao%20CTI:%0AUsu%C3%A1rio:%20' + encodeURIComponent(userName) + '%0ASenha%20tempor%C3%A1ria:%20' + encodeURIComponent(password) + '%0A%0AVoc%C3%AA%20dever%C3%A1%20alterar%20a%20senha%20no%20primeiro%20acesso.\');document.getElementById(\'passwordActionsPanel\').remove();" style="flex:1;padding:8px 12px;font-size:0.78rem;">' +
         '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width:14px;height:14px;display:inline;vertical-align:-2px;margin-right:4px;"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>' +
         'Enviar por Email (Outlook)</button>' +
     '</div>';
@@ -9173,7 +9235,7 @@ function exportCSVLegacy() {
   const data = getFilteredData();
   if (data.length === 0) { showToast('Nenhum registro para exportar.', true); return; }
 
-  const headers = ['Data Mov. FÃ­sico','Tipo','Status','Origem','Destino','EPS Destino','Supervisor','Centro','DepÃ³sito','Pedido','Motivo','Remessa','NF','Data Mov. SistÃªmico','MIGO','CÃ³d. Produto','Material','Quantidade','Unidade','Lote','Data Dev. Emb.','Emb. Devolver','Caixas Devolver','Cont. Embalagem','Inserido por','Inserido em','Finalizado por','Finalizado em'];
+  const headers = ['Data Mov. Físico','Tipo','Status','Origem','Destino','EPS Destino','Supervisor','Centro','Depósito','Pedido','Motivo','Remessa','NF','Data Mov. Sistêmico','MIGO','Cód. Produto','Material','Quantidade','Unidade','Lote','Data Dev. Emb.','Emb. Devolver','Caixas Devolver','Cont. Embalagem','Inserido por','Inserido em','Finalizado por','Finalizado em'];
   const keys = ['dataFisico','tipo','status','origem','destino','epsDestino','supervisor','centro','deposito','pedido','motivo','remessa','nf','dataSistemico','migo','codProduto','material','quantidade','unidade','lote','dataDevEmb','embDevolver','caixasDevolver','contEmb','inseridoPor','inseridoEm','finalizadoPor','finalizadoEm'];
 
   let csv = '\uFEFF' + headers.join(';') + '\n';
@@ -9626,7 +9688,7 @@ function showDetail(id) {
     const cls = val ? (isMono ? 'mono' : '') : 'empty';
     return `<div class="detail-field">
       <div class="detail-field-label">${label}</div>
-      <div class="detail-field-value ${cls}">${val || 'â€”'}</div>
+      <div class="detail-field-value ${cls}">${val || '—'}</div>
     </div>`;
   }
 
@@ -9639,33 +9701,33 @@ function showDetail(id) {
           <span class="badge ${getBadgeClass(m.tipo)}" style="font-size:0.75rem">${m.tipo}</span>
           ${statusBadge}
         </div>
-        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">âœ•</button>
+        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">×</button>
       </div>
       <div class="detail-body">
 
         <div class="detail-section">
-          <div class="detail-section-title">MovimentaÃ§Ã£o</div>
+          <div class="detail-section-title">Movimentação</div>
           <div class="detail-grid">
-            ${field('Data Mov. FÃ­sico', formatDate(m.dataFisico))}
+            ${field('Data Mov. Físico', formatDate(m.dataFisico))}
             ${field('Tipo', m.tipo)}
             ${field('Origem / EPS Fornecedora', m.origem)}
             ${field('Destino (Fazenda)', m.destino)}
             ${field('EPS Destino', m.epsDestino)}
             ${field('Supervisor', m.supervisor)}
             ${field('Centro Destino', m.centro, true)}
-            ${field('DepÃ³sito', m.deposito, true)}
+            ${field('Depósito', m.deposito, true)}
           </div>
         </div>
 
         <div class="detail-section">
           <div class="detail-section-title">Pedido / Nota Fiscal</div>
           <div class="detail-grid">
-            ${field('Tipo NF', m.nfTipo === 'writer' ? 'WRITER (sem mov. sistÃªmico)' : 'Via Pedido')}
+            ${field('Tipo NF', m.nfTipo === 'writer' ? 'WRITER (sem mov. sistêmico)' : 'Via Pedido')}
             ${field('Pedido', m.pedido, true)}
             ${field('Motivo', m.motivo)}
             ${field('Remessa', m.remessa, true)}
             ${field('NF', m.nf, true)}
-            ${field('Data Mov. SistÃªmico', formatDate(m.dataSistemico))}
+            ${field('Data Mov. Sistêmico', formatDate(m.dataSistemico))}
             ${field('MIGO', m.migo, true)}
           </div>
         </div>
@@ -9675,9 +9737,9 @@ function showDetail(id) {
           <div class="detail-grid">
             <div class="detail-field full">
               <div class="detail-field-label">Texto Breve Material</div>
-              <div class="detail-field-value" style="font-size:1rem;font-weight:600">${m.material || 'â€”'}</div>
+              <div class="detail-field-value" style="font-size:1rem;font-weight:600">${m.material || '—'}</div>
             </div>
-            ${field('CÃ³digo Produto', m.codProduto, true)}
+            ${field('Código Produto', m.codProduto, true)}
             ${field('Quantidade', formatNumber(m.quantidade), true)}
             ${field('Unidade', m.unidade)}
             ${field('Lote', m.lote, true)}
@@ -9692,7 +9754,7 @@ function showDetail(id) {
               <div class="material-summary-card">
                 <div class="material-summary-name">${item.material || '-'}</div>
                 <div class="material-summary-meta">
-                  Codigo: ${item.codProduto || '-'}<br>
+                  Código: ${item.codProduto || '-'}<br>
                   Quantidade: ${formatNumber(item.quantidade)} ${item.unidade || ''}<br>
                   Lote: ${item.lote || '-'}
                 </div>
@@ -9705,7 +9767,7 @@ function showDetail(id) {
         <div class="detail-section">
           <div class="detail-section-title">Controle de Embalagens</div>
           <div class="detail-grid">
-            ${field('Data DevoluÃ§Ã£o Embalagens', formatDate(m.dataDevEmb))}
+            ${field('Data Devolução Embalagens', formatDate(m.dataDevEmb))}
             ${field('Embalagens a Devolver', m.embDevolver ? String(m.embDevolver) : '', true)}
             ${field('Caixas a Devolver', m.caixasDevolver ? String(m.caixasDevolver) : '', true)}
             ${field('Contabilizar Embalagem', m.contEmb)}
@@ -9717,7 +9779,7 @@ function showDetail(id) {
         <div>
           Inserido por <strong style="color:var(--neon)">${m.inseridoPor}</strong>
           ${m.inseridoEm ? ' em ' + new Date(m.inseridoEm).toLocaleString('pt-BR') : ''}
-          ${m.finalizadoPor ? ` Â· Finalizado por <strong style="color:var(--neon)">${m.finalizadoPor}</strong>` : ''}
+          ${m.finalizadoPor ? ` · Finalizado por <strong style="color:var(--neon)">${m.finalizadoPor}</strong>` : ''}
         </div>
         <div class="detail-actions">
           ${isPendente ? `<button class="btn-finalizar" onclick="this.closest('.modal-overlay').remove(); finalizarWriter(${m.id})">Finalizar</button>` : ''}
@@ -11065,7 +11127,7 @@ function saveMovimento(e) {
   const blockedDest = route.depositoDestino && isEpsBlocked(route.depositoDestino);
   if (blockedOrigin || blockedDest) {
     const blockedName = blockedOrigin ? route.depositoOrigem : route.depositoDestino;
-    showToast('âš ï¸ EPS ' + blockedName + ' estÃ¡ BLOQUEADA. Regularize a situaÃ§Ã£o antes de registrar movimentaÃ§Ãµes.', true);
+    showToast('⚠️ EPS ' + blockedName + ' está BLOQUEADA. Regularize a situação antes de registrar movimentações.', true);
     return false;
   }
 
@@ -14402,7 +14464,7 @@ function openAnalysisFoDetail(deposito) {
   overlay.innerHTML = `
     <div class="modal" style="max-width:min(1180px,96vw);width:min(1180px,96vw)">
       <div class="modal-title">${escapeHtml(`F.O. de ${row.deposito} - ${row.epsNome}`)}</div>
-      <div class="modal-text">${batches.length} lote(s) de F.O. importado(s) â€” ${totalRows} linha(s) no total.</div>
+      <div class="modal-text">${batches.length} lote(s) de F.O. importado(s) — ${totalRows} linha(s) no total.</div>
       <div style="margin-top:16px">
         ${contentHtml}
       </div>
@@ -16734,7 +16796,7 @@ function exportCSV() {
   if (sourceData.length === 0) { showToast('Nenhum registro para exportar.', true); return; }
   const data = expandMovimentosForExport(sourceData);
 
-  const headers = ['Data Mov. Fisico','Tipo','Status','Fluxo Estoque','Deposito Origem','Origem','Centro Origem','Fazenda Origem','Deposito Destino','Destino','Centro Destino','Fazenda Destino','Supervisor / Solicitante','Pedido','Motivo','Remessa','NF','Data Mov. Sistemico','MIGO','Cod. Produto','Material','Quantidade','Unidade','Lote','Data Dev. Emb.','Emb. Devolver','Cont. Embalagem','Inserido por','Inserido em','Finalizado por','Finalizado em'];
+  const headers = ['Data Mov. Físico','Tipo','Status','Fluxo Estoque','Depósito Origem','Origem','Centro Origem','Fazenda Origem','Depósito Destino','Destino','Centro Destino','Fazenda Destino','Supervisor / Solicitante','Pedido','Motivo','Remessa','NF','Data Mov. Sistêmico','MIGO','Cód. Produto','Material','Quantidade','Unidade','Lote','Data Dev. Emb.','Emb. Devolver','Cont. Embalagem','Inserido por','Inserido em','Finalizado por','Finalizado em'];
   const keys = ['dataFisico','tipo','status','fluxoEstoque','depositoOrigem','origem','centroOrigem','fazendaOrigem','depositoDestino','destino','centroDestino','fazendaDestino','supervisor','pedido','motivo','remessa','nf','dataSistemico','migo','codProduto','material','quantidade','unidade','lote','dataDevEmb','embDevolver','contEmb','inseridoPor','inseridoEm','finalizadoPor','finalizadoEm'];
 
   const bodyRows = data.map((m, idx) => {
@@ -16770,10 +16832,10 @@ function exportCSV() {
 <body>
   <div class="card">
     <div class="header">
-      <h1 class="title">CTI 2026 - Relatorio de Movimentacoes</h1>
+      <h1 class="title">CTI 2026 - Relatório de Movimentações</h1>
       <div class="meta">Gerado em: ${escapeHtml(generatedAt)}</div>
     </div>
-    <div class="summary">Movimentacoes exportadas: <strong>${sourceData.length}</strong> | Linhas de materiais: <strong>${data.length}</strong></div>
+    <div class="summary">Movimentações exportadas: <strong>${sourceData.length}</strong> | Linhas de materiais: <strong>${data.length}</strong></div>
     <table>
       <thead>
         <tr>${headers.map(h => `<th>${escapeHtml(h)}</th>`).join('')}</tr>
@@ -16791,7 +16853,7 @@ function exportCSV() {
   a.download = `CTI_2026_Planilha_${new Date().toISOString().split('T')[0]}.xls`;
   a.click();
   URL.revokeObjectURL(url);
-  showToast(`${sourceData.length} movimentacoes exportadas com ${data.length} linhas de materiais!`);
+  showToast(`${sourceData.length} movimentações exportadas com ${data.length} linhas de materiais!`);
 }
 
 function showDetail(id) {
@@ -16807,11 +16869,11 @@ function showDetail(id) {
     : `<span class="status-finalizado" style="font-size:0.7rem">FINALIZADO</span>`;
 
   function field(label, value, isMono) {
-    const val = value || '';
+    const val = repairMojibake(value || '');
     const cls = val ? (isMono ? 'mono' : '') : 'empty';
     return `<div class="detail-field">
-      <div class="detail-field-label">${label}</div>
-      <div class="detail-field-value ${cls}">${val || 'â€”'}</div>
+      <div class="detail-field-label">${escapeHtml(label)}</div>
+      <div class="detail-field-value ${cls}">${escapeHtml(val || '—')}</div>
     </div>`;
   }
 
@@ -16821,23 +16883,23 @@ function showDetail(id) {
     <div class="detail-modal">
       <div class="detail-header">
         <div>
-          <div class="detail-title">Movimentacao #${m.id}</div>
+          <div class="detail-title">Movimentação #${m.id}</div>
           <div class="detail-subtitle">${statusBadge}</div>
         </div>
-        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">Ã—</button>
+        <button class="detail-close" onclick="this.closest('.modal-overlay').remove()">×</button>
       </div>
 
       <div class="detail-body">
         <div class="detail-section">
-          <div class="detail-section-title">Movimentacao</div>
+          <div class="detail-section-title">Movimentação</div>
           <div class="detail-grid">
-            ${field('Data Mov. Fisico', formatDate(m.dataFisico))}
+            ${field('Data Mov. Físico', formatDate(m.dataFisico))}
             ${field('Tipo', m.tipo)}
-            ${field('Deposito Origem', getDepositoDisplay(m, 'origem'), true)}
+            ${field('Depósito Origem', getDepositoDisplay(m, 'origem'), true)}
             ${field('Origem', getRouteDescription(m, 'origem'))}
             ${field('Centro Fazenda Origem', getCentroDisplay(m, 'origem'), true)}
             ${field('Fazenda Origem', getFazendaDisplay(m, 'origem'))}
-            ${field('Deposito Destino', getDepositoDisplay(m, 'destino'), true)}
+            ${field('Depósito Destino', getDepositoDisplay(m, 'destino'), true)}
             ${field('Destino', getRouteDescription(m, 'destino'))}
             ${field('Centro Fazenda Destino', getCentroDisplay(m, 'destino'), true)}
             ${field('Fazenda Destino', getFazendaDisplay(m, 'destino'))}
@@ -16848,12 +16910,12 @@ function showDetail(id) {
         <div class="detail-section">
           <div class="detail-section-title">Pedido / Nota Fiscal</div>
           <div class="detail-grid">
-            ${field('Tipo NF', m.nfTipo === 'writer' ? 'WRITER (sem mov. sistemico)' : 'Via Pedido')}
+            ${field('Tipo NF', m.nfTipo === 'writer' ? 'WRITER (sem mov. sistêmico)' : 'Via Pedido')}
             ${field('Pedido', m.pedido, true)}
             ${field('Motivo', m.motivo)}
             ${field('Remessa', m.remessa, true)}
             ${field('NF', m.nf, true)}
-            ${field('Data Mov. Sistemico', formatDate(m.dataSistemico))}
+            ${field('Data Mov. Sistêmico', formatDate(m.dataSistemico))}
             ${field('MIGO', m.migo, true)}
           </div>
         </div>
@@ -16863,13 +16925,13 @@ function showDetail(id) {
           <div class="detail-grid">
             <div class="detail-field full">
               <div class="detail-field-label">Texto Breve Material</div>
-              <div class="detail-field-value" style="font-size:1rem;font-weight:600">${m.material || 'â€”'}</div>
+              <div class="detail-field-value" style="font-size:1rem;font-weight:600">${escapeHtml(m.material || '—')}</div>
             </div>
-            ${field('Codigo Produto', m.codProduto, true)}
+            ${field('Código Produto', m.codProduto, true)}
             ${field('Quantidade', formatNumber(m.quantidade), true)}
             ${field('Unidade', m.unidade)}
             ${field('Lote', m.lote, true)}
-            ${firstMaterial.controlaEmbalagem === 'S' ? field('Data Devolucao Embalagens', formatDate(firstMaterial.dataDevEmb)) : ''}
+            ${firstMaterial.controlaEmbalagem === 'S' ? field('Data Devolução Embalagens', formatDate(firstMaterial.dataDevEmb)) : ''}
             ${firstMaterial.controlaEmbalagem === 'S' ? field('Embalagens a Devolver', formatNumber(firstMaterial.embDevolver), true) : ''}
           </div>
         </div>
@@ -16880,12 +16942,12 @@ function showDetail(id) {
           <div class="material-summary-list">
             ${materialItems.map(item => `
               <div class="material-summary-card">
-                <div class="material-summary-name">${item.material || '-'}</div>
+                <div class="material-summary-name">${escapeHtml(item.material || '-')}</div>
                 <div class="material-summary-meta">
-                  Codigo: ${item.codProduto || '-'}<br>
-                  Quantidade: ${formatNumber(item.quantidade)} ${item.unidade || ''}<br>
-                  Lote: ${item.lote || '-'}
-                  ${item.controlaEmbalagem === 'S' ? `<br>Data Dev. Emb.: ${formatDate(item.dataDevEmb) || '-'}<br>Emb. a Devolver: ${formatNumber(item.embDevolver)}${item.embalagemManual === 'S' ? ' (manual)' : ''}` : ''}
+                  Código: ${escapeHtml(item.codProduto || '-')}<br>
+                  Quantidade: ${escapeHtml(formatNumber(item.quantidade))} ${escapeHtml(item.unidade || '')}<br>
+                  Lote: ${escapeHtml(item.lote || '-')}
+                  ${item.controlaEmbalagem === 'S' ? `<br>Data Dev. Emb.: ${escapeHtml(formatDate(item.dataDevEmb) || '-')}<br>Emb. a Devolver: ${escapeHtml(formatNumber(item.embDevolver))}${item.embalagemManual === 'S' ? ' (manual)' : ''}` : ''}
                 </div>
               </div>
             `).join('')}
@@ -16898,11 +16960,11 @@ function showDetail(id) {
           <div class="material-summary-list">
             ${packagingItems.map(item => `
               <div class="material-summary-card">
-                <div class="material-summary-name">${item.material || '-'}</div>
+                <div class="material-summary-name">${escapeHtml(item.material || '-')}</div>
                 <div class="material-summary-meta">
-                  Data Dev. Emb.: ${formatDate(item.dataDevEmb) || '-'}<br>
-                  Emb. a Devolver: ${formatNumber(item.embDevolver)}<br>
-                  Origem do calculo: ${item.embalagemManual === 'S' ? 'Manual' : 'Cadastro do material'}
+                  Data Dev. Emb.: ${escapeHtml(formatDate(item.dataDevEmb) || '-')}<br>
+                  Emb. a Devolver: ${escapeHtml(formatNumber(item.embDevolver))}<br>
+                  Origem do cálculo: ${item.embalagemManual === 'S' ? 'Manual' : 'Cadastro do material'}
                 </div>
               </div>
             `).join('')}
@@ -16911,9 +16973,9 @@ function showDetail(id) {
       </div>
       <div class="detail-footer">
         <div>
-          Inserido por <strong style="color:var(--neon)">${m.inseridoPor}</strong>
+          Inserido por <strong style="color:var(--neon)">${escapeHtml(m.inseridoPor)}</strong>
           ${m.inseridoEm ? ' em ' + new Date(m.inseridoEm).toLocaleString('pt-BR') : ''}
-          ${m.finalizadoPor ? ` Â· Finalizado por <strong style="color:var(--neon)">${m.finalizadoPor}</strong>` : ''}
+          ${m.finalizadoPor ? ` · Finalizado por <strong style="color:var(--neon)">${escapeHtml(m.finalizadoPor)}</strong>` : ''}
         </div>
         <div class="detail-actions">
           ${isPendente ? `<button class="btn-finalizar" onclick="this.closest('.modal-overlay').remove(); finalizarWriter(${m.id})">Finalizar</button>` : ''}
