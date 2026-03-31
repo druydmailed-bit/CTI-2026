@@ -3861,6 +3861,8 @@ const AUTO_BACKUP_KEYS = {
   reason: 'cti_auto_backup_reason'
 };
 const AUTO_BACKUP_COLLECTION = 'cti_daily_backups';
+const AUTO_BACKUP_SCHEDULE_HOUR = 18;
+const AUTO_BACKUP_SCHEDULE_MINUTE = 0;
 const REGISTROS_MODE = {
   seed: 'seed',
   manualOnly: 'manual-only'
@@ -3903,7 +3905,9 @@ let autoBackupState = {
   lastMeta: null,
   loading: false,
   timer: null,
-  running: null
+  running: null,
+  nextRunAt: '',
+  lastAttemptAt: ''
 };
 let registrosMode = REGISTROS_MODE.seed;
 
@@ -4457,6 +4461,7 @@ async function ensureApplicationReady() {
       reason: 'boot'
     });
     appReady = true;
+    queueDailyBackupRun();
     return result;
   })();
 
@@ -5353,6 +5358,42 @@ function getBackupTimestampLabel(value) {
   }
 }
 
+function getAutoBackupDateKey(date = new Date()) {
+  const base = date instanceof Date ? date : new Date(date);
+  const year = base.getFullYear();
+  const month = String(base.getMonth() + 1).padStart(2, '0');
+  const day = String(base.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
+}
+
+function getAutoBackupTargetDate(date = new Date()) {
+  const target = new Date(date instanceof Date ? date.getTime() : new Date(date).getTime());
+  target.setHours(AUTO_BACKUP_SCHEDULE_HOUR, AUTO_BACKUP_SCHEDULE_MINUTE, 0, 0);
+  return target;
+}
+
+function getAutoBackupScheduleLabel() {
+  return `${String(AUTO_BACKUP_SCHEDULE_HOUR).padStart(2, '0')}:${String(AUTO_BACKUP_SCHEDULE_MINUTE).padStart(2, '0')}`;
+}
+
+function getNextAutoBackupRunDate(now = new Date()) {
+  const current = now instanceof Date ? now : new Date(now);
+  const todayKey = getAutoBackupDateKey(current);
+  const lastRunKey = normalizeText(localStorage.getItem(AUTO_BACKUP_KEYS.date));
+  const todayTarget = getAutoBackupTargetDate(current);
+  const lastAttemptKey = autoBackupState.lastAttemptAt ? getAutoBackupDateKey(autoBackupState.lastAttemptAt) : '';
+
+  if (current >= todayTarget && lastRunKey !== todayKey && lastAttemptKey !== todayKey) {
+    return new Date(current.getTime() + 1800);
+  }
+
+  if (current < todayTarget) return todayTarget;
+
+  const nextDay = new Date(current.getTime());
+  nextDay.setDate(nextDay.getDate() + 1);
+  return getAutoBackupTargetDate(nextDay);
+}
+
 function renderAutoBackupCard() {
   const card = document.getElementById('cfgAutoBackupCard');
   if (!card) return;
@@ -5365,9 +5406,11 @@ function renderAutoBackupCard() {
   const lastBackupLabel = lastCloudAt
     ? getBackupTimestampLabel(lastCloudAt)
     : (lastLocalAt ? getBackupTimestampLabel(lastLocalAt) : 'Ainda nao gerado');
+  const scheduleLabel = getAutoBackupScheduleLabel();
+  const nextRunLabel = autoBackupState.nextRunAt ? getBackupTimestampLabel(autoBackupState.nextRunAt) : `Diariamente às ${scheduleLabel}`;
   const status = localStorage.getItem(AUTO_BACKUP_KEYS.status) || (mode === 'web-cloud' ? 'Aguardando' : 'Indisponivel');
   const reason = localStorage.getItem(AUTO_BACKUP_KEYS.reason) || (mode === 'web-cloud'
-    ? 'O sistema salva um backup diario do estado completo na nuvem.'
+    ? `O sistema agenda um backup diario do estado completo às ${scheduleLabel}, desde que a versao web esteja aberta.`
     : 'O backup diario automatico funciona na versao web conectada ao Firebase.');
   const exportedBy = lastMeta && lastMeta.exportedBy ? lastMeta.exportedBy : 'Sistema';
   const isCloud = mode === 'web-cloud';
@@ -5393,6 +5436,10 @@ function renderAutoBackupCard() {
       '<div style="background:var(--bg4);border-radius:10px;padding:12px;">' +
         '<div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Responsavel</div>' +
         '<div style="font-size:0.82rem;font-weight:600;color:var(--text);">' + escapeHtml(exportedBy) + '</div>' +
+      '</div>' +
+      '<div style="background:var(--bg4);border-radius:10px;padding:12px;">' +
+        '<div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Proximo disparo</div>' +
+        '<div style="font-size:0.82rem;font-weight:600;color:var(--text);">' + escapeHtml(nextRunLabel) + '</div>' +
       '</div>' +
     '</div>' +
     '<div style="margin-top:14px;font-size:0.76rem;color:var(--text-dim);line-height:1.6;">' + escapeHtml(reason) + '</div>' +
@@ -5424,7 +5471,9 @@ async function runDailyBackupNow(force = false, silent = false) {
   if (autoBackupState.running) return autoBackupState.running;
 
   autoBackupState.running = (async () => {
-    const todayKey = new Date().toISOString().split('T')[0];
+    const now = new Date();
+    autoBackupState.lastAttemptAt = now.toISOString();
+    const todayKey = getAutoBackupDateKey(now);
     if (!force && localStorage.getItem(AUTO_BACKUP_KEYS.date) === todayKey) {
       renderAutoBackupCard();
       return { ok: true, skipped: true };
@@ -5432,7 +5481,7 @@ async function runDailyBackupNow(force = false, silent = false) {
 
     if ((cloudSyncState && cloudSyncState.mode) !== 'web-cloud') {
       localStorage.setItem(AUTO_BACKUP_KEYS.status, 'Modo local');
-      localStorage.setItem(AUTO_BACKUP_KEYS.reason, 'Abra a versao web conectada para enviar o backup diario automatico.');
+      localStorage.setItem(AUTO_BACKUP_KEYS.reason, `Abra a versao web conectada para enviar o backup diario automatico às ${getAutoBackupScheduleLabel()}.`);
       renderAutoBackupCard();
       return { ok: false, reason: 'Modo local' };
     }
@@ -5514,6 +5563,7 @@ async function runDailyBackupNow(force = false, silent = false) {
     return { ok: false, error };
   }).finally(() => {
     autoBackupState.running = null;
+    queueDailyBackupRun();
   });
 
   return autoBackupState.running;
@@ -5521,9 +5571,13 @@ async function runDailyBackupNow(force = false, silent = false) {
 
 function queueDailyBackupRun() {
   if (autoBackupState.timer) clearTimeout(autoBackupState.timer);
+  const nextRun = getNextAutoBackupRunDate(new Date());
+  autoBackupState.nextRunAt = nextRun ? nextRun.toISOString() : '';
+  const delay = nextRun ? Math.max(1000, nextRun.getTime() - Date.now()) : (1000 * 60 * 60 * 24);
   autoBackupState.timer = setTimeout(() => {
     runDailyBackupNow(false, true);
-  }, 1800);
+  }, delay);
+  if (getActiveTabName && getActiveTabName() === 'config') renderAutoBackupCard();
 }
 
 function runAutoBackupNow() {
