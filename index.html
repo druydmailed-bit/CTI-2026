@@ -3863,6 +3863,7 @@ const AUTO_BACKUP_KEYS = {
 const AUTO_BACKUP_COLLECTION = 'cti_daily_backups';
 const AUTO_BACKUP_SCHEDULE_HOUR = 18;
 const AUTO_BACKUP_SCHEDULE_MINUTE = 0;
+const AUTO_BACKUP_HISTORY_LIMIT = 20;
 const REGISTROS_MODE = {
   seed: 'seed',
   manualOnly: 'manual-only'
@@ -3907,7 +3908,10 @@ let autoBackupState = {
   timer: null,
   running: null,
   nextRunAt: '',
-  lastAttemptAt: ''
+  lastAttemptAt: '',
+  lastFetchedAt: '',
+  history: [],
+  historyError: ''
 };
 let registrosMode = REGISTROS_MODE.seed;
 
@@ -4002,6 +4006,7 @@ function getAuditEventLabel(action) {
     movement_delete: 'Exclusão de movimentação',
     writer_finalize: 'Finalização de writer',
     baldeio_register: 'Registro de baldeio',
+    backup_restore: 'Restauração de backup',
     registros_import: 'Importação de registros',
     registros_clear: 'Limpeza de registros',
     mm60_refresh: 'Atualização da base MM60',
@@ -5358,6 +5363,44 @@ function getBackupTimestampLabel(value) {
   }
 }
 
+function formatBytesLabel(bytes) {
+  const size = Number(bytes) || 0;
+  if (size <= 0) return '-';
+  if (size >= 1024 * 1024) return `${(size / (1024 * 1024)).toFixed(2)} MB`;
+  if (size >= 1024) return `${(size / 1024).toFixed(1)} KB`;
+  return `${size} B`;
+}
+
+function normalizeAutoBackupMetaRecord(raw, id = '') {
+  const source = raw && typeof raw === 'object' ? raw : {};
+  return {
+    id: normalizeText(id || source.id || source.backupDate),
+    backupDate: normalizeText(source.backupDate || ''),
+    chunkCount: Number(source.chunkCount) || 0,
+    exportedBy: normalizeText(source.exportedBy || 'Sistema') || 'Sistema',
+    exportedAt: source.exportedAt || '',
+    exportedAtIso: normalizeText(source.exportedAtIso || ''),
+    bytes: Number(source.bytes) || 0,
+    mode: normalizeText(source.mode || 'web') || 'web'
+  };
+}
+
+function getAutoBackupDisplayLabel(meta) {
+  if (!meta) return 'Backup sem data';
+  return getBackupTimestampLabel(meta.exportedAtIso || meta.exportedAt || meta.backupDate);
+}
+
+function getAutoBackupRestoreSummary(backup) {
+  const movementCount = Array.isArray(backup && backup.movimentos) ? backup.movimentos.length : 0;
+  const legacyCount = Array.isArray(backup && backup.legacyOverlay) ? backup.legacyOverlay.length : 0;
+  const embalagemCount = Array.isArray(backup && backup.embalagens) ? backup.embalagens.length : 0;
+  return `Registros: ${movementCount} • Legado: ${legacyCount} • Embalagens: ${embalagemCount}`;
+}
+
+function isValidFullBackupPayload(backup) {
+  return !!(backup && typeof backup === 'object' && backup._backupVersion);
+}
+
 function getAutoBackupDateKey(date = new Date()) {
   const base = date instanceof Date ? date : new Date(date);
   const year = base.getFullYear();
@@ -5415,6 +5458,43 @@ function renderAutoBackupCard() {
   const exportedBy = lastMeta && lastMeta.exportedBy ? lastMeta.exportedBy : 'Sistema';
   const isCloud = mode === 'web-cloud';
   const accent = isCloud ? 'var(--neon)' : 'var(--yellow)';
+  const historyItems = Array.isArray(autoBackupState.history) ? autoBackupState.history.slice(0, AUTO_BACKUP_HISTORY_LIMIT) : [];
+  let historyHtml = '';
+  if (!isCloud) {
+    historyHtml = '<div class="empty-state" style="margin-top:12px;">Abra a versão web conectada para consultar os backups da nuvem.</div>';
+  } else if (autoBackupState.loading && !historyItems.length) {
+    historyHtml = '<div class="empty-state" style="margin-top:12px;">Consultando backups da nuvem...</div>';
+  } else if (autoBackupState.historyError) {
+    historyHtml = '<div class="empty-state" style="margin-top:12px;color:var(--yellow);">' + escapeHtml(autoBackupState.historyError) + '</div>';
+  } else if (!historyItems.length) {
+    historyHtml = '<div class="empty-state" style="margin-top:12px;">Nenhum backup diário encontrado na nuvem ainda.</div>';
+  } else {
+    historyHtml =
+      '<div class="table-scroll" style="max-height:260px;margin-top:12px;">' +
+        '<table>' +
+          '<thead>' +
+            '<tr>' +
+              '<th>Backup</th>' +
+              '<th>Responsavel</th>' +
+              '<th>Tamanho</th>' +
+              '<th>Partes</th>' +
+              '<th>Ação</th>' +
+            '</tr>' +
+          '</thead>' +
+          '<tbody>' +
+            historyItems.map((meta) => (
+              '<tr>' +
+                '<td>' + escapeHtml(getAutoBackupDisplayLabel(meta)) + '</td>' +
+                '<td>' + escapeHtml(meta.exportedBy || 'Sistema') + '</td>' +
+                '<td>' + escapeHtml(formatBytesLabel(meta.bytes)) + '</td>' +
+                '<td>' + escapeHtml(String(meta.chunkCount || 0)) + '</td>' +
+                '<td><button type="button" class="btn btn-secondary" style="padding:7px 10px;font-size:0.76rem;" onclick="promptRestoreAutoBackup(\'' + escapeHtml(meta.backupDate) + '\')">Restaurar</button></td>' +
+              '</tr>'
+            )).join('') +
+          '</tbody>' +
+        '</table>' +
+      '</div>';
+  }
 
   card.innerHTML =
     '<div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
@@ -5445,22 +5525,49 @@ function renderAutoBackupCard() {
     '<div style="margin-top:14px;font-size:0.76rem;color:var(--text-dim);line-height:1.6;">' + escapeHtml(reason) + '</div>' +
     '<div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">' +
       '<button type="button" class="btn btn-primary" onclick="runAutoBackupNow()" style="flex:1 1 180px;justify-content:center;" ' + (isCloud ? '' : 'disabled') + '>Salvar Backup Diario Agora</button>' +
-      '<button type="button" class="btn btn-secondary" onclick="refreshAutoBackupMetaFromCloud()" style="flex:1 1 180px;justify-content:center;" ' + (isCloud ? '' : 'disabled') + '>Atualizar Status</button>' +
+      '<button type="button" class="btn btn-secondary" onclick="refreshAutoBackupMetaFromCloud(true)" style="flex:1 1 180px;justify-content:center;" ' + (isCloud ? '' : 'disabled') + '>Atualizar Status</button>' +
+    '</div>' +
+    '<div style="margin-top:18px;padding-top:16px;border-top:1px solid var(--border);">' +
+      '<div style="display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;">' +
+        '<div>' +
+          '<div style="font-size:0.86rem;font-weight:700;color:var(--text);">Backups armazenados na nuvem</div>' +
+          '<div style="font-size:0.74rem;color:var(--text-dim);line-height:1.5;">Consulte os backups já gravados e restaure quando necessário.</div>' +
+        '</div>' +
+        '<span style="font-size:0.72rem;color:var(--text-dim);">' + escapeHtml(`${historyItems.length} item(ns) carregado(s)`) + '</span>' +
+      '</div>' +
+      historyHtml +
     '</div>';
 }
 
-async function refreshAutoBackupMetaFromCloud() {
+async function refreshAutoBackupMetaFromCloud(force = false) {
   const db = getBackupFirestoreDb();
+  const lastFetchedAt = autoBackupState.lastFetchedAt ? new Date(autoBackupState.lastFetchedAt).getTime() : 0;
+  if (!force && lastFetchedAt && (Date.now() - lastFetchedAt) < 20000) {
+    renderAutoBackupCard();
+    return;
+  }
   if (!db || autoBackupState.loading) {
     renderAutoBackupCard();
     return;
   }
   autoBackupState.loading = true;
   try {
-    const snapshot = await db.collection(AUTO_BACKUP_COLLECTION).doc('backup_registry_latest').get();
-    autoBackupState.lastMeta = snapshot.exists ? snapshot.data() : null;
+    const collection = db.collection(AUTO_BACKUP_COLLECTION);
+    const [latestSnapshot, historySnapshot] = await Promise.all([
+      collection.doc('backup_registry_latest').get(),
+      collection.where('chunkCount', '>', 0).get()
+    ]);
+    autoBackupState.lastMeta = latestSnapshot.exists ? latestSnapshot.data() : null;
+    autoBackupState.history = historySnapshot.docs
+      .filter((doc) => doc.exists && doc.id !== 'backup_registry_latest')
+      .map((doc) => normalizeAutoBackupMetaRecord(doc.data(), doc.id))
+      .sort((a, b) => normalizeText(b.backupDate).localeCompare(normalizeText(a.backupDate), 'pt-BR'))
+      .slice(0, AUTO_BACKUP_HISTORY_LIMIT);
+    autoBackupState.historyError = '';
+    autoBackupState.lastFetchedAt = new Date().toISOString();
   } catch (error) {
     console.error('Falha ao consultar status do backup diario:', error);
+    autoBackupState.historyError = error && error.message ? error.message : 'Falha ao consultar backups da nuvem.';
   } finally {
     autoBackupState.loading = false;
     renderAutoBackupCard();
@@ -5547,6 +5654,12 @@ async function runDailyBackupNow(force = false, silent = false) {
     await batch.commit();
 
     autoBackupState.lastMeta = metaPayload;
+    autoBackupState.history = [
+      normalizeAutoBackupMetaRecord(metaPayload, `backup_meta_${todayKey}`),
+      ...(Array.isArray(autoBackupState.history) ? autoBackupState.history.filter((item) => item.backupDate !== todayKey) : [])
+    ].slice(0, AUTO_BACKUP_HISTORY_LIMIT);
+    autoBackupState.historyError = '';
+    autoBackupState.lastFetchedAt = new Date().toISOString();
     localStorage.setItem(AUTO_BACKUP_KEYS.date, todayKey);
     localStorage.setItem(AUTO_BACKUP_KEYS.at, exportedAtIso);
     localStorage.setItem(AUTO_BACKUP_KEYS.status, 'Em dia');
@@ -5688,6 +5801,63 @@ function updateBackupPanel() {
   }
 }
 
+function restoreFullBackupPayload(backup, options = {}) {
+  if (!isValidFullBackupPayload(backup)) {
+    throw new Error('Arquivo de backup invalido. Falta o campo _backupVersion.');
+  }
+
+  movimentos = Array.isArray(backup.movimentos)
+    ? backup.movimentos.map((item) => normalizeImportedMovement(item, 'backup'))
+    : [];
+  legacyOverlay = Array.isArray(backup.legacyOverlay)
+    ? backup.legacyOverlay.map((item) => normalizeImportedMovement(item, 'backup-overlay'))
+    : [];
+  embalagemDevolucoes = Array.isArray(backup.embalagens)
+    ? backup.embalagens.map(normalizePackagingReturnRecord).filter(item => item.quantidade > 0)
+    : [];
+
+  if (backup.analise && typeof backup.analise === 'object') {
+    analysisState = hydrateAnalysisState(backup.analise);
+  } else {
+    analysisState = createEmptyAnalysisState();
+  }
+  invalidateMm60PriceCache();
+  setRegistrosMode(backup.registrosMode || REGISTROS_MODE.seed);
+
+  auditTrail = Array.isArray(backup.auditTrail)
+    ? backup.auditTrail.map(normalizeAuditRecord).slice(0, AUDIT_LOG_LIMIT)
+    : [];
+  saveAuditTrail('audit', { render: false });
+
+  if (Array.isArray(backup.users) && backup.users.length > 0) {
+    users = backup.users;
+    ensureLucasAdmin(users);
+    saveUsers();
+  }
+  if (backup.master) {
+    try { localStorage.setItem(STORAGE_KEYS.master, typeof backup.master === 'string' ? backup.master : JSON.stringify(backup.master)); } catch (error) {}
+  }
+
+  saveToStorage();
+  loadMasterData();
+  populateSelects();
+
+  if (options.auditAction) {
+    recordAuditEvent(options.auditAction, {
+      entityType: options.entityType || 'backup',
+      entityId: options.entityId || '',
+      reason: options.auditReason || 'Restauracao de backup.',
+      summary: options.summary || 'Backup restaurado no sistema.',
+      details: options.details || []
+    });
+  }
+
+  showToast(options.successMessage || 'Backup restaurado com sucesso! Recarregando...');
+  if (options.reload !== false) {
+    setTimeout(() => location.reload(), 1500);
+  }
+}
+
 function importFullBackup() {
   const input = document.createElement('input');
   input.type = 'file';
@@ -5699,36 +5869,10 @@ function importFullBackup() {
     reader.onload = function(ev) {
       try {
         const backup = JSON.parse(ev.target.result);
-        if (!backup._backupVersion) {
-          showToast('Arquivo de backup invalido. Falta o campo _backupVersion.', true);
-          return;
-        }
         if (!confirm('Tem certeza que deseja restaurar este backup? Todos os dados atuais serao substituidos.\n\nBackup de: ' + (backup._exportedAt || 'data desconhecida'))) return;
-        if (Array.isArray(backup.movimentos)) movimentos = backup.movimentos.map((item) => normalizeImportedMovement(item, 'backup'));
-        if (Array.isArray(backup.legacyOverlay)) legacyOverlay = backup.legacyOverlay.map((item) => normalizeImportedMovement(item, 'backup-overlay'));
-        if (Array.isArray(backup.embalagens)) embalagemDevolucoes = backup.embalagens.map(normalizePackagingReturnRecord).filter(item => item.quantidade > 0);
-        if (backup.analise && typeof backup.analise === 'object') {
-          analysisState = hydrateAnalysisState(backup.analise);
-          invalidateMm60PriceCache();
-        }
-        setRegistrosMode(backup.registrosMode || REGISTROS_MODE.seed);
-        if (Array.isArray(backup.auditTrail)) {
-          auditTrail = backup.auditTrail.map(normalizeAuditRecord).slice(0, AUDIT_LOG_LIMIT);
-          saveAuditTrail('audit', { render: false });
-        }
-        if (Array.isArray(backup.users) && backup.users.length > 0) {
-          users = backup.users;
-          ensureLucasAdmin(users);
-          saveUsers();
-        }
-        if (backup.master) {
-          try { localStorage.setItem(STORAGE_KEYS.master, typeof backup.master === 'string' ? backup.master : JSON.stringify(backup.master)); } catch(e) {}
-        }
-        saveToStorage();
-        loadMasterData();
-        populateSelects();
-        showToast('Backup restaurado com sucesso! Recarregando...');
-        setTimeout(() => location.reload(), 1500);
+        restoreFullBackupPayload(backup, {
+          successMessage: 'Backup restaurado com sucesso! Recarregando...'
+        });
       } catch (err) {
         console.error('Erro ao importar backup:', err);
         showToast('Erro ao processar o arquivo de backup: ' + err.message, true);
@@ -5737,6 +5881,93 @@ function importFullBackup() {
     reader.readAsText(file);
   };
   input.click();
+}
+
+async function fetchAutoBackupPayloadFromCloud(backupDate) {
+  const db = getBackupFirestoreDb();
+  if (!db) throw new Error('Firestore indisponivel para restaurar o backup.');
+
+  const backupKey = normalizeText(backupDate);
+  const collection = db.collection(AUTO_BACKUP_COLLECTION);
+  const metaSnapshot = await collection.doc(`backup_meta_${backupKey}`).get();
+  if (!metaSnapshot.exists) throw new Error('Nao encontrei os metadados desse backup na nuvem.');
+
+  const meta = normalizeAutoBackupMetaRecord(metaSnapshot.data(), metaSnapshot.id);
+  if (!meta.chunkCount) throw new Error('Este backup nao possui partes registradas para restauracao.');
+
+  const chunkSnapshots = await Promise.all(
+    Array.from({ length: meta.chunkCount }, (_, index) => collection.doc(`backup_${backupKey}_${index}`).get())
+  );
+  const missingChunk = chunkSnapshots.findIndex((snapshot) => !snapshot.exists);
+  if (missingChunk >= 0) {
+    throw new Error(`Falta a parte ${missingChunk + 1} de ${meta.chunkCount} no backup ${backupKey}.`);
+  }
+
+  const serialized = chunkSnapshots.map((snapshot) => {
+    const data = snapshot.data() || {};
+    return typeof data.data === 'string' ? data.data : '';
+  }).join('');
+  if (!serialized) throw new Error('O conteudo do backup na nuvem esta vazio.');
+
+  let backup = null;
+  try {
+    backup = JSON.parse(serialized);
+  } catch (error) {
+    throw new Error('Nao foi possivel interpretar o JSON do backup na nuvem.');
+  }
+  if (!isValidFullBackupPayload(backup)) {
+    throw new Error('O backup consultado na nuvem nao possui o formato esperado.');
+  }
+  return { backup, meta };
+}
+
+function promptRestoreAutoBackup(backupDate) {
+  const backupKey = normalizeText(backupDate);
+  if (!backupKey) return;
+  const meta = (autoBackupState.history || []).find((item) => item.backupDate === backupKey) || null;
+  const backupLabel = meta ? getAutoBackupDisplayLabel(meta) : backupKey;
+
+  requestAuditReason({
+    title: 'Restaurar backup da nuvem',
+    text: `Informe o motivo da restauracao do backup ${backupLabel}.`,
+    label: 'Motivo da restauracao',
+    confirmText: 'Restaurar backup',
+    placeholder: 'Ex: recuperar dados apos erro operacional, retorno para fechamento validado, contingencia...',
+    onConfirm: (reason) => restoreAutoBackupFromCloud(backupKey, reason)
+  });
+}
+
+async function restoreAutoBackupFromCloud(backupDate, auditReason) {
+  try {
+    const { backup, meta } = await fetchAutoBackupPayloadFromCloud(backupDate);
+    const backupLabel = getAutoBackupDisplayLabel(meta);
+    const summary = getAutoBackupRestoreSummary(backup);
+    const confirmMessage =
+      `Tem certeza que deseja restaurar o backup ${backupLabel}?\n\n` +
+      `${summary}\n\n` +
+      'Todos os dados atuais do sistema serao substituidos.\n\n' +
+      'Recomendamos exportar um backup manual antes de continuar.';
+    if (!confirm(confirmMessage)) return;
+    if (!confirm('Confirme novamente: o estado atual do sistema sera substituido pelo backup selecionado.')) return;
+
+    restoreFullBackupPayload(backup, {
+      auditAction: 'backup_restore',
+      entityType: 'backup',
+      entityId: meta.backupDate || backupDate,
+      auditReason,
+      summary: `Restauracao do backup diario ${backupLabel}.`,
+      details: [
+        `Origem: nuvem (${meta.backupDate || backupDate})`,
+        `Responsavel no backup: ${meta.exportedBy || 'Sistema'}`,
+        `Tamanho restaurado: ${formatBytesLabel(meta.bytes)}`,
+        summary
+      ],
+      successMessage: `Backup ${backupLabel} restaurado com sucesso! Recarregando...`
+    });
+  } catch (error) {
+    console.error('Erro ao restaurar backup da nuvem:', error);
+    showToast('Nao foi possivel restaurar o backup da nuvem: ' + (error && error.message ? error.message : error), true);
+  }
 }
 
 function renderRegistrosToolsCard() {
@@ -7454,7 +7685,7 @@ function renderAuditTrailPanel() {
   if (!card) return;
 
   const recentItems = auditTrail.slice(0, 12);
-  const criticalCount = auditTrail.filter((item) => ['movement_delete', 'writer_finalize', 'baldeio_register', 'mm60_refresh', 'registros_import', 'registros_clear'].includes(item.action)).length;
+  const criticalCount = auditTrail.filter((item) => ['movement_delete', 'writer_finalize', 'baldeio_register', 'mm60_refresh', 'registros_import', 'registros_clear', 'backup_restore'].includes(item.action)).length;
   const latestAt = auditTrail[0] ? getBackupTimestampLabel(auditTrail[0].at) : 'Sem eventos';
 
   card.innerHTML = `
