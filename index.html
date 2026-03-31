@@ -1892,6 +1892,34 @@ tbody tr { cursor: pointer; }
   display: flex; align-items: center; gap: 12px;
 }
 
+.bar-row.is-clickable .bar-label {
+  color: var(--text);
+}
+
+.bar-row-button {
+  width: 100%;
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.bar-row-button:hover .bar-track,
+.bar-row-button:focus-visible .bar-track {
+  box-shadow: 0 0 0 1px rgba(57,255,20,0.25), 0 10px 24px rgba(0,0,0,0.18);
+}
+
+.bar-row-button:focus-visible {
+  outline: none;
+}
+
+.bar-row-button:hover .bar-label,
+.bar-row-button:focus-visible .bar-label {
+  color: var(--neon);
+}
+
 .bar-label {
   font-size: 0.75rem; color: var(--text-dim);
   min-width: 130px; text-align: right;
@@ -1926,6 +1954,11 @@ tbody tr { cursor: pointer; }
 .bar-fill.alt1 { background: linear-gradient(90deg, var(--blue), #7dd3fc); }
 .bar-fill.alt2 { background: linear-gradient(90deg, var(--yellow), #fcd34d); }
 .bar-fill.alt3 { background: linear-gradient(90deg, var(--red), #ff4757); }
+
+.dashboard-drilldown-table th,
+.dashboard-drilldown-table td {
+  white-space: nowrap;
+}
 
 /* Selection highlight */
 ::selection {
@@ -2214,6 +2247,29 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         </div>
       </div>
 
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;margin-bottom:20px;">
+        <div style="background:var(--bg2);border:1px solid rgba(255,71,87,0.12);border-radius:12px;padding:16px;">
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Alertas críticos</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--red);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardAlertCount">0</div>
+          <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardAlertDetail">-</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid rgba(57,255,20,0.12);border-radius:12px;padding:16px;">
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Valor parado</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--neon);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardAgingValue">R$ 0,00</div>
+          <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardAgingValueDetail">-</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid rgba(255,211,42,0.12);border-radius:12px;padding:16px;">
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Materiais sem preço</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--yellow);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardMissingPriceCount">0</div>
+          <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardMissingPriceDetail">-</div>
+        </div>
+        <div style="background:var(--bg2);border:1px solid rgba(24,220,255,0.15);border-radius:12px;padding:16px;">
+          <div style="font-size:0.65rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;">Devoluções atrasadas</div>
+          <div style="font-size:1.6rem;font-weight:800;color:var(--blue);font-family:'JetBrains Mono',monospace;margin:4px 0;" id="dashboardOverdueCount">0</div>
+          <div style="font-size:0.7rem;color:var(--text-dim);" id="dashboardOverdueDetail">-</div>
+        </div>
+      </div>
+
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
         <div class="form-section" style="margin-bottom:0;">
           <div class="form-section-title">
@@ -2285,10 +2341,27 @@ button:focus-visible, input:focus-visible, select:focus-visible {
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
         <div class="form-section" style="margin-bottom:0;">
           <div class="form-section-title">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 2 4-6"/></svg>
-            Ritmo Financeiro
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 19h16"/><path d="M7 19V9"/><path d="M12 19V5"/><path d="M17 19v-7"/></svg>
+            Valor por EPS
           </div>
-          <div class="bar-chart" id="dashboardChartValueTimeline"></div>
+          <div class="bar-chart" id="dashboardChartValueEps"></div>
+        </div>
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V8l7-5 7 5v13"/><path d="M9 21v-6h6v6"/></svg>
+            Valor por Fazenda
+          </div>
+          <div class="bar-chart" id="dashboardChartValueFarms"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5.5 21a6.5 6.5 0 0 1 13 0"/></svg>
+            Valor por Supervisor
+          </div>
+          <div class="bar-chart" id="dashboardChartValueSupervisors"></div>
         </div>
         <div class="form-section" style="margin-bottom:0;">
           <div class="form-section-title">
@@ -2296,6 +2369,63 @@ button:focus-visible, input:focus-visible, select:focus-visible {
             Destinos com Maior Valor
           </div>
           <div class="bar-chart" id="dashboardChartValueDestinations"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 15l4-4 3 2 4-6"/></svg>
+            Ritmo Financeiro
+          </div>
+          <div class="bar-chart" id="dashboardChartValueTimeline"></div>
+        </div>
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 8v4l3 3"/><circle cx="12" cy="12" r="9"/><path d="M8 3h8"/></svg>
+            Aging de Pendências
+          </div>
+          <div class="bar-chart" id="dashboardChartAging"></div>
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:14px;">
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M8 17l4-4 4 2 3-5"/></svg>
+            Valor Parado por Depósito
+          </div>
+          <div class="bar-chart" id="dashboardChartOpenValueDeposits"></div>
+        </div>
+        <div class="form-section" style="margin-bottom:0;">
+          <div class="form-section-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86 1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            Alertas de Exceção
+          </div>
+          <div class="bar-chart" id="dashboardChartAlerts"></div>
+        </div>
+      </div>
+
+      <div class="form-section" style="margin-bottom:14px;">
+        <div class="form-section-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M8 17l4-4 4 2 3-5"/></svg>
+          Exceções Prioritárias
+        </div>
+        <div class="table-scroll" style="max-height:34vh">
+          <table class="dashboard-drilldown-table">
+            <thead>
+              <tr>
+                <th>Alerta</th>
+                <th>Data</th>
+                <th>Referência</th>
+                <th>Responsável / Local</th>
+                <th>Detalhe</th>
+                <th>Impacto</th>
+                <th>Ação</th>
+              </tr>
+            </thead>
+            <tbody id="dashboardAlertsTable"></tbody>
+          </table>
         </div>
       </div>
 
@@ -3471,10 +3601,11 @@ button:focus-visible, input:focus-visible, select:focus-visible {
               <div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:4px;">Base MM60</div>
               <div class="hint-line" id="dashboardMm60Hint" style="margin-top:0;">Os preços MM60 são carregados automaticamente do banco para habilitar os gráficos financeiros, ignorando materiais zerados e consolidando repetidos pela média.</div>
               <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:16px;">
-                <button type="button" class="btn btn-secondary" onclick="loadMm60PricingFromCloud(true)">Atualizar base do banco</button>
+                <button type="button" class="btn btn-secondary" onclick="requestMm60Refresh()">Atualizar base do banco</button>
                 <span style="font-size:0.75rem;color:var(--text-dim);" id="dashboardMm60Status">Aguardando sincronização da base MM60.</span>
               </div>
             </div>
+            <div id="cfgAuditTrailCard" style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;"></div>
             <div id="cfgBackupSectionHost"></div>
           </div>
         </div>
@@ -3685,7 +3816,8 @@ const STORAGE_KEYS = {
   users: 'cti_users_v2',
   master: 'cti_master_data_v4',
   accessRequests: 'cti_access_requests_v1',
-  saldoDevolucao: 'cti_saldo_devolucao_v1'
+  saldoDevolucao: 'cti_saldo_devolucao_v1',
+  auditTrail: 'cti_audit_trail_v1'
 };
 
 const CLOUD_SYNC_EXTRA_KEYS = [
@@ -3707,11 +3839,14 @@ let cloudSyncPauseDepth = 0;
 let appReady = false;
 let appInitPromise = null;
 let appInterfacePrepared = false;
+let auditTrail = [];
+const AUDIT_LOG_LIMIT = 600;
 const IMMEDIATE_CLOUD_SYNC_REASONS = new Set([
   'storage',
   'users',
   'master-data',
   'access-requests',
+  'audit',
   'saldo-devolucao',
   'blocked-eps',
   'desbloqueio-requests',
@@ -3739,6 +3874,7 @@ function getCloudSyncKeysForReason(reason = 'auto') {
   if (reason === 'master-data') return [STORAGE_KEYS.master];
   if (reason === 'users') return [STORAGE_KEYS.users];
   if (reason === 'access-requests') return [STORAGE_KEYS.accessRequests];
+  if (reason === 'audit') return [STORAGE_KEYS.auditTrail];
   if (reason === 'saldo-devolucao') return [STORAGE_KEYS.saldoDevolucao];
   if (reason === 'movimentos') return [STORAGE_KEYS.movimentos];
   if (reason === 'legacy-overlay') return [STORAGE_KEYS.legacyOverlay];
@@ -3750,6 +3886,162 @@ function getCloudSyncKeysForReason(reason = 'auto') {
   if (reason === 'desbloqueio-history') return ['cti_desbloqueio_history'];
   if (reason === 'backup-export') return ['cti_lastBackup'];
   return getCloudSyncableStorageKeys();
+}
+
+function normalizeAuditDetails(details) {
+  if (!Array.isArray(details)) return [];
+  return details
+    .map((item) => normalizeText(item))
+    .filter(Boolean)
+    .slice(0, 12);
+}
+
+function normalizeAuditRecord(raw) {
+  const item = raw && typeof raw === 'object' ? raw : {};
+  return {
+    id: normalizeText(item.id || safeId('audit')),
+    at: normalizeText(item.at || new Date().toISOString()),
+    user: normalizeText(item.user || 'Sistema') || 'Sistema',
+    action: normalizeText(item.action || 'evento') || 'evento',
+    entityType: normalizeText(item.entityType || ''),
+    entityId: normalizeText(item.entityId || ''),
+    reason: normalizeText(item.reason || 'Sem motivo informado') || 'Sem motivo informado',
+    summary: normalizeText(item.summary || ''),
+    details: normalizeAuditDetails(item.details),
+    meta: item.meta && typeof item.meta === 'object' ? item.meta : {}
+  };
+}
+
+function loadAuditTrail() {
+  try {
+    const parsed = JSON.parse(localStorage.getItem(STORAGE_KEYS.auditTrail) || '[]');
+    auditTrail = Array.isArray(parsed)
+      ? parsed.map(normalizeAuditRecord).sort((a, b) => normalizeText(b.at).localeCompare(normalizeText(a.at), 'pt-BR')).slice(0, AUDIT_LOG_LIMIT)
+      : [];
+  } catch (error) {
+    console.error('Erro ao carregar trilha de auditoria:', error);
+    auditTrail = [];
+  }
+}
+
+function saveAuditTrail(reason = 'audit', { render = true } = {}) {
+  localStorage.setItem(STORAGE_KEYS.auditTrail, JSON.stringify(auditTrail.slice(0, AUDIT_LOG_LIMIT)));
+  scheduleCloudSync(reason);
+  queueDailyBackupRun();
+  if (render && getActiveTabName() === 'config') renderAuditTrailPanel();
+}
+
+function getAuditEventLabel(action) {
+  const map = {
+    movement_edit: 'Edição de movimentação',
+    movement_delete: 'Exclusão de movimentação',
+    writer_finalize: 'Finalização de writer',
+    baldeio_register: 'Registro de baldeio',
+    mm60_refresh: 'Atualização da base MM60',
+    mm60_apply: 'Aplicação da base MM60',
+    password_change: 'Alteração de senha',
+    cadastro_update: 'Atualização de cadastro',
+    cadastro_delete: 'Exclusão de cadastro',
+    cadastro_link: 'Padronização de cadastro'
+  };
+  return map[action] || normalizeText(action || 'Evento');
+}
+
+function buildMovementAuditSummary(mov) {
+  if (!mov) return 'Movimentação sem identificação';
+  const route = getMovementRouteData(mov);
+  const material = getMovementMaterials(mov)[0] || {};
+  const qtyLabel = formatNumber(material.quantidade || mov.quantidade || 0);
+  const unitLabel = normalizeText(material.unidade || mov.unidade || '');
+  return [
+    `#${mov.id}`,
+    normalizeText(mov.tipo || 'Sem tipo'),
+    normalizeText(material.material || mov.material || ''),
+    qtyLabel ? `${qtyLabel}${unitLabel ? ` ${unitLabel}` : ''}` : '',
+    [route.depositoOrigem, route.depositoDestino].filter(Boolean).join(' → ')
+  ].filter(Boolean).join(' • ');
+}
+
+function getCadastroTypeLabel(type) {
+  return normalizeText((CADASTRO_META[type] && CADASTRO_META[type].title) || getCadastroReviewLabel(type) || type || 'Cadastro');
+}
+
+function buildCadastroAuditSummary(type, item) {
+  const safeType = getCadastroTypeLabel(type);
+  const value = getCadastroItemLabel(type, item);
+  if (type === 'eps' && item && typeof item === 'object') {
+    return `${safeType} • ${normalizeText(item.deposito || '-')}${item.nome ? ` / ${normalizeText(item.nome)}` : ''}`;
+  }
+  if (type === 'fazendas' && item && typeof item === 'object') {
+    return `${safeType} • ${normalizeText(item.centro || '-')}${item.nome ? ` / ${normalizeText(item.nome)}` : ''}`;
+  }
+  if (type === 'materiais' && item && typeof item === 'object') {
+    return `${safeType} • ${normalizeText(item.d || '-')}${item.c ? ` (${normalizeText(item.c)})` : ''}`;
+  }
+  return `${safeType} • ${normalizeText(value || 'Item')}`;
+}
+
+function recordAuditEvent(action, options = {}) {
+  const entry = normalizeAuditRecord({
+    id: safeId('audit'),
+    at: new Date().toISOString(),
+    user: options.user || (currentUser && currentUser.name) || 'Sistema',
+    action,
+    entityType: options.entityType || '',
+    entityId: options.entityId || '',
+    reason: options.reason || 'Sem motivo informado',
+    summary: options.summary || '',
+    details: options.details || [],
+    meta: options.meta || {}
+  });
+  auditTrail = [entry, ...auditTrail].slice(0, AUDIT_LOG_LIMIT);
+  saveAuditTrail('audit');
+  return entry;
+}
+
+function requestAuditReason({
+  title = 'Registrar motivo',
+  text = 'Descreva rapidamente o motivo desta ação.',
+  label = 'Motivo',
+  confirmText = 'Confirmar',
+  placeholder = 'Ex: ajuste operacional, correção de dados, atualização confirmada...',
+  initialValue = '',
+  onConfirm = null
+} = {}) {
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal" style="max-width:560px;">
+      <div class="modal-title">${escapeHtml(title)}</div>
+      <div class="modal-text" style="text-align:left;">${escapeHtml(text)}</div>
+      <div class="modal-form-group">
+        <label>${escapeHtml(label)} *</label>
+        <textarea id="auditReasonInput" class="form-input" rows="4" placeholder="${escapeHtml(placeholder)}" style="resize:vertical;min-height:110px;">${escapeHtml(initialValue)}</textarea>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
+        <button type="button" class="btn btn-primary" id="auditReasonConfirmBtn">${escapeHtml(confirmText)}</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+
+  const input = overlay.querySelector('#auditReasonInput');
+  if (input) input.focus();
+
+  overlay.querySelector('#auditReasonConfirmBtn').addEventListener('click', () => {
+    const reason = normalizeText(input ? input.value : '');
+    if (!reason) {
+      showToast('Informe o motivo para continuar.', true);
+      return;
+    }
+    overlay.remove();
+    if (typeof onConfirm === 'function') onConfirm(reason);
+  });
+
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) overlay.remove();
+  });
 }
 
 function buildCloudSyncPayload(targetKeys = null) {
@@ -4628,7 +4920,7 @@ function loadFromStorage(targetKeys = null) {
       const saved = localStorage.getItem(STORAGE_KEYS.movimentos);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) movimentos = parsed;
+        if (Array.isArray(parsed)) movimentos = parsed.map((item) => normalizeImportedMovement(item, 'storage'));
       }
     } catch(e) { console.error('Erro ao carregar movimentos:', e); corruptedKeys.push('Movimentacoes'); }
   }
@@ -4637,7 +4929,7 @@ function loadFromStorage(targetKeys = null) {
       const saved = localStorage.getItem(STORAGE_KEYS.legacyOverlay);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) legacyOverlay = parsed;
+        if (Array.isArray(parsed)) legacyOverlay = parsed.map((item) => normalizeImportedMovement(item, 'overlay'));
       }
     } catch(e) { console.error('Erro ao carregar legado local:', e); corruptedKeys.push('Legado'); }
   }
@@ -4661,6 +4953,9 @@ function loadFromStorage(targetKeys = null) {
         }
       }
     } catch(e) { console.error('Erro ao carregar analise:', e); corruptedKeys.push('Analise'); }
+  }
+  if (shouldLoadKey(STORAGE_KEYS.auditTrail)) {
+    loadAuditTrail();
   }
   if (!normalizedTargetKeys || normalizedTargetKeys.some((key) => [
     STORAGE_KEYS.movimentos,
@@ -4948,13 +5243,14 @@ async function syncHistoricalSeedData() {
 
 function buildFullBackupPayload() {
   return {
-    _backupVersion: 2,
+    _backupVersion: 3,
     _exportedAt: new Date().toISOString(),
     movimentos: movimentos,
     legacyOverlay: legacyOverlay,
     embalagens: embalagemDevolucoes,
     analise: analysisState,
     users: users,
+    auditTrail: auditTrail,
     master: localStorage.getItem(STORAGE_KEYS.master)
   };
 }
@@ -5275,12 +5571,16 @@ function importFullBackup() {
           return;
         }
         if (!confirm('Tem certeza que deseja restaurar este backup? Todos os dados atuais serao substituidos.\n\nBackup de: ' + (backup._exportedAt || 'data desconhecida'))) return;
-        if (Array.isArray(backup.movimentos)) movimentos = backup.movimentos;
-        if (Array.isArray(backup.legacyOverlay)) legacyOverlay = backup.legacyOverlay;
+        if (Array.isArray(backup.movimentos)) movimentos = backup.movimentos.map((item) => normalizeImportedMovement(item, 'backup'));
+        if (Array.isArray(backup.legacyOverlay)) legacyOverlay = backup.legacyOverlay.map((item) => normalizeImportedMovement(item, 'backup-overlay'));
         if (Array.isArray(backup.embalagens)) embalagemDevolucoes = backup.embalagens.map(normalizePackagingReturnRecord).filter(item => item.quantidade > 0);
         if (backup.analise && typeof backup.analise === 'object') {
           analysisState = hydrateAnalysisState(backup.analise);
           invalidateMm60PriceCache();
+        }
+        if (Array.isArray(backup.auditTrail)) {
+          auditTrail = backup.auditTrail.map(normalizeAuditRecord).slice(0, AUDIT_LOG_LIMIT);
+          saveAuditTrail('audit', { render: false });
         }
         if (Array.isArray(backup.users) && backup.users.length > 0) {
           users = backup.users;
@@ -6780,6 +7080,59 @@ async function reloadFromCloudState() {
   });
 }
 
+function renderAuditTrailPanel() {
+  const card = document.getElementById('cfgAuditTrailCard');
+  if (!card) return;
+
+  const recentItems = auditTrail.slice(0, 12);
+  const criticalCount = auditTrail.filter((item) => ['movement_delete', 'writer_finalize', 'baldeio_register', 'mm60_refresh'].includes(item.action)).length;
+  const latestAt = auditTrail[0] ? getBackupTimestampLabel(auditTrail[0].at) : 'Sem eventos';
+
+  card.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:4px;">Auditoria e Rastreabilidade</div>
+        <div style="font-size:0.75rem;color:var(--text-dim);line-height:1.6;">Histórico das ações críticas com usuário, data, motivo e resumo operacional.</div>
+      </div>
+      <span style="font-size:0.72rem;font-weight:800;padding:6px 10px;border-radius:999px;background:rgba(24,220,255,0.08);color:var(--blue);border:1px solid rgba(24,220,255,0.18);">${auditTrail.length} evento(s)</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px;">
+      <div style="background:var(--bg4);border-radius:10px;padding:12px;">
+        <div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Último evento</div>
+        <div style="font-size:0.82rem;font-weight:600;color:var(--text);">${escapeHtml(latestAt)}</div>
+      </div>
+      <div style="background:var(--bg4);border-radius:10px;padding:12px;">
+        <div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Ações críticas</div>
+        <div style="font-size:0.82rem;font-weight:600;color:var(--yellow);">${escapeHtml(String(criticalCount))}</div>
+      </div>
+    </div>
+    <div class="table-scroll" style="max-height:32vh;margin-top:16px;">
+      <table>
+        <thead>
+          <tr>
+            <th>Quando</th>
+            <th>Ação</th>
+            <th>Usuário</th>
+            <th>Motivo</th>
+            <th>Resumo</th>
+          </tr>
+        </thead>
+        <tbody>
+          ${recentItems.length ? recentItems.map((item) => `
+            <tr>
+              <td style="white-space:nowrap;">${escapeHtml(getBackupTimestampLabel(item.at))}</td>
+              <td>${escapeHtml(getAuditEventLabel(item.action))}</td>
+              <td>${escapeHtml(item.user || '-')}</td>
+              <td title="${escapeHtml(item.reason || '-')}">${escapeHtml(item.reason || '-')}</td>
+              <td title="${escapeHtml(item.summary || '-')}">${escapeHtml(item.summary || '-')}</td>
+            </tr>
+          `).join('') : '<tr><td colspan="5" class="empty-state">Nenhum evento auditável registrado ainda.</td></tr>'}
+        </tbody>
+      </table>
+    </div>
+  `;
+}
+
 function renderConfigTab() {
   const info = document.getElementById('cfgUserInfo');
   if (!info || !currentUser) return;
@@ -6801,6 +7154,7 @@ function renderConfigTab() {
   renderCloudSyncCard();
   updateBackupPanel();
   renderAutoBackupCard();
+  renderAuditTrailPanel();
   refreshAutoBackupMetaFromCloud();
 }
 
@@ -6819,6 +7173,12 @@ function changeUserPassword() {
     currentUser.password = nova;
     currentUser.mustChangePassword = false;
     saveUsers();
+    recordAuditEvent('password_change', {
+      entityType: 'usuario',
+      entityId: currentUser.id,
+      reason: 'Alteração manual na aba de configurações.',
+      summary: `Senha alterada para ${currentUser.name}.`
+    });
     document.getElementById('cfgSenhaAtual').value = '';
     document.getElementById('cfgSenhaNova').value = '';
     document.getElementById('cfgSenhaConfirm').value = '';
@@ -8316,15 +8676,36 @@ function deleteMov(id) {
     return;
   }
 
+  const mov = movimentos.find((item) => item.id === id);
+  if (!mov) return;
+
   showModal(
     'Confirmar Exclusão',
     'Deseja realmente excluir esta movimentação? Esta ação não pode ser desfeita.',
     () => {
-      movimentos = movimentos.filter(m => m.id !== id);
-      saveToStorage('movimentos');
-      updateDashboard();
-      renderTable();
-      showToast('Movimentação excluída.');
+      requestAuditReason({
+        title: 'Motivo da exclusão',
+        text: `Informe o motivo da exclusão da movimentação #${id}.`,
+        confirmText: 'Excluir movimentação',
+        placeholder: 'Ex: lançamento duplicado, correção de carga, ajuste operacional...',
+        onConfirm: (reason) => {
+          movimentos = movimentos.filter(m => m.id !== id);
+          saveToStorage('movimentos');
+          updateDashboard();
+          renderTable();
+          recordAuditEvent('movement_delete', {
+            entityType: 'movimento',
+            entityId: id,
+            reason,
+            summary: buildMovementAuditSummary(mov),
+            details: [
+              `NF: ${normalizeText(mov.nf || '-') || '-'}`,
+              `MIGO: ${normalizeText(mov.migo || '-') || '-'}`
+            ]
+          });
+          showToast('Movimentação excluída.');
+        }
+      });
     }
   );
 }
@@ -10994,7 +11375,7 @@ function upgradeCadastroSection() {
           </div>
         </div>
       </div>
-      <div class="cadastro-review-panel" id="cadastroMarchReviewPanel"></div>
+      <div class="cadastro-review-panel" id="cadastroConsistencyPanel"></div>
     </div>`;
 }
 
@@ -11104,10 +11485,51 @@ function expandMovimentosForExport(data) {
   return rows;
 }
 
+function isBaldeioMovementType(tipo) {
+  return normalizeText(tipo).toLowerCase().includes('baldeio');
+}
+
+function commitSavedMovement(mov, {
+  existing = null,
+  auditAction = '',
+  auditReason = '',
+  successMessage = ''
+} = {}) {
+  if (existing) {
+    const idx = movimentos.findIndex((item) => item.id === existing.id);
+    if (idx !== -1) movimentos[idx] = mov;
+    editingId = null;
+  } else {
+    movimentos.push(mov);
+  }
+
+  saveToStorage('movimentos');
+  resetForm();
+  updateDashboard();
+  renderTable();
+
+  if (auditAction && auditReason) {
+    recordAuditEvent(auditAction, {
+      entityType: 'movimento',
+      entityId: mov.id,
+      reason: auditReason,
+      summary: buildMovementAuditSummary(mov),
+      details: existing
+        ? [`Antes: ${buildMovementAuditSummary(existing)}`, `Depois: ${buildMovementAuditSummary(mov)}`]
+        : [
+            `NF: ${normalizeText(mov.nf || '-') || '-'}`,
+            `MIGO: ${normalizeText(mov.migo || '-') || '-'}`
+          ]
+    });
+  }
+
+  showToast(successMessage || 'Movimentação salva com sucesso!');
+}
+
 function saveMovimento(e) {
   e.preventDefault();
   if (!currentUser) {
-    showToast('Faca login para registrar movimentacoes.', true);
+    showToast('Faça login para registrar movimentações.', true);
     return false;
   }
 
@@ -11122,17 +11544,18 @@ function saveMovimento(e) {
     return false;
   }
 
-  // Check if origin or destination EPS is blocked
   const blockedOrigin = route.depositoOrigem && isEpsBlocked(route.depositoOrigem);
   const blockedDest = route.depositoDestino && isEpsBlocked(route.depositoDestino);
   if (blockedOrigin || blockedDest) {
     const blockedName = blockedOrigin ? route.depositoOrigem : route.depositoDestino;
-    showToast('⚠️ EPS ' + blockedName + ' está BLOQUEADA. Regularize a situação antes de registrar movimentações.', true);
+    showToast(`⚠️ EPS ${blockedName} está bloqueada. Regularize a situação antes de registrar movimentações.`, true);
     return false;
   }
 
+  const currentEditingId = editingId;
+  const existing = currentEditingId ? movimentos.find((item) => item.id === currentEditingId) : null;
   const mov = {
-    id: editingId || Date.now(),
+    id: currentEditingId || Date.now(),
     dataFisico: document.getElementById('fDataFisico').value,
     tipo: route.tipo,
     supervisor: route.supervisor,
@@ -11155,32 +11578,57 @@ function saveMovimento(e) {
   applyRouteToMovement(mov, route);
   applyMaterialsToMovement(mov, materials);
 
-  if (editingId) {
-    const existing = movimentos.find(m => m.id === editingId);
-    if (existing && existing.status === 'finalizado') {
-      mov.status = 'finalizado';
-    }
-    if (existing) {
-      mov.finalizadoPor = existing.finalizadoPor;
-      mov.finalizadoEm = existing.finalizadoEm;
-      mov.inseridoEm = existing.inseridoEm;
-      mov.inseridoPor = existing.inseridoPor;
-    }
-    const idx = movimentos.findIndex(m => m.id === editingId);
-    if (idx !== -1) movimentos[idx] = mov;
-    editingId = null;
-    showToast('Movimentacao atualizada com sucesso!');
-  } else {
-    movimentos.push(mov);
-    showToast(isWriter
-      ? 'WRITER registrada! Ficara pendente ate finalizar.'
-      : 'Movimentacao registrada com sucesso!');
+  if (existing && existing.status === 'finalizado') {
+    mov.status = 'finalizado';
+  }
+  if (existing) {
+    mov.finalizadoPor = existing.finalizadoPor;
+    mov.finalizadoEm = existing.finalizadoEm;
+    mov.inseridoEm = existing.inseridoEm;
+    mov.inseridoPor = existing.inseridoPor;
   }
 
-  saveToStorage('movimentos');
-  resetForm();
-  updateDashboard();
-  renderTable();
+  const finalizeSave = (auditReason = '') => {
+    const isNewBaldeio = !existing && isBaldeioMovementType(mov.tipo);
+    commitSavedMovement(mov, {
+      existing,
+      auditAction: existing ? 'movement_edit' : (isNewBaldeio ? 'baldeio_register' : ''),
+      auditReason,
+      successMessage: existing
+        ? 'Movimentação atualizada com sucesso!'
+        : (isWriter
+            ? 'WRITER registrada! Ficará pendente até finalizar.'
+            : 'Movimentação registrada com sucesso!')
+    });
+  };
+
+  if (existing) {
+    requestAuditReason({
+      title: 'Motivo da edição',
+      text: `Informe o motivo da alteração da movimentação #${mov.id}.`,
+      confirmText: 'Salvar edição',
+      placeholder: 'Ex: correção de rota, ajuste de quantidade, atualização operacional...',
+      onConfirm: finalizeSave
+    });
+    return false;
+  }
+
+  if (isBaldeioMovementType(mov.tipo)) {
+    requestAuditReason({
+      title: 'Motivo do baldeio',
+      text: 'Registre o motivo operacional deste baldeio para manter a rastreabilidade.',
+      confirmText: 'Registrar baldeio',
+      placeholder: 'Ex: redistribuição de estoque, ajuste entre depósitos, apoio operacional...',
+      initialValue: normalizeText(mov.motivo || ''),
+      onConfirm: (reason) => {
+        if (!normalizeText(mov.motivo)) mov.motivo = reason;
+        finalizeSave(reason);
+      }
+    });
+    return false;
+  }
+
+  finalizeSave();
   return false;
 }
 
@@ -11258,6 +11706,10 @@ function finalizarWriter(id) {
         <label>No Pedido (se houver)</label>
         <input type="text" id="finPedido" placeholder="No do pedido" value="${mov.pedido === 'WRITER' ? '' : mov.pedido}">
       </div>
+      <div class="modal-form-group">
+        <label>Motivo da finalização *</label>
+        <textarea id="finReason" class="form-input" rows="3" placeholder="Ex: MIGO confirmado, regularização concluída, pendência resolvida..." style="resize:vertical;min-height:90px;"></textarea>
+      </div>
       <div class="modal-actions">
         <button class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
         <button class="btn btn-primary" id="finConfirmBtn">Finalizar</button>
@@ -11270,9 +11722,10 @@ function finalizarWriter(id) {
     const dataSist = overlay.querySelector('#finDataSist').value;
     const migo = overlay.querySelector('#finMigo').value;
     const pedido = overlay.querySelector('#finPedido').value;
+    const reason = normalizeText(overlay.querySelector('#finReason').value);
 
-    if (!dataSist || !migo) {
-      showToast('Preencha Data Mov. Sistemico e MIGO para finalizar.', true);
+    if (!dataSist || !migo || !reason) {
+      showToast('Preencha data sistêmica, MIGO e o motivo da finalização.', true);
       return;
     }
 
@@ -11286,6 +11739,16 @@ function finalizarWriter(id) {
     saveToStorage('movimentos');
     updateDashboard();
     renderTable();
+    recordAuditEvent('writer_finalize', {
+      entityType: 'movimento',
+      entityId: mov.id,
+      reason,
+      summary: buildMovementAuditSummary(mov),
+      details: [
+        `MIGO: ${normalizeText(mov.migo || '-') || '-'}`,
+        `Finalizado por: ${normalizeText(mov.finalizadoPor || getCurrentUserName())}`
+      ]
+    });
     overlay.remove();
     showToast('WRITER finalizada com sucesso!');
   });
@@ -12297,6 +12760,82 @@ function buildExtractTypeList(rows) {
     .sort((a, b) => b.value - a.value);
 }
 
+let dashboardDrilldownSeq = 0;
+const dashboardDrilldownRegistry = new Map();
+
+function registerDashboardDrilldown(payload) {
+  const id = `dashdd_${Date.now()}_${dashboardDrilldownSeq++}`;
+  dashboardDrilldownRegistry.set(id, {
+    title: normalizeText(payload && payload.title),
+    subtitle: normalizeText(payload && payload.subtitle),
+    emptyText: normalizeText(payload && payload.emptyText) || 'Nenhum item encontrado para este recorte.',
+    columns: Array.isArray(payload && payload.columns) ? payload.columns : [],
+    rows: Array.isArray(payload && payload.rows) ? payload.rows : []
+  });
+  return id;
+}
+
+function openDashboardDrilldownById(id) {
+  const payload = dashboardDrilldownRegistry.get(id);
+  if (!payload) {
+    showToast('Não foi possível abrir o detalhamento solicitado.', true);
+    return;
+  }
+  showDashboardDrilldown(payload);
+}
+
+function showDashboardDrilldown(payload) {
+  const rows = Array.isArray(payload && payload.rows) ? payload.rows : [];
+  const columns = Array.isArray(payload && payload.columns) ? payload.columns : [];
+  const hasActionColumn = rows.some((row) => row && row._movementId !== undefined && row._movementId !== null);
+  const overlay = document.createElement('div');
+  overlay.className = 'modal-overlay';
+  overlay.innerHTML = `
+    <div class="modal" style="max-width:min(1200px,96vw);width:min(1200px,96vw);">
+      <div class="modal-title">${escapeHtml(payload && payload.title ? payload.title : 'Detalhamento')}</div>
+      <div class="modal-text" style="text-align:left;">${escapeHtml(payload && payload.subtitle ? payload.subtitle : 'Lista filtrada a partir do gráfico selecionado.')}</div>
+      <div class="table-scroll" style="max-height:60vh;margin-top:14px;">
+        <table class="dashboard-drilldown-table">
+          <thead>
+            <tr>
+              ${columns.map((column) => `<th>${escapeHtml(column.label || column.key)}</th>`).join('')}
+              ${hasActionColumn ? '<th>Ação</th>' : ''}
+            </tr>
+          </thead>
+          <tbody>
+            ${rows.length
+              ? rows.map((row) => `
+                  <tr>
+                    ${columns.map((column) => {
+                      const rawValue = row && row[column.key] !== undefined && row[column.key] !== null && row[column.key] !== '' ? row[column.key] : '-';
+                      const cellValue = escapeHtml(String(rawValue));
+                      const style = column.align === 'right'
+                        ? 'text-align:right;font-family:\'JetBrains Mono\',monospace;'
+                        : '';
+                      return `<td style="${style}">${cellValue}</td>`;
+                    }).join('')}
+                    ${hasActionColumn
+                      ? `<td>${row && row._movementId !== undefined && row._movementId !== null
+                          ? `<button type="button" class="btn btn-secondary" style="padding:4px 10px;font-size:0.72rem;" onclick="this.closest('.modal-overlay').remove(); showDetail(${JSON.stringify(row._movementId)})">Abrir</button>`
+                          : '-'}</td>`
+                      : ''}
+                  </tr>
+                `).join('')
+              : `<tr><td colspan="${columns.length + (hasActionColumn ? 1 : 0)}" class="empty-state">${escapeHtml(payload && payload.emptyText ? payload.emptyText : 'Nenhum item encontrado para este recorte.')}</td></tr>`}
+          </tbody>
+        </table>
+      </div>
+      <div class="modal-actions">
+        <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Fechar</button>
+      </div>
+    </div>
+  `;
+  document.body.appendChild(overlay);
+  overlay.addEventListener('click', (event) => {
+    if (event.target === overlay) overlay.remove();
+  });
+}
+
 function renderGenericBarChart(containerId, items, emptyText) {
   const container = document.getElementById(containerId);
   if (!container) return;
@@ -12310,12 +12849,20 @@ function renderGenericBarChart(containerId, items, emptyText) {
 
   const maxValue = Math.max(1, ...chartItems.map(item => Number(item.value) || 0));
   container.innerHTML = chartItems.map((item, index) => `
-    <div class="bar-row">
-      <div class="bar-label" title="${escapeHtml(item.label)}">${escapeHtml(item.label)}</div>
-      <div class="bar-track">
-        <div class="bar-fill ${colors[index % 4]}" style="width:${((Number(item.value) || 0) / maxValue) * 100}%" data-value="${escapeHtml(item.display || formatNumber(item.value))}"></div>
-      </div>
-    </div>
+    ${(() => {
+      const hasDrilldown = item && item.drilldown && Array.isArray(item.drilldown.rows) && item.drilldown.rows.length;
+      const drilldownId = hasDrilldown ? registerDashboardDrilldown(item.drilldown) : '';
+      const rowMarkup = `
+        <div class="bar-label" title="${escapeHtml(item.label)}">${escapeHtml(item.label)}</div>
+        <div class="bar-track">
+          <div class="bar-fill ${colors[index % 4]}" style="width:${((Number(item.value) || 0) / maxValue) * 100}%" data-value="${escapeHtml(item.display || formatNumber(item.value))}"></div>
+        </div>
+      `;
+      if (hasDrilldown) {
+        return `<button type="button" class="bar-row bar-row-button is-clickable" title="Clique para ver a lista filtrada" onclick="openDashboardDrilldownById('${drilldownId}')">${rowMarkup}</button>`;
+      }
+      return `<div class="bar-row">${rowMarkup}</div>`;
+    })()}
   `).join('');
 }
 
@@ -13005,12 +13552,35 @@ function parseMm60Workbook(workbook, fileName = 'MM60.xlsx') {
   };
 }
 
-function applyMm60Pricing(parsed, source = 'manual') {
+function applyMm60Pricing(parsed, source = 'manual', options = {}) {
+  const previousKey = [
+    normalizeText(analysisState.mm60FileName || ''),
+    normalizeText(analysisState.mm60UpdatedAt || ''),
+    Array.isArray(analysisState.mm60PriceRows) ? analysisState.mm60PriceRows.length : 0
+  ].join('|');
   analysisState.mm60PriceRows = Array.isArray(parsed && parsed.priceRows) ? parsed.priceRows : [];
   analysisState.mm60FileName = normalizeText(parsed && parsed.fileName ? parsed.fileName : 'MM60.xlsx') || 'MM60.xlsx';
   analysisState.mm60UpdatedAt = normalizeText(parsed && parsed.updatedAt ? parsed.updatedAt : new Date().toISOString());
   analysisState.mm60Source = normalizeText(source || 'manual') || 'manual';
   saveAnalysisState();
+  const nextKey = [
+    normalizeText(analysisState.mm60FileName || ''),
+    normalizeText(analysisState.mm60UpdatedAt || ''),
+    Array.isArray(analysisState.mm60PriceRows) ? analysisState.mm60PriceRows.length : 0
+  ].join('|');
+  if (options.auditReason && previousKey !== nextKey) {
+    recordAuditEvent('mm60_refresh', {
+      entityType: 'mm60',
+      entityId: MM60_CLOUD_DOC_ID,
+      reason: options.auditReason,
+      summary: `${analysisState.mm60FileName} com ${analysisState.mm60PriceRows.length} material(is) precificado(s).`,
+      details: [
+        `Fonte: ${normalizeText(source || 'manual') || 'manual'}`,
+        `Atualizado em: ${normalizeText(analysisState.mm60UpdatedAt || '-') || '-'}`,
+        `Materiais com preço: ${analysisState.mm60PriceRows.length}`
+      ]
+    });
+  }
 }
 
 function normalizeMm60CloudPayload(payload) {
@@ -13036,7 +13606,7 @@ function normalizeMm60CloudPayload(payload) {
   };
 }
 
-async function loadMm60PricingFromCloud(force = false) {
+async function loadMm60PricingFromCloud(force = false, auditReason = '') {
   if (mm60AutoLoadState.promise) return mm60AutoLoadState.promise;
 
   const isWeb = location.protocol === 'http:' || location.protocol === 'https:';
@@ -13065,7 +13635,7 @@ async function loadMm60PricingFromCloud(force = false) {
         throw new Error('Base MM60 no Firebase está vazia.');
       }
       mm60AutoLoadState.lastError = '';
-      applyMm60Pricing(parsed, 'cloud');
+      applyMm60Pricing(parsed, 'cloud', { auditReason });
       if (force) {
         showToast(`Base MM60 atualizada do banco: ${parsed.priceRows.length} materiais com preço médio.`);
       }
@@ -13082,6 +13652,19 @@ async function loadMm60PricingFromCloud(force = false) {
   })();
 
   return mm60AutoLoadState.promise;
+}
+
+function requestMm60Refresh() {
+  requestAuditReason({
+    title: 'Atualizar base MM60',
+    text: 'Informe o motivo da atualização manual da base de preços antes de sincronizar do banco.',
+    label: 'Motivo da atualização',
+    confirmText: 'Atualizar base',
+    placeholder: 'Ex: fechamento mensal, revisão financeira, atualização validada pelo almoxarifado...',
+    onConfirm: (reason) => {
+      loadMm60PricingFromCloud(true, reason);
+    }
+  });
 }
 
 function findWorkbookSheet(workbook, matcher, fallbackIndex) {
@@ -14908,6 +15491,121 @@ function handleDashboardMonthChange() {
   updateDashboard();
 }
 
+const DASHBOARD_VALUE_DRILLDOWN_COLUMNS = [
+  { key: 'data', label: 'Data' },
+  { key: 'tipo', label: 'Tipo' },
+  { key: 'eps', label: 'EPS' },
+  { key: 'fazenda', label: 'Fazenda' },
+  { key: 'supervisor', label: 'Supervisor' },
+  { key: 'material', label: 'Material' },
+  { key: 'quantidade', label: 'Qtd.', align: 'right' },
+  { key: 'preco', label: 'Preço', align: 'right' },
+  { key: 'valor', label: 'Valor', align: 'right' }
+];
+
+const DASHBOARD_ALERT_COLUMNS = [
+  { key: 'alerta', label: 'Alerta' },
+  { key: 'data', label: 'Data' },
+  { key: 'referencia', label: 'Referência' },
+  { key: 'responsavel', label: 'Responsável / Local' },
+  { key: 'detalhe', label: 'Detalhe' },
+  { key: 'impacto', label: 'Impacto', align: 'right' }
+];
+
+const DASHBOARD_AGING_COLUMNS = [
+  { key: 'categoria', label: 'Categoria' },
+  { key: 'referencia', label: 'Referência' },
+  { key: 'deposito', label: 'Depósito' },
+  { key: 'material', label: 'Material' },
+  { key: 'idade', label: 'Idade', align: 'right' },
+  { key: 'vencimento', label: 'Vencimento' },
+  { key: 'valor', label: 'Valor', align: 'right' }
+];
+
+function getDashboardPrimaryDepositLabel(mov) {
+  return normalizeText(
+    getDepositoDisplay(mov, 'destino')
+    || getDepositoDisplay(mov, 'origem')
+    || 'Sem depósito'
+  ) || 'Sem depósito';
+}
+
+function getDashboardPrimaryEpsLabel(mov) {
+  return normalizeText(
+    getRouteSummary(mov, 'destino')
+    || getRouteSummary(mov, 'origem')
+    || getDashboardPrimaryDepositLabel(mov)
+    || 'Sem EPS'
+  ) || 'Sem EPS';
+}
+
+function getDashboardPrimaryFarmLabel(mov) {
+  return normalizeText(
+    getFazendaDisplay(mov, 'destino')
+    || getFazendaDisplay(mov, 'origem')
+    || getCentroDisplay(mov, 'destino')
+    || getCentroDisplay(mov, 'origem')
+    || 'Sem fazenda'
+  ) || 'Sem fazenda';
+}
+
+function getDashboardSupervisorLabel(mov) {
+  return normalizeText(getMovementRouteData(mov).supervisor || mov.supervisor || 'Sem supervisor') || 'Sem supervisor';
+}
+
+function createDashboardMovementDetailRow(mov, item, extra = {}) {
+  const quantity = Number.isFinite(extra.quantity) ? Number(extra.quantity) : Math.abs(parseLocaleNumber(item && item.quantidade));
+  const unitPrice = Number.isFinite(extra.unitPrice) ? Number(extra.unitPrice) : 0;
+  const itemValue = Number.isFinite(extra.value) ? Number(extra.value) : 0;
+  const material = normalizeText((item && item.material) || mov.material || 'Sem material') || 'Sem material';
+  const code = normalizeText((item && item.codProduto) || mov.codProduto || '');
+  return {
+    _movementId: mov.id,
+    data: formatDate(getDashboardMovementDate(mov)) || '-',
+    tipo: normalizeText(mov.tipo || '-') || '-',
+    eps: getDashboardPrimaryEpsLabel(mov),
+    fazenda: getDashboardPrimaryFarmLabel(mov),
+    supervisor: getDashboardSupervisorLabel(mov),
+    material: code ? `${material} (${code})` : material,
+    quantidade: `${formatNumber(quantity || 0)}${normalizeText((item && item.unidade) || mov.unidade || '') ? ` ${normalizeText((item && item.unidade) || mov.unidade || '')}` : ''}`.trim(),
+    preco: unitPrice > 0 ? formatCurrencyBRL(unitPrice) : 'Sem preço',
+    valor: itemValue > 0 ? formatCurrencyBRL(itemValue) : '-',
+    referencia: `#${mov.id}`,
+    nf: normalizeText(mov.nf || '-') || '-',
+    migo: normalizeText(mov.migo || '-') || '-',
+    lote: normalizeText((item && item.lote) || '-') || '-',
+    status: normalizeText(mov.status || '-') || '-',
+    ...extra
+  };
+}
+
+function createValueBucketItemList(bucketMap, titlePrefix, columns) {
+  return [...bucketMap.values()]
+    .map((bucket) => ({
+      label: bucket.label,
+      value: Number(bucket.value.toFixed(2)),
+      display: formatCurrencyBRL(bucket.value),
+      drilldown: bucket.rows.length
+        ? {
+            title: `${titlePrefix} • ${bucket.label}`,
+            subtitle: `${bucket.rows.length} linha(s) encontradas no recorte selecionado.`,
+            columns,
+            rows: [...bucket.rows].sort((a, b) => normalizeText(b.data).localeCompare(normalizeText(a.data), 'pt-BR'))
+          }
+        : null
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
+}
+
+function getDashboardAgingBucketLabel(days) {
+  if (days <= 2) return '0 a 2 dias';
+  if (days <= 7) return '3 a 7 dias';
+  if (days <= 15) return '8 a 15 dias';
+  if (days <= 30) return '16 a 30 dias';
+  return 'Acima de 30 dias';
+}
+
 function buildDashboardPackagingSnapshot(rows) {
   const materialMap = new Map();
   (Array.isArray(rows) ? rows : []).forEach((row) => {
@@ -14924,15 +15622,21 @@ function buildDashboardPackagingSnapshot(rows) {
         material,
         codProduto,
         balance: 0,
-        lastDate: normalizeText(row.data || '')
+        lastDate: normalizeText(row.data || ''),
+        firstPendingDate: Number(row._signedQuantidade) > 0 ? normalizeText(row.data || '') : ''
       });
     }
     const item = materialMap.get(key);
     item.balance += Number(row._signedQuantidade) || 0;
     if (normalizeText(row.data) > normalizeText(item.lastDate)) item.lastDate = normalizeText(row.data || '');
+    if (Number(row._signedQuantidade) > 0) {
+      const pendingDate = normalizeText(row.data || '');
+      if (!item.firstPendingDate || (pendingDate && pendingDate < item.firstPendingDate)) item.firstPendingDate = pendingDate;
+    }
   });
 
   const depositMap = new Map();
+  const openItems = [];
   materialMap.forEach((item) => {
     if (!depositMap.has(item.deposito)) {
       depositMap.set(item.deposito, {
@@ -14948,6 +15652,15 @@ function buildDashboardPackagingSnapshot(rows) {
     if (item.balance > 0) {
       deposit.openQty += item.balance;
       deposit.materialCount += 1;
+      openItems.push({
+        deposito: item.deposito,
+        epsNome: item.epsNome,
+        material: item.material,
+        codProduto: item.codProduto,
+        openQty: Number(item.balance.toFixed(6)),
+        firstPendingDate: normalizeText(item.firstPendingDate || ''),
+        lastDate: normalizeText(item.lastDate || '')
+      });
     }
   });
 
@@ -14961,7 +15674,8 @@ function buildDashboardPackagingSnapshot(rows) {
 
   return {
     depositRows,
-    openMaterialCount: depositRows.reduce((sum, item) => sum + item.materialCount, 0)
+    openMaterialCount: depositRows.reduce((sum, item) => sum + item.materialCount, 0),
+    openItems: openItems.sort((a, b) => b.openQty - a.openQty)
   };
 }
 
@@ -14979,9 +15693,14 @@ function buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd) {
     missingItemCount: 0,
     coverageRate: 0,
     typeItems: [],
+    epsItems: [],
+    farmItems: [],
+    supervisorItems: [],
     materialItems: [],
     destinationItems: [],
     timelineItems: [],
+    detailRows: [],
+    missingPriceRows: [],
     isLoading: mm60AutoLoadState.loading,
     lastError: normalizeText(mm60AutoLoadState.lastError || '')
   };
@@ -14992,15 +15711,31 @@ function buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd) {
   const materialMap = new Map();
   const destinationMap = new Map();
   const timelineMap = new Map();
+  const epsMap = new Map();
+  const farmMap = new Map();
+  const supervisorMap = new Map();
   let totalValue = 0;
   let pricedItemCount = 0;
   let totalItemCount = 0;
+  const detailRows = [];
+  const missingPriceRows = [];
+
+  const appendValueBucket = (bucketMap, label, row, value) => {
+    const safeLabel = normalizeText(label || 'Sem agrupamento') || 'Sem agrupamento';
+    if (!bucketMap.has(safeLabel)) bucketMap.set(safeLabel, { label: safeLabel, value: 0, rows: [] });
+    const bucket = bucketMap.get(safeLabel);
+    bucket.value += value;
+    bucket.rows.push(row);
+  };
 
   filteredMovs.forEach((mov) => {
     const movementDate = getDashboardMovementDate(mov);
     if (!movementDate) return;
     const timelineKey = period.mode === 'monthly' ? movementDate : movementDate.slice(0, 7);
     const destinationLabel = getRouteSummary(mov, 'destino') || getRouteSummary(mov, 'origem') || 'Sem destino';
+    const epsLabel = getDashboardPrimaryEpsLabel(mov);
+    const farmLabel = getDashboardPrimaryFarmLabel(mov);
+    const supervisorLabel = getDashboardSupervisorLabel(mov);
     const typeLabel = normalizeText(mov.tipo || 'Sem tipo') || 'Sem tipo';
 
     getMovementMaterials(mov).forEach((item) => {
@@ -15010,40 +15745,42 @@ function buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd) {
 
       totalItemCount += 1;
       const priceRow = getMm60PriceForMaterial(item);
-      if (!priceRow) return;
+      const detailRowBase = createDashboardMovementDetailRow(mov, item, { quantity });
+      if (!priceRow) {
+        missingPriceRows.push({
+          ...detailRowBase,
+          detalhe: `${materialName} sem preço MM60 no recorte.`,
+          impacto: '-'
+        });
+        return;
+      }
 
       const itemValue = quantity * Number(priceRow.unitPrice || 0);
       if (!Number.isFinite(itemValue) || itemValue <= 0) return;
 
       pricedItemCount += 1;
       totalValue += itemValue;
+      const detailRow = createDashboardMovementDetailRow(mov, item, {
+        quantity,
+        unitPrice: Number(priceRow.unitPrice || 0),
+        value: itemValue
+      });
+      detailRows.push(detailRow);
 
       const materialCode = normalizeText(item.codProduto || priceRow.materialCode || '');
       const materialLabel = materialCode ? `${materialName} (${materialCode})` : materialName;
       const materialKey = `${materialName.toLowerCase()}|${materialCode.toLowerCase()}`;
 
-      if (!typeMap.has(typeLabel)) typeMap.set(typeLabel, 0);
-      typeMap.set(typeLabel, typeMap.get(typeLabel) + itemValue);
-
-      if (!materialMap.has(materialKey)) materialMap.set(materialKey, { label: materialLabel, value: 0 });
-      materialMap.get(materialKey).value += itemValue;
-
-      if (!destinationMap.has(destinationLabel)) destinationMap.set(destinationLabel, 0);
-      destinationMap.set(destinationLabel, destinationMap.get(destinationLabel) + itemValue);
-
-      if (!timelineMap.has(timelineKey)) timelineMap.set(timelineKey, 0);
-      timelineMap.set(timelineKey, timelineMap.get(timelineKey) + itemValue);
+      appendValueBucket(typeMap, typeLabel, detailRow, itemValue);
+      appendValueBucket(epsMap, epsLabel, detailRow, itemValue);
+      appendValueBucket(farmMap, farmLabel, detailRow, itemValue);
+      appendValueBucket(supervisorMap, supervisorLabel, detailRow, itemValue);
+      appendValueBucket(destinationMap, destinationLabel, detailRow, itemValue);
+      appendValueBucket(materialMap, materialKey, { ...detailRow, material: materialLabel }, itemValue);
+      appendValueBucket(timelineMap, timelineKey, detailRow, itemValue);
+      if (materialMap.has(materialKey)) materialMap.get(materialKey).label = materialLabel;
     });
   });
-
-  const toValueItems = (entries) => entries
-    .map(([label, value]) => ({
-      label,
-      value: Number(value.toFixed(2)),
-      display: formatCurrencyBRL(value)
-    }))
-    .sort((a, b) => b.value - a.value)
-    .slice(0, 8);
 
   const timelineItems = (() => {
     if (period.mode === 'monthly') {
@@ -15052,11 +15789,20 @@ function buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd) {
       const endDate = new Date(`${snapshotEnd}T00:00:00`);
       while (cursor <= endDate) {
         const iso = cursor.toISOString().slice(0, 10);
-        const value = timelineMap.get(iso) || 0;
+        const bucket = timelineMap.get(iso) || { value: 0, rows: [] };
+        const value = bucket.value || 0;
         items.push({
           label: iso.slice(8, 10),
           value: Number(value.toFixed(2)),
-          display: formatCurrencyBRL(value)
+          display: formatCurrencyBRL(value),
+          drilldown: bucket.rows.length
+            ? {
+                title: `Ritmo financeiro • ${formatDate(iso)}`,
+                subtitle: `${bucket.rows.length} linha(s) com valor calculado para ${formatDate(iso)}.`,
+                columns: DASHBOARD_VALUE_DRILLDOWN_COLUMNS,
+                rows: [...bucket.rows]
+              }
+            : null
         });
         cursor.setDate(cursor.getDate() + 1);
       }
@@ -15066,10 +15812,18 @@ function buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd) {
     return [...timelineMap.entries()]
       .sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'))
       .slice(-12)
-      .map(([label, value]) => ({
+      .map(([label, bucket]) => ({
         label: `${label.slice(5, 7)}/${label.slice(0, 4)}`,
-        value: Number(value.toFixed(2)),
-        display: formatCurrencyBRL(value)
+        value: Number((bucket.value || 0).toFixed(2)),
+        display: formatCurrencyBRL(bucket.value || 0),
+        drilldown: bucket.rows.length
+          ? {
+              title: `Ritmo financeiro • ${label.slice(5, 7)}/${label.slice(0, 4)}`,
+              subtitle: `${bucket.rows.length} linha(s) com valor calculado neste mês.`,
+              columns: DASHBOARD_VALUE_DRILLDOWN_COLUMNS,
+              rows: [...bucket.rows]
+            }
+          : null
       }));
   })();
 
@@ -15088,17 +15842,15 @@ function buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd) {
     totalItemCount,
     missingItemCount: Math.max(0, totalItemCount - pricedItemCount),
     coverageRate,
-    typeItems: toValueItems([...typeMap.entries()]),
-    materialItems: [...materialMap.values()]
-      .map((item) => ({
-        ...item,
-        value: Number(item.value.toFixed(2)),
-        display: formatCurrencyBRL(item.value)
-      }))
-      .sort((a, b) => b.value - a.value)
-      .slice(0, 8),
-    destinationItems: toValueItems([...destinationMap.entries()]),
+    typeItems: createValueBucketItemList(typeMap, 'Valor por tipo', DASHBOARD_VALUE_DRILLDOWN_COLUMNS),
+    epsItems: createValueBucketItemList(epsMap, 'Valor por EPS', DASHBOARD_VALUE_DRILLDOWN_COLUMNS),
+    farmItems: createValueBucketItemList(farmMap, 'Valor por fazenda', DASHBOARD_VALUE_DRILLDOWN_COLUMNS),
+    supervisorItems: createValueBucketItemList(supervisorMap, 'Valor por supervisor', DASHBOARD_VALUE_DRILLDOWN_COLUMNS),
+    materialItems: createValueBucketItemList(materialMap, 'Valor por material', DASHBOARD_VALUE_DRILLDOWN_COLUMNS),
+    destinationItems: createValueBucketItemList(destinationMap, 'Valor por destino', DASHBOARD_VALUE_DRILLDOWN_COLUMNS),
     timelineItems,
+    detailRows,
+    missingPriceRows,
     isLoading: mm60AutoLoadState.loading,
     lastError: normalizeText(mm60AutoLoadState.lastError || '')
   };
@@ -15131,6 +15883,14 @@ function buildDashboardData() {
   const packagingRowsToDate = dashboardPackagingRows.filter((row) => isDashboardDateWithin(row.data, '', snapshotEnd));
   const packagingSnapshot = buildDashboardPackagingSnapshot(packagingRowsToDate);
   const valueSnapshot = buildDashboardValueSnapshot(filteredMovs, period, snapshotEnd);
+  const calculateMovementValue = (mov) => getMovementMaterials(mov).reduce((sum, item) => {
+    const quantity = Math.abs(parseLocaleNumber(item.quantidade));
+    if (!Number.isFinite(quantity) || quantity <= 0) return sum;
+    const priceRow = getMm60PriceForMaterial(item);
+    const unitPrice = Number(priceRow && priceRow.unitPrice) || 0;
+    if (!unitPrice) return sum;
+    return sum + (quantity * unitPrice);
+  }, 0);
 
   const nfCount = new Set(filteredMovs.map(mov => normalizeText(mov.nf)).filter(Boolean)).size;
   const activeDeposits = new Set();
@@ -15144,10 +15904,30 @@ function buildDashboardData() {
   const typeMap = new Map();
   filteredMovs.forEach((mov) => {
     const key = normalizeText(mov.tipo || 'Sem tipo') || 'Sem tipo';
-    typeMap.set(key, (typeMap.get(key) || 0) + 1);
+    if (!typeMap.has(key)) typeMap.set(key, { label: key, value: 0, rows: [] });
+    const bucket = typeMap.get(key);
+    bucket.value += 1;
+    const movementItems = getMovementMaterials(mov);
+    if (!movementItems.length) {
+      bucket.rows.push(createDashboardMovementDetailRow(mov, {}, { material: getMaterialSummary(mov) }));
+    } else {
+      movementItems.forEach((item) => bucket.rows.push(createDashboardMovementDetailRow(mov, item)));
+    }
   });
-  const typeItems = [...typeMap.entries()]
-    .map(([label, value]) => ({ label, value }))
+  const typeItems = [...typeMap.values()]
+    .map((bucket) => ({
+      label: bucket.label,
+      value: bucket.value,
+      display: String(bucket.value),
+      drilldown: bucket.rows.length
+        ? {
+            title: `Movimentações por tipo • ${bucket.label}`,
+            subtitle: `${bucket.rows.length} linha(s) relacionadas a este tipo.`,
+            columns: DASHBOARD_VALUE_DRILLDOWN_COLUMNS,
+            rows: bucket.rows
+          }
+        : null
+    }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 8);
 
@@ -15163,14 +15943,31 @@ function buildDashboardData() {
       if (!materialOutMap.has(key)) {
         materialOutMap.set(key, {
           label: codProduto ? `${material} (${codProduto})` : material,
-          value: 0
+          value: 0,
+          rows: []
         });
       }
-      materialOutMap.get(key).value += qty;
+      const bucket = materialOutMap.get(key);
+      bucket.value += qty;
+      bucket.rows.push(createDashboardMovementDetailRow(mov, item, {
+        quantidade: `${formatNumber(qty)}${normalizeText(item.unidade || '') ? ` ${normalizeText(item.unidade || '')}` : ''}`.trim()
+      }));
     });
   });
   const topMaterialItems = [...materialOutMap.values()]
-    .map(item => ({ ...item, value: Number(item.value.toFixed(6)), display: formatNumber(item.value) }))
+    .map(item => ({
+      ...item,
+      value: Number(item.value.toFixed(6)),
+      display: formatNumber(item.value),
+      drilldown: item.rows.length
+        ? {
+            title: `Saídas por material • ${item.label}`,
+            subtitle: `${item.rows.length} linha(s) de saída encontradas no recorte.`,
+            columns: DASHBOARD_VALUE_DRILLDOWN_COLUMNS,
+            rows: item.rows
+          }
+        : null
+    }))
     .sort((a, b) => b.value - a.value)
     .slice(0, 8);
 
@@ -15286,11 +16083,37 @@ function buildDashboardData() {
     { label: 'Materiais em aberto', value: packagingSnapshot.openMaterialCount }
   ];
 
-  const packagingDebtItems = packagingSnapshot.depositRows.slice(0, 8).map((item) => ({
-    label: `${item.deposito} - ${item.epsNome}`,
-    value: item.openQty,
-    display: formatNumber(item.openQty)
-  }));
+  const packagingDebtRowsMap = new Map();
+  packagingSnapshot.openItems.forEach((item) => {
+    const key = `${item.deposito} - ${item.epsNome}`;
+    if (!packagingDebtRowsMap.has(key)) packagingDebtRowsMap.set(key, []);
+    const ageDays = item.firstPendingDate ? getDaysBetween(item.firstPendingDate, snapshotEnd) : 0;
+    packagingDebtRowsMap.get(key).push({
+      categoria: 'Embalagem',
+      referencia: item.deposito,
+      deposito: `${item.deposito} - ${item.epsNome}`,
+      material: item.codProduto ? `${item.material} (${item.codProduto})` : item.material,
+      idade: formatDashboardDuration(ageDays),
+      vencimento: formatDate(item.firstPendingDate) || '-',
+      valor: formatNumber(item.openQty)
+    });
+  });
+  const packagingDebtItems = packagingSnapshot.depositRows.slice(0, 8).map((item) => {
+    const label = `${item.deposito} - ${item.epsNome}`;
+    return {
+      label,
+      value: item.openQty,
+      display: formatNumber(item.openQty),
+      drilldown: (packagingDebtRowsMap.get(label) || []).length
+        ? {
+            title: `Embalagens em aberto • ${label}`,
+            subtitle: `${(packagingDebtRowsMap.get(label) || []).length} item(ns) com saldo pendente.`,
+            columns: DASHBOARD_AGING_COLUMNS,
+            rows: packagingDebtRowsMap.get(label) || []
+          }
+        : null
+    };
+  });
 
   const timelineItems = (() => {
     const map = new Map();
@@ -15298,10 +16121,16 @@ function buildDashboardData() {
       const date = getDashboardMovementDate(mov);
       if (!date) return;
       if (period.mode === 'monthly') {
-        map.set(date, (map.get(date) || 0) + 1);
+        if (!map.has(date)) map.set(date, { value: 0, rows: [] });
+        const bucket = map.get(date);
+        bucket.value += 1;
+        getMovementMaterials(mov).forEach((item) => bucket.rows.push(createDashboardMovementDetailRow(mov, item)));
       } else {
         const monthKey = date.slice(0, 7);
-        map.set(monthKey, (map.get(monthKey) || 0) + 1);
+        if (!map.has(monthKey)) map.set(monthKey, { value: 0, rows: [] });
+        const bucket = map.get(monthKey);
+        bucket.value += 1;
+        getMovementMaterials(mov).forEach((item) => bucket.rows.push(createDashboardMovementDetailRow(mov, item)));
       }
     });
 
@@ -15311,9 +16140,19 @@ function buildDashboardData() {
       const endDate = new Date(`${snapshotEnd}T00:00:00`);
       while (cursor <= endDate) {
         const iso = cursor.toISOString().slice(0, 10);
+        const bucket = map.get(iso) || { value: 0, rows: [] };
         items.push({
           label: iso.slice(8, 10),
-          value: map.get(iso) || 0
+          value: bucket.value || 0,
+          display: String(bucket.value || 0),
+          drilldown: bucket.rows.length
+            ? {
+                title: `Ritmo do período • ${formatDate(iso)}`,
+                subtitle: `${bucket.rows.length} linha(s) movimentadas nesta data.`,
+                columns: DASHBOARD_VALUE_DRILLDOWN_COLUMNS,
+                rows: bucket.rows
+              }
+            : null
         });
         cursor.setDate(cursor.getDate() + 1);
       }
@@ -15323,9 +16162,18 @@ function buildDashboardData() {
     return [...map.entries()]
       .sort((a, b) => a[0].localeCompare(b[0], 'pt-BR'))
       .slice(-12)
-      .map(([label, value]) => ({
+      .map(([label, bucket]) => ({
         label: `${label.slice(5, 7)}/${label.slice(0, 4)}`,
-        value
+        value: bucket.value,
+        display: String(bucket.value),
+        drilldown: bucket.rows.length
+          ? {
+              title: `Ritmo do período • ${label.slice(5, 7)}/${label.slice(0, 4)}`,
+              subtitle: `${bucket.rows.length} linha(s) movimentadas neste mês.`,
+              columns: DASHBOARD_VALUE_DRILLDOWN_COLUMNS,
+              rows: bucket.rows
+            }
+          : null
       }));
   })();
 
@@ -15346,6 +16194,209 @@ function buildDashboardData() {
     return [...map.entries()].sort((a, b) => b[1] - a[1])[0] || null;
   })();
 
+  const pricingMissingRows = valueSnapshot.missingPriceRows.map((row) => ({
+    ...row,
+    alerta: 'Material sem preço',
+    data: row.data || '-',
+    referencia: row.referencia || `#${row._movementId}`,
+    responsavel: `${row.supervisor || 'Sem supervisor'} • ${row.eps || 'Sem EPS'}`,
+    detalhe: row.material,
+    impacto: 'Sem MM60'
+  }));
+
+  const packagingOpenAgingRows = packagingSnapshot.openItems.map((item) => {
+    const priceRow = getMm60PriceForMaterial(item);
+    const unitPrice = Number(priceRow && priceRow.unitPrice) || 0;
+    const value = unitPrice > 0 ? item.openQty * unitPrice : 0;
+    const ageDays = item.firstPendingDate ? getDaysBetween(item.firstPendingDate, snapshotEnd) : 0;
+    return {
+      categoria: 'Embalagem',
+      referencia: item.deposito,
+      deposito: `${item.deposito} - ${item.epsNome}`,
+      material: item.codProduto ? `${item.material} (${item.codProduto})` : item.material,
+      idade: formatDashboardDuration(ageDays),
+      vencimento: formatDate(item.firstPendingDate) || '-',
+      valor: value > 0 ? formatCurrencyBRL(value) : '-',
+      _value: value,
+      _ageDays: ageDays,
+      _depositoKey: item.deposito
+    };
+  });
+
+  const writerAgingRows = writerPending.flatMap((mov) => {
+    const ageDays = getDaysBetween(mov.inseridoEm || mov.dataFisico, snapshotEnd);
+    const deposito = getDashboardPrimaryDepositLabel(mov);
+    return getMovementMaterials(mov).map((item) => {
+      const quantity = Math.abs(parseLocaleNumber(item.quantidade));
+      const priceRow = getMm60PriceForMaterial(item);
+      const unitPrice = Number(priceRow && priceRow.unitPrice) || 0;
+      const value = unitPrice > 0 ? quantity * unitPrice : 0;
+      return {
+        _movementId: mov.id,
+        categoria: 'Writer',
+        referencia: `#${mov.id}`,
+        deposito,
+        material: normalizeText(item.material || 'Sem material'),
+        idade: formatDashboardDuration(ageDays),
+        vencimento: '-',
+        valor: value > 0 ? formatCurrencyBRL(value) : '-',
+        _value: value,
+        _ageDays: ageDays,
+        _depositoKey: deposito
+      };
+    });
+  });
+
+  const agingRows = [...writerAgingRows, ...packagingOpenAgingRows]
+    .sort((a, b) => (Number(b._ageDays) || 0) - (Number(a._ageDays) || 0));
+  const agingBucketMap = new Map();
+  const openValueByDepositMap = new Map();
+  agingRows.forEach((row) => {
+    const bucketLabel = getDashboardAgingBucketLabel(Number(row._ageDays) || 0);
+    if (!agingBucketMap.has(bucketLabel)) agingBucketMap.set(bucketLabel, { label: bucketLabel, value: 0, rows: [] });
+    const bucket = agingBucketMap.get(bucketLabel);
+    bucket.value += 1;
+    bucket.rows.push(row);
+
+    const depositLabel = normalizeText(row.deposito || row._depositoKey || 'Sem depósito') || 'Sem depósito';
+    if (!openValueByDepositMap.has(depositLabel)) openValueByDepositMap.set(depositLabel, { label: depositLabel, value: 0, rows: [] });
+    const depositBucket = openValueByDepositMap.get(depositLabel);
+    depositBucket.value += Number(row._value) || 0;
+    depositBucket.rows.push(row);
+  });
+  const agingBucketItems = [...agingBucketMap.values()]
+    .map((bucket) => ({
+      label: bucket.label,
+      value: bucket.value,
+      display: String(bucket.value),
+      drilldown: bucket.rows.length
+        ? {
+            title: `Aging de pendências • ${bucket.label}`,
+            subtitle: `${bucket.rows.length} pendência(s) neste intervalo de idade.`,
+            columns: DASHBOARD_AGING_COLUMNS,
+            rows: bucket.rows
+          }
+        : null
+    }))
+    .sort((a, b) => b.value - a.value);
+  const openValueByDepositItems = [...openValueByDepositMap.values()]
+    .map((bucket) => ({
+      label: bucket.label,
+      value: Number(bucket.value.toFixed(2)),
+      display: formatCurrencyBRL(bucket.value),
+      drilldown: bucket.rows.length
+        ? {
+            title: `Valor parado por depósito • ${bucket.label}`,
+            subtitle: `${bucket.rows.length} pendência(s) com valor associado neste depósito.`,
+            columns: DASHBOARD_AGING_COLUMNS,
+            rows: bucket.rows
+          }
+        : null
+    }))
+    .sort((a, b) => b.value - a.value)
+    .slice(0, 8);
+
+  const alertMap = new Map();
+  const alertRows = [];
+  const pushAlert = (alertLabel, row) => {
+    const safeLabel = normalizeText(alertLabel || 'Alerta') || 'Alerta';
+    const normalizedRow = {
+      alerta: safeLabel,
+      data: row.data || '-',
+      referencia: row.referencia || '-',
+      responsavel: row.responsavel || '-',
+      detalhe: row.detalhe || '-',
+      impacto: row.impacto || '-',
+      _movementId: row._movementId
+    };
+    alertRows.push(normalizedRow);
+    if (!alertMap.has(safeLabel)) alertMap.set(safeLabel, { label: safeLabel, value: 0, rows: [] });
+    const bucket = alertMap.get(safeLabel);
+    bucket.value += 1;
+    bucket.rows.push(normalizedRow);
+  };
+
+  filteredMovs.forEach((mov) => {
+    const isPending = normalizeText(mov.status).toLowerCase() === 'pendente';
+    const movementValue = calculateMovementValue(mov);
+    if (!isPending && !normalizeText(mov.migo)) {
+      pushAlert('MIGO faltando', {
+        _movementId: mov.id,
+        data: formatDate(getDashboardMovementDate(mov)) || '-',
+        referencia: `#${mov.id}`,
+        responsavel: `${getDashboardSupervisorLabel(mov)} • ${getDashboardPrimaryEpsLabel(mov)}`,
+        detalhe: `NF ${normalizeText(mov.nf || '-') || '-'} sem MIGO em movimento finalizado.`,
+        impacto: movementValue > 0 ? formatCurrencyBRL(movementValue) : '-'
+      });
+    }
+
+    if (isBaldeioMovementType(mov.tipo)) {
+      const route = getMovementRouteData(mov);
+      const invalidRoute = !normalizeText(route.depositoOrigem) || !normalizeText(route.depositoDestino) || normalizeText(route.depositoOrigem) === normalizeText(route.depositoDestino);
+      const noItems = !getMovementMaterials(mov).length;
+      if (invalidRoute || noItems) {
+        pushAlert('Baldeio inconsistente', {
+          _movementId: mov.id,
+          data: formatDate(getDashboardMovementDate(mov)) || '-',
+          referencia: `#${mov.id}`,
+          responsavel: `${getDashboardSupervisorLabel(mov)} • ${getDashboardPrimaryEpsLabel(mov)}`,
+          detalhe: invalidRoute
+            ? 'Origem e destino precisam estar preenchidos e ser diferentes.'
+            : 'Baldeio sem itens válidos vinculados.',
+          impacto: movementValue > 0 ? formatCurrencyBRL(movementValue) : '-'
+        });
+      }
+    }
+
+    getMovementMaterials(mov).forEach((item) => {
+      const quantity = Math.abs(parseLocaleNumber(item.quantidade));
+      if (!quantity) return;
+      if (!normalizeText(item.lote)) {
+        pushAlert('Lote vazio', {
+          _movementId: mov.id,
+          data: formatDate(getDashboardMovementDate(mov)) || '-',
+          referencia: `#${mov.id}`,
+          responsavel: `${getDashboardPrimaryEpsLabel(mov)} • ${getDashboardSupervisorLabel(mov)}`,
+          detalhe: normalizeText(item.material || 'Material sem descrição'),
+          impacto: `${formatNumber(quantity)} ${normalizeText(item.unidade || '')}`.trim()
+        });
+      }
+    });
+  });
+
+  pricingMissingRows.forEach((row) => pushAlert('Material sem preço', row));
+  packagingOpenAgingRows
+    .filter((row) => normalizeText(row.vencimento) && normalizeText(parseSpreadsheetDate(row.vencimento) || '') < snapshotEnd)
+    .forEach((row) => {
+      pushAlert('Devolução atrasada', {
+        data: row.vencimento,
+        referencia: row.referencia,
+        responsavel: row.deposito,
+        detalhe: row.material,
+        impacto: row.valor !== '-' ? row.valor : row.idade
+      });
+    });
+
+  const alertItems = [...alertMap.values()]
+    .map((bucket) => ({
+      label: bucket.label,
+      value: bucket.value,
+      display: String(bucket.value),
+      drilldown: bucket.rows.length
+        ? {
+            title: `Alertas de exceção • ${bucket.label}`,
+            subtitle: `${bucket.rows.length} ocorrência(s) no recorte selecionado.`,
+            columns: DASHBOARD_ALERT_COLUMNS,
+            rows: bucket.rows
+          }
+        : null
+    }))
+    .sort((a, b) => b.value - a.value);
+  const topAlertRows = [...alertRows]
+    .sort((a, b) => normalizeText(b.data).localeCompare(normalizeText(a.data), 'pt-BR'))
+    .slice(0, 12);
+  const agingTotalValue = agingRows.reduce((sum, row) => sum + (Number(row._value) || 0), 0);
+
   return {
     period,
     snapshotEnd,
@@ -15357,6 +16408,12 @@ function buildDashboardData() {
     outMaterialCount: materialOutMap.size,
     topMaterialItems,
     valueSnapshot,
+    alertItems,
+    alertRows: topAlertRows,
+    agingRows,
+    agingBucketItems,
+    agingTotalValue,
+    openValueByDepositItems,
     packagingFlow,
     packagingSnapshot,
     packagingDebtItems,
@@ -15378,6 +16435,7 @@ function updateDashboard() {
   if (!mm60AutoLoadState.loading && !mm60AutoLoadState.attempted) {
     loadMm60PricingFromCloud(false);
   }
+  dashboardDrilldownRegistry.clear();
   setDashboardCardIdentity();
   const data = buildDashboardData();
   const packagingReturnRate = data.packagingFlow.retiradas > 0
@@ -15389,6 +16447,14 @@ function updateDashboard() {
   const valueSnapshot = data.valueSnapshot;
   const topValueMaterial = valueSnapshot.materialItems[0] || null;
   const topValueDestination = valueSnapshot.destinationItems[0] || null;
+  const topValueEps = valueSnapshot.epsItems[0] || null;
+  const topValueFarm = valueSnapshot.farmItems[0] || null;
+  const topValueSupervisor = valueSnapshot.supervisorItems[0] || null;
+  const topAlert = data.alertItems[0] || null;
+  const topOpenValueDeposit = data.openValueByDepositItems[0] || null;
+  const missingPriceAlert = data.alertItems.find((item) => item.label === 'Material sem preço') || null;
+  const overdueAlert = data.alertItems.find((item) => item.label === 'Devolução atrasada') || null;
+  const totalAlertCount = data.alertItems.reduce((sum, item) => sum + (Number(item.value) || 0), 0);
 
   syncDashboardControls(data.period);
 
@@ -15470,6 +16536,30 @@ function updateDashboard() {
       ? (topValueDestination ? `maior destino: ${topValueDestination.label}` : 'sem destino financeiro relevante')
       : 'cobertura financeira indisponivel'
   );
+  setDashboardText('dashboardAlertCount', String(totalAlertCount));
+  setDashboardText('dashboardAlertDetail',
+    topAlert
+      ? `${topAlert.label} lidera com ${formatNumber(topAlert.value)} ocorrência(s).`
+      : 'nenhuma exceção crítica encontrada no recorte'
+  );
+  setDashboardText('dashboardAgingValue', formatCurrencyBRL(data.agingTotalValue || 0));
+  setDashboardText('dashboardAgingValueDetail',
+    topOpenValueDeposit
+      ? `maior concentração: ${topOpenValueDeposit.label}`
+      : 'sem valor parado calculado no recorte'
+  );
+  setDashboardText('dashboardMissingPriceCount', String(valueSnapshot.missingPriceRows.length));
+  setDashboardText('dashboardMissingPriceDetail',
+    missingPriceAlert
+      ? `${formatNumber(missingPriceAlert.value)} ocorrência(s) sem MM60.`
+      : 'todos os materiais elegíveis têm preço MM60'
+  );
+  setDashboardText('dashboardOverdueCount', String(overdueAlert ? overdueAlert.value : 0));
+  setDashboardText('dashboardOverdueDetail',
+    overdueAlert
+      ? `${formatNumber(overdueAlert.value)} pendência(s) com devolução vencida.`
+      : 'nenhuma devolução vencida identificada'
+  );
 
   renderGenericBarChart('chartTipos', data.typeItems, 'Sem movimentacoes no recorte.');
   renderGenericBarChart('chartUsuarios', data.topMaterialItems, 'Sem saidas relevantes no recorte.');
@@ -15484,8 +16574,14 @@ function updateDashboard() {
   renderGenericBarChart('dashboardChartWriterMotivos', data.writerReasonItems, 'Nenhum writer pendente no recorte.');
   renderGenericBarChart('dashboardChartValueTypes', valueSnapshot.typeItems, 'Sem valores calculados para os tipos no recorte.');
   renderGenericBarChart('dashboardChartValueMaterials', valueSnapshot.materialItems, 'Nenhum material com valor calculado no recorte.');
+  renderGenericBarChart('dashboardChartValueEps', valueSnapshot.epsItems, 'Sem valores calculados por EPS no recorte.');
+  renderGenericBarChart('dashboardChartValueFarms', valueSnapshot.farmItems, 'Sem valores calculados por fazenda no recorte.');
+  renderGenericBarChart('dashboardChartValueSupervisors', valueSnapshot.supervisorItems, 'Sem valores calculados por supervisor no recorte.');
   renderGenericBarChart('dashboardChartValueTimeline', valueSnapshot.timelineItems, 'Sem base MM60 ou valores suficientes para mostrar o ritmo financeiro.');
   renderGenericBarChart('dashboardChartValueDestinations', valueSnapshot.destinationItems, 'Nenhum destino com valor calculado no recorte.');
+  renderGenericBarChart('dashboardChartAging', data.agingBucketItems, 'Sem pendências suficientes para compor o aging.');
+  renderGenericBarChart('dashboardChartOpenValueDeposits', data.openValueByDepositItems, 'Sem valor parado por depósito no recorte.');
+  renderGenericBarChart('dashboardChartAlerts', data.alertItems, 'Nenhuma exceção crítica encontrada no recorte.');
 
   setDashboardText('dashboardInsightWriterValue', formatDashboardDuration(data.avgWriterLead));
   setDashboardText('dashboardInsightWriterText',
@@ -15506,7 +16602,7 @@ function updateDashboard() {
   );
   setDashboardText('dashboardInsightOperacaoText',
     data.mostIntenseDay
-      ? `${data.mostIntenseDay[1]} movimentacao(oes) no dia mais intenso. ${topType ? `Tipo dominante: ${topType.label}.` : ''} ${topMaterial ? `Material lider de saida: ${topMaterial.label}.` : ''}${data.topUser ? ` Usuario mais ativo: ${data.topUser[0]} (${data.topUser[1]} lancamentos).` : ''}`
+      ? `${data.mostIntenseDay[1]} movimentação(ões) no dia mais intenso. ${topType ? `Tipo dominante: ${topType.label}.` : ''} ${topMaterial ? `Material líder de saída: ${topMaterial.label}.` : ''}${topValueEps ? ` EPS de maior valor: ${topValueEps.label}.` : ''}${topValueFarm ? ` Fazenda líder: ${topValueFarm.label}.` : ''}${topValueSupervisor ? ` Supervisor com maior valor: ${topValueSupervisor.label}.` : ''}${data.topUser ? ` Usuário mais ativo: ${data.topUser[0]} (${data.topUser[1]} lançamentos).` : ''}`
       : 'Sem volume suficiente para destacar o dia mais intenso do periodo.'
   );
 
@@ -15532,6 +16628,23 @@ function updateDashboard() {
         `;
       }).join('')
     : '<tr><td colspan="8" class="empty-state">Sem dados de embalagem suficientes para montar o radar.</td></tr>'
+  );
+
+  setDashboardHtml('dashboardAlertsTable', data.alertRows.length
+    ? data.alertRows.map((row) => `
+        <tr>
+          <td>${escapeHtml(row.alerta || '-')}</td>
+          <td>${escapeHtml(row.data || '-')}</td>
+          <td>${escapeHtml(row.referencia || '-')}</td>
+          <td>${escapeHtml(row.responsavel || '-')}</td>
+          <td title="${escapeHtml(row.detalhe || '-')}">${escapeHtml(row.detalhe || '-')}</td>
+          <td style="font-family:'JetBrains Mono',monospace;text-align:right;">${escapeHtml(row.impacto || '-')}</td>
+          <td>${row._movementId !== undefined && row._movementId !== null
+            ? `<button type="button" class="btn btn-secondary" style="padding:4px 10px;font-size:0.72rem;" onclick="showDetail(${JSON.stringify(row._movementId)})">Abrir</button>`
+            : '-'}</td>
+        </tr>
+      `).join('')
+    : '<tr><td colspan="7" class="empty-state">Nenhuma exceção prioritária encontrada para o recorte selecionado.</td></tr>'
   );
 
   setDashboardHtml('dashboardRecentTable', data.filteredMovs.length
@@ -15584,22 +16697,27 @@ function getCadastroItems(type = getCadastroType()) {
 
 let cadastroReviewItemsState = [];
 
-function getCadastroReviewMonthMeta() {
-  const movementMonths = movimentos
-    .map((mov) => getDashboardMovementDate(mov))
-    .filter(Boolean)
-    .sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  const month = normalizeText(movementMonths.length ? movementMonths[0].slice(0, 7) : (getCurrentMonthValue ? getCurrentMonthValue() : new Date().toISOString().slice(0, 7))) || new Date().toISOString().slice(0, 7);
-  const [year, monthNumber] = month.split('-').map(Number);
-  const start = `${month}-01`;
-  const end = new Date(year, monthNumber, 0).toISOString().slice(0, 10);
-  const label = new Intl.DateTimeFormat('pt-BR', { month: 'long', year: 'numeric' }).format(new Date(`${start}T00:00:00`));
+function getCadastroConsistencyMeta() {
+  const period = getDashboardPeriod();
+  if (period.mode === 'general') {
+    return {
+      month: '',
+      start: '',
+      end: getDashboardSnapshotEnd(period),
+      label: 'Consolidado geral'
+    };
+  }
+
   return {
-    month,
-    start,
-    end,
-    label: label.charAt(0).toUpperCase() + label.slice(1)
+    month: period.month,
+    start: period.start,
+    end: getDashboardSnapshotEnd(period),
+    label: period.label
   };
+}
+
+function getCadastroReviewMonthMeta() {
+  return getCadastroConsistencyMeta();
 }
 
 function getCadastroReviewLabel(type) {
@@ -15626,8 +16744,8 @@ function isCadastroReviewIgnoredValue(value) {
     || text === 'sem info';
 }
 
-function getCadastroReviewItemsByMonth() {
-  const meta = getCadastroReviewMonthMeta();
+function getCadastroConsistencyItems() {
+  const meta = getCadastroConsistencyMeta();
   const map = new Map();
   const typeLookup = new Set((DATA.tipos || []).map(item => normalizeText(item.nome).toLowerCase()).filter(Boolean));
   const epsLookup = new Set(getDepositosList().map(item => normalizeText(item.deposito).toLowerCase()).filter(Boolean));
@@ -15678,7 +16796,7 @@ function getCadastroReviewItemsByMonth() {
       register('tipos', tipo, {
         value: tipo,
         displayValue: tipo,
-        detail: 'Usado nas movimentacoes de marÃ§o.',
+        detail: 'Usado nas movimentações do recorte atual.',
         sampleDate: movementDate,
         suggestionEmb: normalizeText(tipo).toLowerCase().includes('embal')
       });
@@ -15739,7 +16857,7 @@ function getCadastroReviewItemsByMonth() {
       register('supervisores', supervisor, {
         value: supervisor,
         displayValue: supervisor,
-        detail: 'Supervisor informado em marÃ§o sem cadastro.',
+        detail: 'Supervisor informado no recorte sem cadastro.',
         sampleDate: movementDate
       });
     }
@@ -15749,7 +16867,7 @@ function getCadastroReviewItemsByMonth() {
       register('motivosWriter', motivo, {
         value: motivo,
         displayValue: motivo,
-        detail: 'Motivo writer usado em marÃ§o sem cadastro.',
+        detail: 'Motivo WRITER usado no recorte sem cadastro.',
         sampleDate: movementDate
       });
     }
@@ -15764,7 +16882,7 @@ function getCadastroReviewItemsByMonth() {
         codProduto,
         unidade: normalizeText(item.unidade || ''),
         displayValue: codProduto ? `${material} (${codProduto})` : material,
-        detail: 'Material movimentado em marÃ§o sem cadastro.',
+        detail: 'Material movimentado no recorte sem cadastro.',
         sampleDate: movementDate
       });
     });
@@ -15777,6 +16895,10 @@ function getCadastroReviewItemsByMonth() {
   });
 
   return { meta, items };
+}
+
+function getCadastroReviewItemsByMonth() {
+  return getCadastroConsistencyItems();
 }
 
 function getCadastroReviewItemById(id) {
@@ -15820,18 +16942,37 @@ function getCadastroReviewTargetOptions(type) {
   return [];
 }
 
-function renderMarchMissingCadastrosReview() {
-  const panel = document.getElementById('cadastroMarchReviewPanel');
+function renderCadastroConsistencyReview() {
+  const panel = document.getElementById('cadastroConsistencyPanel');
   if (!panel) return;
 
-  const review = getCadastroReviewItemsByMonth();
+  const review = getCadastroConsistencyItems();
   cadastroReviewItemsState = review.items;
+
+  const summaryMap = review.items.reduce((map, item) => {
+    const key = item.type;
+    if (!map.has(key)) {
+      map.set(key, { label: getCadastroReviewLabel(item.type), items: 0, ocorrencias: 0 });
+    }
+    const entry = map.get(key);
+    entry.items += 1;
+    entry.ocorrencias += Number(item.count) || 0;
+    return map;
+  }, new Map());
+
+  const summaryCards = [...summaryMap.values()].map((item) => `
+    <div class="cadastro-review-card">
+      <div class="cadastro-review-chip">${escapeHtml(item.label)}</div>
+      <div style="font-size:1.4rem;font-weight:800;color:var(--text);margin-top:8px;">${escapeHtml(String(item.items))}</div>
+      <div class="hint-line" style="margin-top:6px;">${escapeHtml(item.ocorrencias)} ocorrência(s) fora do padrão</div>
+    </div>
+  `).join('');
 
   if (!review.items.length) {
     panel.innerHTML = `
       <div class="cadastro-review-card">
-        <div class="cadastro-review-title">Pendencias de cadastro em ${escapeHtml(review.meta.label)}</div>
-        <div class="hint-line">Tudo o que foi usado em marÃ§o ja esta vinculado aos cadastros atuais.</div>
+        <div class="cadastro-review-title">Consistência cadastral • ${escapeHtml(review.meta.label)}</div>
+        <div class="hint-line">Tudo o que foi usado no recorte atual já está vinculado aos cadastros padrões.</div>
       </div>
     `;
     return;
@@ -15839,15 +16980,16 @@ function renderMarchMissingCadastrosReview() {
 
   panel.innerHTML = `
     <div class="cadastro-review-card">
-      <div class="cadastro-review-title">Pendencias de cadastro em ${escapeHtml(review.meta.label)}</div>
-      <div class="hint-line">Revise os itens abaixo e decida se quer cadastrar um novo item ou vincular ao que ja existe.</div>
+      <div class="cadastro-review-title">Consistência cadastral • ${escapeHtml(review.meta.label)}</div>
+      <div class="hint-line">Revise os itens abaixo e decida se quer cadastrar um novo item ou vincular ao padrão já existente.</div>
+      <div class="cadastro-review-grid" style="margin-top:14px;">${summaryCards}</div>
       <div class="cadastro-review-grid">
         ${review.items.map((item) => `
           <div class="cadastro-review-card">
             <div class="cadastro-review-chip">${escapeHtml(getCadastroReviewLabel(item.type))}</div>
             <div style="font-weight:700;color:var(--text);font-size:0.95rem;">${escapeHtml(item.displayValue)}</div>
             <div class="hint-line" style="margin-top:6px;">${escapeHtml(item.detail || 'Sem detalhe adicional.')}</div>
-            <div class="hint-line" style="margin-top:4px;">${escapeHtml(item.count)} ocorrencia(s) em marÃ§o${item.sampleDate ? ` â€¢ primeiro em ${escapeHtml(formatDate(item.sampleDate))}` : ''}</div>
+            <div class="hint-line" style="margin-top:4px;">${escapeHtml(item.count)} ocorrência(s) no recorte${item.sampleDate ? ` • primeiro em ${escapeHtml(formatDate(item.sampleDate))}` : ''}</div>
             <div class="cadastro-review-actions">
               ${item.type === 'tipoNf' ? '' : `<button type="button" class="btn btn-primary" style="padding:8px 12px;font-size:0.76rem;" onclick="startCadastroFromReview('${escapeHtml(item.id)}')">Cadastrar</button>`}
               <button type="button" class="btn btn-secondary" style="padding:8px 12px;font-size:0.76rem;" onclick="openCadastroReviewMapping('${escapeHtml(item.id)}')">${item.type === 'tipoNf' ? 'Padronizar' : 'Vincular'}</button>
@@ -15857,6 +16999,10 @@ function renderMarchMissingCadastrosReview() {
       </div>
     </div>
   `;
+}
+
+function renderMarchMissingCadastrosReview() {
+  renderCadastroConsistencyReview();
 }
 
 function startCadastroFromReview(reviewId) {
@@ -15908,7 +17054,7 @@ function startCadastroFromReview(reviewId) {
   showToast('Formulario preenchido com a pendencia selecionada.');
 }
 
-function applyCadastroReviewLink(reviewId, targetValue) {
+function applyCadastroReviewLink(reviewId, targetValue, auditReason = '') {
   if (!hasPermission('manageCadastros')) {
     showToast('Somente usuarios com privilegio podem vincular itens.', true);
     return;
@@ -15917,7 +17063,7 @@ function applyCadastroReviewLink(reviewId, targetValue) {
   const item = getCadastroReviewItemById(reviewId);
   if (!item || !targetValue) return;
 
-  const reviewMeta = getCadastroReviewMonthMeta();
+  const reviewMeta = getCadastroConsistencyMeta();
   let affected = 0;
 
   movimentos.forEach((mov) => {
@@ -16031,7 +17177,7 @@ function applyCadastroReviewLink(reviewId, targetValue) {
   });
 
   if (!affected) {
-    showToast('Nenhum registro de marÃ§o foi encontrado para vincular.', true);
+    showToast('Nenhum registro do recorte atual foi encontrado para vincular.', true);
     return;
   }
 
@@ -16044,7 +17190,18 @@ function applyCadastroReviewLink(reviewId, targetValue) {
   renderCadastroForm();
   renderCadastroTable();
   updateEmbalagemVisibility();
-  showToast(`${affected} vinculo(s) aplicado(s) em registros de marÃ§o.`);
+  recordAuditEvent('cadastro_link', {
+    entityType: 'cadastro',
+    entityId: reviewId,
+    reason: auditReason || `Vinculação para ${targetValue}.`,
+    summary: `${getCadastroReviewLabel(item.type)} • ${item.displayValue}`,
+    details: [
+      `Destino vinculado: ${normalizeText(targetValue)}`,
+      `Registros afetados: ${affected}`,
+      `Recorte: ${reviewMeta.label}`
+    ]
+  });
+  showToast(`${affected} vínculo(s) aplicado(s) no recorte atual.`);
 }
 
 function openCadastroReviewMapping(reviewId) {
@@ -16064,7 +17221,7 @@ function openCadastroReviewMapping(reviewId) {
       <div class="modal-title">Vincular pendencia de cadastro</div>
       <div class="modal-text" style="text-align:left;">
         <div style="margin-bottom:10px;"><strong>${escapeHtml(getCadastroReviewLabel(item.type))}:</strong> ${escapeHtml(item.displayValue)}</div>
-        <div style="margin-bottom:14px;color:var(--text-dim);">Escolha um item ja cadastrado para reaproveitar nos registros de marÃ§o.</div>
+        <div style="margin-bottom:14px;color:var(--text-dim);">Escolha um item já cadastrado para reaproveitar nos registros do recorte atual.</div>
         <select class="form-select" id="cadastroReviewTargetSelect">
           <option value="">Selecione um cadastro existente...</option>
           ${options.map((option) => `<option value="${escapeHtml(option.value)}">${escapeHtml(option.label)}</option>`).join('')}
@@ -16072,7 +17229,7 @@ function openCadastroReviewMapping(reviewId) {
       </div>
       <div class="modal-actions">
         <button type="button" class="btn btn-secondary" onclick="this.closest('.modal-overlay').remove()">Cancelar</button>
-        <button type="button" class="btn btn-primary" id="cadastroReviewConfirmBtn">Vincular em MarÃ§o</button>
+        <button type="button" class="btn btn-primary" id="cadastroReviewConfirmBtn">Vincular no Recorte</button>
       </div>
     </div>
   `;
@@ -16082,11 +17239,17 @@ function openCadastroReviewMapping(reviewId) {
     const select = overlay.querySelector('#cadastroReviewTargetSelect');
     const targetValue = normalizeText(select ? select.value : '');
     if (!targetValue) {
-      showToast('Selecione um cadastro para concluir o vinculo.', true);
+      showToast('Selecione um cadastro para concluir o vínculo.', true);
       return;
     }
     overlay.remove();
-    applyCadastroReviewLink(reviewId, targetValue);
+    requestAuditReason({
+      title: 'Motivo da padronização',
+      text: `Informe o motivo da vinculação para ${item.displayValue}.`,
+      confirmText: 'Aplicar vínculo',
+      placeholder: 'Ex: unificação cadastral, ajuste de nomenclatura, correção de importação...',
+      onConfirm: (reason) => applyCadastroReviewLink(reviewId, targetValue, reason)
+    });
   });
   overlay.addEventListener('click', (event) => {
     if (event.target === overlay) overlay.remove();
@@ -16229,6 +17392,7 @@ function renderCadastroTable() {
   const head = document.getElementById('cadastroTableHead');
   const body = document.getElementById('cadastroTableBody');
   if (!head || !body) return;
+  const finish = () => renderCadastroConsistencyReview();
 
   const canManage = hasPermission('manageCadastros');
   const type = getCadastroType();
@@ -16247,12 +17411,14 @@ function renderCadastroTable() {
   if (type === 'limiteLibTemp') {
     head.innerHTML = '<th>Configuracao</th><th>Valor Atual</th>';
     body.innerHTML = '<tr><td>Limite de Liberacoes Temporarias por EPS</td><td style="font-weight:700;color:var(--neon);">' + (DATA.limiteLiberacaoTemporaria || 3) + '</td></tr>';
+    finish();
     return;
   }
 
   if (!items.length) {
     head.innerHTML = '<th>Item</th><th>Acoes</th>';
     body.innerHTML = '<tr><td colspan="2" class="empty-state">Nenhum item cadastrado nesta categoria.</td></tr>';
+    finish();
     return;
   }
 
@@ -16264,6 +17430,7 @@ function renderCadastroTable() {
         <td>${item}</td>
         ${actionButtons(i)}
       </tr>`).join('');
+    finish();
     return;
   }
 
@@ -16275,6 +17442,7 @@ function renderCadastroTable() {
         <td>${item}</td>
         ${actionButtons(i)}
       </tr>`).join('');
+    finish();
     return;
   }
 
@@ -16288,6 +17456,7 @@ function renderCadastroTable() {
         <td>${item.moveEmbalagem || 'NAO'}</td>
         ${actionButtons(i)}
       </tr>`).join('');
+    finish();
     return;
   }
 
@@ -16299,6 +17468,7 @@ function renderCadastroTable() {
         <td>${item}</td>
         ${actionButtons(i)}
       </tr>`).join('');
+    finish();
     return;
   }
 
@@ -16310,6 +17480,7 @@ function renderCadastroTable() {
         <td>${item}</td>
         ${actionButtons(i)}
       </tr>`).join('');
+    finish();
     return;
   }
 
@@ -16321,6 +17492,7 @@ function renderCadastroTable() {
         <td>${item.dias || '-'}</td>
         ${actionButtons(i)}
       </tr>`).join('');
+    finish();
     return;
   }
 
@@ -16335,6 +17507,7 @@ function renderCadastroTable() {
         <td>${item.classificacao || '-'}</td>
         ${actionButtons(i)}
       </tr>`).join('');
+    finish();
     return;
   }
 
@@ -16349,6 +17522,7 @@ function renderCadastroTable() {
         <td>${item.municipio || '-'}</td>
         ${actionButtons(i)}
       </tr>`).join('');
+    finish();
     return;
   }
 
@@ -16364,6 +17538,7 @@ function renderCadastroTable() {
       <td>${item.qp || '-'}</td>
       ${actionButtons(i)}
     </tr>`).join('');
+  finish();
 }
 
 function onCadastroTipoChange() {
@@ -16592,14 +17767,6 @@ function saveCadastroItem(event) {
     showToast('Preencha o motivo de bloqueio.', true);
     return false;
   }
-  if (type === 'limiteLibTemp') {
-    DATA.limiteLiberacaoTemporaria = value;
-    saveMasterData();
-    renderCadastroForm();
-    renderCadastroTable();
-    showToast('Limite de liberacao temporaria atualizado para ' + value + '.');
-    return false;
-  }
   if (type === 'leadTimeEmbalagens' && !value.dias) {
     showToast('Preencha os dias do lead time.', true);
     return false;
@@ -16623,26 +17790,73 @@ function saveCadastroItem(event) {
   }
 
   const list = getCadastroItems(type);
-  if (cadastroEditingIndex !== null) {
-    const oldItem = JSON.parse(JSON.stringify(list[cadastroEditingIndex]));
-    list[cadastroEditingIndex] = value;
-    propagateCadastroUpdate(type, oldItem, value);
-    showToast('Cadastro atualizado com sucesso!');
-  } else {
-    list.push(value);
-    showToast('Cadastro adicionado com sucesso!');
+  const oldItem = cadastroEditingIndex !== null
+    ? JSON.parse(JSON.stringify(list[cadastroEditingIndex]))
+    : null;
+  const applySave = (auditReason = '') => {
+    if (type === 'limiteLibTemp') {
+      const previousValue = DATA.limiteLiberacaoTemporaria || 3;
+      DATA.limiteLiberacaoTemporaria = value;
+      saveMasterData();
+      renderCadastroForm();
+      renderCadastroTable();
+      recordAuditEvent('cadastro_update', {
+        entityType: 'cadastro',
+        entityId: type,
+        reason: auditReason,
+        summary: `${getCadastroTypeLabel(type)} • ${previousValue} → ${value}`,
+        details: [`Valor anterior: ${previousValue}`, `Novo valor: ${value}`]
+      });
+      showToast('Limite de liberação temporária atualizado para ' + value + '.');
+      return false;
+    }
+
+    if (cadastroEditingIndex !== null) {
+      list[cadastroEditingIndex] = value;
+      propagateCadastroUpdate(type, oldItem, value);
+      recordAuditEvent('cadastro_update', {
+        entityType: 'cadastro',
+        entityId: `${type}_${cadastroEditingIndex}`,
+        reason: auditReason,
+        summary: buildCadastroAuditSummary(type, value),
+        details: [
+          `Antes: ${buildCadastroAuditSummary(type, oldItem)}`,
+          `Depois: ${buildCadastroAuditSummary(type, value)}`
+        ]
+      });
+      showToast('Cadastro atualizado com sucesso!');
+    } else {
+      list.push(value);
+      showToast('Cadastro adicionado com sucesso!');
+    }
+
+    sortCadastroCollection(type);
+    cadastroEditingIndex = null;
+    saveMasterData();
+    saveToStorage('movimentos');
+    populateSelects();
+    updateDashboard();
+    renderTable();
+    renderCadastroForm();
+    renderCadastroTable();
+    updateEmbalagemVisibility();
+    return false;
+  };
+
+  if (type === 'limiteLibTemp' || cadastroEditingIndex !== null) {
+    requestAuditReason({
+      title: cadastroEditingIndex !== null ? 'Motivo da alteração do cadastro' : 'Motivo da alteração da configuração',
+      text: cadastroEditingIndex !== null
+        ? `Informe o motivo da atualização em ${getCadastroTypeLabel(type)}.`
+        : 'Informe o motivo da alteração do limite de liberação temporária.',
+      confirmText: cadastroEditingIndex !== null ? 'Salvar alteração' : 'Salvar configuração',
+      placeholder: 'Ex: padronização do cadastro, correção operacional, ajuste de política...',
+      onConfirm: applySave
+    });
+    return false;
   }
 
-  sortCadastroCollection(type);
-  cadastroEditingIndex = null;
-  saveMasterData();
-  saveToStorage('movimentos');
-  populateSelects();
-  updateDashboard();
-  renderTable();
-  renderCadastroForm();
-  renderCadastroTable();
-  updateEmbalagemVisibility();
+  applySave();
   return false;
 }
 
@@ -16718,14 +17932,28 @@ function deleteCadastroItem(index) {
     'Excluir Item',
     `Deseja remover ${getCadastroItemLabel(type, item)} desta categoria?`,
     () => {
-      list.splice(index, 1);
-      cadastroEditingIndex = null;
-      saveMasterData();
-      populateSelects();
-      updateEmbalagemVisibility();
-      renderCadastroForm();
-      renderCadastroTable();
-      showToast('Item removido.');
+      requestAuditReason({
+        title: 'Motivo da exclusão do cadastro',
+        text: `Informe o motivo da exclusão de ${getCadastroItemLabel(type, item)}.`,
+        confirmText: 'Excluir item',
+        placeholder: 'Ex: cadastro duplicado, item obsoleto, correção de base...',
+        onConfirm: (reason) => {
+          list.splice(index, 1);
+          cadastroEditingIndex = null;
+          saveMasterData();
+          populateSelects();
+          updateEmbalagemVisibility();
+          renderCadastroForm();
+          renderCadastroTable();
+          recordAuditEvent('cadastro_delete', {
+            entityType: 'cadastro',
+            entityId: `${type}_${index}`,
+            reason,
+            summary: buildCadastroAuditSummary(type, item)
+          });
+          showToast('Item removido.');
+        }
+      });
     }
   );
 }
