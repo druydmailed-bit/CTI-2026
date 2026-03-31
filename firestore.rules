@@ -4,5 +4,9 @@ service cloud.firestore {
     match /cti_app_state/{document=**} {
       allow read, write: if true;
     }
+
+    match /cti_daily_backups/{document=**} {
+      allow read, write: if true;
+    }
   }
 }
