@@ -969,6 +969,111 @@ body {
   padding: 14px;
 }
 
+.material-summary-card.sap-warning-card {
+  border-color: rgba(250,204,21,0.4);
+  background: rgba(250,204,21,0.08);
+  box-shadow: inset 0 0 0 1px rgba(250,204,21,0.12);
+}
+
+.sap-confirm-list {
+  display: grid;
+  gap: 12px;
+}
+
+.sap-confirm-card {
+  border: 1px solid var(--glass-border);
+  border-radius: 14px;
+  background: rgba(255,255,255,0.03);
+  padding: 14px;
+  transition: all var(--transition-smooth);
+}
+
+.sap-confirm-card.is-inferior {
+  border-color: rgba(250,204,21,0.45);
+  background: rgba(250,204,21,0.08);
+  box-shadow: 0 0 0 1px rgba(250,204,21,0.15);
+}
+
+.sap-confirm-card.is-invalid {
+  border-color: rgba(255,71,87,0.5);
+  background: rgba(255,71,87,0.08);
+}
+
+.sap-confirm-card-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.sap-confirm-name {
+  font-size: 0.9rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.sap-confirm-meta {
+  margin-top: 4px;
+  font-size: 0.74rem;
+  color: var(--text-dim);
+  line-height: 1.6;
+}
+
+.sap-confirm-code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: 0.72rem;
+  color: var(--text-dim);
+  white-space: nowrap;
+}
+
+.sap-confirm-grid {
+  display: grid;
+  grid-template-columns: minmax(180px, 220px) 1fr;
+  gap: 14px;
+  align-items: end;
+}
+
+.sap-confirm-status {
+  min-height: 42px;
+  display: flex;
+  align-items: center;
+  font-size: 0.78rem;
+  color: var(--text-dim);
+  line-height: 1.5;
+}
+
+.sap-confirm-status.is-ok {
+  color: #9ca3af;
+}
+
+.sap-confirm-status.is-greater {
+  color: #7dd3fc;
+}
+
+.sap-confirm-status.is-inferior {
+  color: #fde68a;
+  font-weight: 600;
+}
+
+.sap-confirm-status.is-invalid {
+  color: #ff9f9f;
+  font-weight: 600;
+}
+
+.table-alert-note {
+  margin-top: 4px;
+  font-size: 0.68rem;
+  color: #fde68a;
+  font-weight: 600;
+}
+
+@media (max-width: 640px) {
+  .sap-confirm-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
 .material-summary-name {
   font-size: 0.9rem;
   font-weight: 700;
@@ -6360,6 +6465,9 @@ function normalizeMaterialItem(item) {
   const quantidade = item.quantidade === '' || item.quantidade === null || item.quantidade === undefined
     ? 0
     : parseLocaleNumber(item.quantidade);
+  const sapQuantidadeConfirmada = item.sapQuantidadeConfirmada === '' || item.sapQuantidadeConfirmada === null || item.sapQuantidadeConfirmada === undefined
+    ? null
+    : parseLocaleNumber(item.sapQuantidadeConfirmada);
   const embalagemInfo = getMaterialPackagingCalculation(item, quantidade);
   const embalagemManual = normalizeText(item.embalagemManual || item.manualEmbalagem || '').toUpperCase() === 'S' || embalagemInfo.manualRequired;
   const embDevolverInformado = item.embDevolver === '' || item.embDevolver === null || item.embDevolver === undefined
@@ -6368,6 +6476,8 @@ function normalizeMaterialItem(item) {
   const embDevolver = embalagemManual
     ? (Number.isFinite(embDevolverInformado) ? embDevolverInformado : 0)
     : embalagemInfo.embalagens;
+  const sapQuantidadeInferior = item.sapQuantidadeInferior === true || normalizeText(item.sapQuantidadeInferior).toUpperCase() === 'S'
+    || (Number.isFinite(sapQuantidadeConfirmada) && sapQuantidadeConfirmada < (Number.isNaN(quantidade) ? 0 : quantidade));
   return {
     material: normalizeText(item.material || item.d || ''),
     codProduto: normalizeText(item.codProduto || item.c || (meta ? meta.c : '')),
@@ -6378,7 +6488,10 @@ function normalizeMaterialItem(item) {
     quantidadeEmbalagemPrimaria: embalagemInfo.qtdEmbPrimariaText,
     dataDevEmb: normalizeText(item.dataDevEmb || ''),
     embDevolver: Number.isNaN(embDevolver) ? 0 : embDevolver,
-    embalagemManual: embalagemManual ? 'S' : 'N'
+    embalagemManual: embalagemManual ? 'S' : 'N',
+    sapQuantidadeConfirmada: Number.isFinite(sapQuantidadeConfirmada) ? sapQuantidadeConfirmada : null,
+    sapQuantidadeInferior: sapQuantidadeInferior,
+    sapQuantidadeMotivo: normalizeText(item.sapQuantidadeMotivo || '')
   };
 }
 
@@ -6413,6 +6526,40 @@ function applyMaterialsToMovement(mov, materials) {
   mov.embDevolver = packagingItems.reduce((total, item) => total + (Number(item.embDevolver) || 0), 0);
   mov.caixasDevolver = 0;
   mov.contEmb = packagingItems.length ? 'SIM' : 'NAO';
+}
+
+function getSapConfirmedQuantity(item) {
+  const parsed = parseLocaleNumber(item && item.sapQuantidadeConfirmada);
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatOptionalNumber(value) {
+  const parsed = parseLocaleNumber(value);
+  return Number.isFinite(parsed) ? formatNumber(parsed) : '-';
+}
+
+function getWriterSapConfirmationMeta(mov) {
+  const items = getMovementMaterials(mov).map((item) => {
+    const planned = Number(item.quantidade) || 0;
+    const confirmed = getSapConfirmedQuantity(item);
+    const isInferior = item.sapQuantidadeInferior === true || (confirmed !== null && confirmed < planned);
+    return {
+      ...item,
+      quantidadePlanejada: planned,
+      quantidadeSapConfirmada: confirmed,
+      sapQuantidadeInferior: isInferior,
+      sapQuantidadeMotivo: normalizeText(item.sapQuantidadeMotivo || mov.sapQuantidadeMotivo || '')
+    };
+  });
+  const confirmedItems = items.filter(item => item.quantidadeSapConfirmada !== null);
+  return {
+    items,
+    hasAnyConfirmation: confirmedItems.length > 0,
+    totalPlanejado: items.reduce((sum, item) => sum + (Number(item.quantidadePlanejada) || 0), 0),
+    totalConfirmado: confirmedItems.reduce((sum, item) => sum + (Number(item.quantidadeSapConfirmada) || 0), 0),
+    inferiorItems: items.filter(item => item.sapQuantidadeInferior),
+    reason: normalizeText(mov.sapQuantidadeMotivo || confirmedItems.find(item => item.sapQuantidadeMotivo)?.sapQuantidadeMotivo || '')
+  };
 }
 
 function getPackagingPendingCount(mov) {
@@ -9160,6 +9307,8 @@ function finalizarWriter(id) {
   const mov = movimentos.find(m => m.id === id);
   if (!mov) return;
   if (mov.quantidade === undefined || mov.quantidade === null || mov.quantidade === '') mov.quantidade = 0;
+  const materials = getMovementMaterials(mov);
+  const existingSapMeta = getWriterSapConfirmationMeta(mov);
 
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -12057,6 +12206,8 @@ function expandMovimentosForExport(data) {
     }
 
     items.forEach((item) => {
+      const sapQuantidadeConfirmada = getSapConfirmedQuantity(item);
+      const sapQuantidadeInferior = item.sapQuantidadeInferior === true || (sapQuantidadeConfirmada !== null && sapQuantidadeConfirmada < (Number(item.quantidade) || 0));
       const materialRow = {
         ...exportBase,
         material: item.material,
@@ -12066,7 +12217,10 @@ function expandMovimentosForExport(data) {
         lote: item.lote,
         dataDevEmb: item.dataDevEmb || '',
         embDevolver: item.controlaEmbalagem === 'S' ? item.embDevolver : '',
-        contEmb: item.controlaEmbalagem === 'S' ? 'SIM' : 'NAO'
+        contEmb: item.controlaEmbalagem === 'S' ? 'SIM' : 'NAO',
+        sapQuantidadeConfirmada: sapQuantidadeConfirmada === null ? '' : sapQuantidadeConfirmada,
+        sapQuantidadeInferior: sapQuantidadeConfirmada === null ? '' : (sapQuantidadeInferior ? 'Sim' : 'Não'),
+        sapQuantidadeMotivo: normalizeText(item.sapQuantidadeMotivo || mov.sapQuantidadeMotivo || '')
       };
 
       if (isTransferenciaSaldoType(mov.tipo)) {
@@ -12179,6 +12333,34 @@ function saveMovimento(e) {
   applyRouteToMovement(mov, route);
   applyMaterialsToMovement(mov, materials);
 
+  if (existing && existing.nfTipo === 'writer') {
+    const existingSapMaterials = getMovementMaterials(existing);
+    const usedMatchIndexes = new Set();
+    const preservedSapMaterials = getMovementMaterials(mov).map((item) => {
+      const matchIndex = existingSapMaterials.findIndex((candidate, candidateIndex) => {
+        if (usedMatchIndexes.has(candidateIndex)) return false;
+        const currentKey = [normalizeText(item.codProduto || item.material), normalizeText(item.lote || '')].join('|').toLowerCase();
+        const candidateKey = [normalizeText(candidate.codProduto || candidate.material), normalizeText(candidate.lote || '')].join('|').toLowerCase();
+        return currentKey === candidateKey;
+      });
+      const match = matchIndex === -1 ? null : existingSapMaterials[matchIndex];
+      if (matchIndex !== -1) usedMatchIndexes.add(matchIndex);
+      const confirmed = match ? getSapConfirmedQuantity(match) : null;
+      const isInferior = confirmed !== null && confirmed < (Number(item.quantidade) || 0);
+      return {
+        ...item,
+        sapQuantidadeConfirmada: confirmed,
+        sapQuantidadeInferior: isInferior,
+        sapQuantidadeMotivo: isInferior ? normalizeText((match && match.sapQuantidadeMotivo) || existing.sapQuantidadeMotivo || '') : ''
+      };
+    });
+    applyMaterialsToMovement(mov, preservedSapMaterials);
+    mov.sapQuantidadePlanejadaTotal = preservedSapMaterials.reduce((sum, item) => sum + (Number(item.quantidade) || 0), 0);
+    mov.sapQuantidadeConfirmadaTotal = preservedSapMaterials.reduce((sum, item) => sum + (Number(item.sapQuantidadeConfirmada) || 0), 0);
+    mov.sapQuantidadeInferior = preservedSapMaterials.some(item => item.sapQuantidadeInferior);
+    mov.sapQuantidadeMotivo = mov.sapQuantidadeInferior ? normalizeText(existing.sapQuantidadeMotivo || preservedSapMaterials.find(item => item.sapQuantidadeInferior && item.sapQuantidadeMotivo)?.sapQuantidadeMotivo || '') : '';
+  }
+
   if (existing && existing.status === 'finalizado') {
     mov.status = 'finalizado';
   }
@@ -12283,6 +12465,8 @@ function finalizarWriter(id) {
   const mov = movimentos.find(m => m.id === id);
   if (!mov) return;
   if (mov.quantidade === undefined || mov.quantidade === null || mov.quantidade === '') mov.quantidade = 0;
+  const materials = getMovementMaterials(mov);
+  const existingSapMeta = getWriterSapConfirmationMeta(mov);
 
   const overlay = document.createElement('div');
   overlay.className = 'modal-overlay';
@@ -12303,6 +12487,38 @@ function finalizarWriter(id) {
         <label>MIGO *</label>
         <input type="text" id="finMigo" placeholder="No MIGO">
       </div>
+      ${materials.length ? `
+      <div class="modal-form-group">
+        <label>Confirmar quantidade transferida via SAP *</label>
+        <div class="sap-confirm-list">
+          ${materials.map((item, index) => `
+            <div class="sap-confirm-card" data-sap-card="${index}">
+              <div class="sap-confirm-card-head">
+                <div>
+                  <div class="sap-confirm-name">${escapeHtml(item.material || `Item ${index + 1}`)}</div>
+                  <div class="sap-confirm-meta">
+                    Previsto no WRITER: ${escapeHtml(formatNumber(item.quantidade))} ${escapeHtml(item.unidade || '')}
+                    ${item.lote ? `<br>Lote: ${escapeHtml(item.lote)}` : ''}
+                  </div>
+                </div>
+                <div class="sap-confirm-code">${escapeHtml(item.codProduto || '-')}</div>
+              </div>
+              <div class="sap-confirm-grid">
+                <div class="modal-form-group" style="margin-bottom:0">
+                  <label>Qtd. confirmada no SAP</label>
+                  <input type="text" inputmode="decimal" data-sap-input="${index}" value="${escapeHtml(formatNumberInputValue(existingSapMeta.items[index] && existingSapMeta.items[index].quantidadeSapConfirmada !== null ? existingSapMeta.items[index].quantidadeSapConfirmada : item.quantidade))}" placeholder="Qtd. confirmada no SAP">
+                </div>
+                <div class="sap-confirm-status" data-sap-status="${index}">Confirme a quantidade movimentada no SAP para este material.</div>
+              </div>
+            </div>
+          `).join('')}
+        </div>
+      </div>
+      <div class="modal-form-group" id="finSapDiffReasonWrap" style="display:none">
+        <label>Motivo da quantidade SAP inferior *</label>
+        <div class="hint-line" id="finSapDiffHint" style="margin-bottom:10px;font-size:0.75rem">Explique por que a quantidade confirmada no SAP ficou menor que a prevista no WRITER.</div>
+        <textarea id="finSapDiffReason" class="form-input" rows="3" placeholder="Ex: transferência parcial no SAP, falta de saldo, material recusado..." style="resize:vertical;min-height:90px;">${escapeHtml(existingSapMeta.reason || '')}</textarea>
+      </div>` : ''}
       <div class="modal-form-group">
         <label>No Pedido (se houver)</label>
         <input type="text" id="finPedido" placeholder="No do pedido" value="${mov.pedido === 'WRITER' ? '' : mov.pedido}">
@@ -12319,17 +12535,128 @@ function finalizarWriter(id) {
   `;
   document.body.appendChild(overlay);
 
+  const sapReasonWrap = overlay.querySelector('#finSapDiffReasonWrap');
+  const sapReasonHint = overlay.querySelector('#finSapDiffHint');
+  const sapReasonInput = overlay.querySelector('#finSapDiffReason');
+  const sapInputs = Array.from(overlay.querySelectorAll('[data-sap-input]'));
+
+  const getSapEntries = () => materials.map((item, index) => {
+    const input = overlay.querySelector(`[data-sap-input="${index}"]`);
+    const raw = input ? normalizeText(input.value) : '';
+    const confirmed = parseLocaleNumber(raw);
+    const planned = Number(item.quantidade) || 0;
+    return {
+      index,
+      item,
+      raw,
+      planned,
+      confirmed,
+      isValid: Number.isFinite(confirmed) && confirmed >= 0,
+      isInferior: Number.isFinite(confirmed) && confirmed >= 0 && confirmed < planned
+    };
+  });
+
+  const syncSapInferiorState = () => {
+    const entries = getSapEntries();
+    const inferiorLabels = [];
+
+    entries.forEach((entry) => {
+      const card = overlay.querySelector(`[data-sap-card="${entry.index}"]`);
+      const status = overlay.querySelector(`[data-sap-status="${entry.index}"]`);
+      if (!card || !status) return;
+
+      card.classList.remove('is-inferior', 'is-invalid');
+      status.className = 'sap-confirm-status';
+
+      if (!entry.raw) {
+        status.textContent = 'Informe a quantidade confirmada no SAP.';
+        return;
+      }
+
+      if (!entry.isValid) {
+        card.classList.add('is-invalid');
+        status.classList.add('is-invalid');
+        status.textContent = 'Quantidade inválida. Informe um número maior ou igual a zero.';
+        return;
+      }
+
+      if (entry.isInferior) {
+        const diferenca = entry.planned - entry.confirmed;
+        inferiorLabels.push(`${entry.item.material || `Item ${entry.index + 1}`} (${formatNumber(entry.confirmed)} de ${formatNumber(entry.planned)})`);
+        card.classList.add('is-inferior');
+        status.classList.add('is-inferior');
+        status.textContent = `Inferior ao WRITER em ${formatNumber(diferenca)} ${entry.item.unidade || ''}. Informe o motivo abaixo.`;
+        return;
+      }
+
+      if (entry.confirmed > entry.planned) {
+        status.classList.add('is-greater');
+        status.textContent = `SAP acima do previsto em ${formatNumber(entry.confirmed - entry.planned)} ${entry.item.unidade || ''}.`;
+        return;
+      }
+
+      status.classList.add('is-ok');
+      status.textContent = 'Quantidade confirmada igual ao previsto no WRITER.';
+    });
+
+    if (!sapReasonWrap) return;
+
+    if (inferiorLabels.length) {
+      sapReasonWrap.style.display = 'block';
+      if (sapReasonHint) {
+        sapReasonHint.innerHTML = `Itens com SAP inferior: <strong>${escapeHtml(inferiorLabels.join(' | '))}</strong>. Informe o motivo da divergência.`;
+      }
+    } else {
+      sapReasonWrap.style.display = 'none';
+      if (sapReasonInput) sapReasonInput.value = '';
+    }
+  };
+
+  sapInputs.forEach((input) => {
+    input.addEventListener('input', syncSapInferiorState);
+    input.addEventListener('blur', syncSapInferiorState);
+  });
+  syncSapInferiorState();
+
   overlay.querySelector('#finConfirmBtn').addEventListener('click', () => {
     const dataSist = overlay.querySelector('#finDataSist').value;
-    const migo = overlay.querySelector('#finMigo').value;
-    const pedido = overlay.querySelector('#finPedido').value;
+    const migo = normalizeText(overlay.querySelector('#finMigo').value);
+    const pedido = normalizeText(overlay.querySelector('#finPedido').value);
     const reason = normalizeText(overlay.querySelector('#finReason').value);
+    const sapEntries = getSapEntries();
+    const invalidSapEntries = sapEntries.filter(entry => !entry.isValid);
+    const inferiorSapEntries = sapEntries.filter(entry => entry.isInferior);
+    const sapDiffReason = normalizeText(sapReasonInput ? sapReasonInput.value : '');
 
     if (!dataSist || !migo || !reason) {
       showToast('Preencha data sistêmica, MIGO e o motivo da finalização.', true);
       return;
     }
+    if (invalidSapEntries.length) {
+      showToast('Confirme a quantidade transferida via SAP para todos os materiais.', true);
+      return;
+    }
+    if (inferiorSapEntries.length && !sapDiffReason) {
+      showToast('Informe o motivo da quantidade SAP inferior ao previsto.', true);
+      return;
+    }
 
+    const updatedMaterials = materials.map((item, index) => {
+      const entry = sapEntries[index];
+      const confirmed = Number(entry.confirmed.toFixed(6));
+      return {
+        ...item,
+        sapQuantidadeConfirmada: confirmed,
+        sapQuantidadeInferior: entry.isInferior,
+        sapQuantidadeMotivo: entry.isInferior ? sapDiffReason : ''
+      };
+    });
+
+    applyMaterialsToMovement(mov, updatedMaterials);
+    mov.sapQuantidadePlanejadaTotal = updatedMaterials.reduce((sum, item) => sum + (Number(item.quantidade) || 0), 0);
+    mov.sapQuantidadeConfirmadaTotal = updatedMaterials.reduce((sum, item) => sum + (Number(item.sapQuantidadeConfirmada) || 0), 0);
+    mov.sapQuantidadeInferior = inferiorSapEntries.length > 0;
+    mov.sapQuantidadeMotivo = inferiorSapEntries.length ? sapDiffReason : '';
     mov.dataSistemico = dataSist;
     mov.migo = migo;
     if (pedido) mov.pedido = pedido;
@@ -12347,11 +12674,13 @@ function finalizarWriter(id) {
       summary: buildMovementAuditSummary(mov),
       details: [
         `MIGO: ${normalizeText(mov.migo || '-') || '-'}`,
-        `Finalizado por: ${normalizeText(mov.finalizadoPor || getCurrentUserName())}`
+        `Finalizado por: ${normalizeText(mov.finalizadoPor || getCurrentUserName())}`,
+        `SAP confirmado: ${formatNumber(mov.sapQuantidadeConfirmadaTotal || 0)} de ${formatNumber(mov.sapQuantidadePlanejadaTotal || 0)}`,
+        ...(mov.sapQuantidadeInferior ? [`Motivo SAP inferior: ${normalizeText(mov.sapQuantidadeMotivo || '-') || '-'}`] : [])
       ]
     });
     overlay.remove();
-    showToast('WRITER finalizada com sucesso!');
+    showToast(mov.sapQuantidadeInferior ? 'WRITER finalizada com divergência SAP registrada.' : 'WRITER finalizada com sucesso!');
   });
 
   overlay.addEventListener('click', (e) => {
@@ -12566,6 +12895,7 @@ function renderTable() {
   tbody.innerHTML = pageData.map((m, i) => {
     const isPendente = m.status === 'pendente';
     const isCancelled = !!m._isCancelled;
+    const hasSapInferior = m.sapQuantidadeInferior === true || normalizeText(m.sapQuantidadeInferior).toLowerCase() === 'sim' || normalizeText(m.sapQuantidadeInferior).toUpperCase() === 'S';
     const origemResumo = getRouteSummary(m, 'origem') || '-';
     const destinoResumo = getRouteSummary(m, 'destino') || '-';
     const origemDeposito = getDepositoDisplay(m, 'origem') || '-';
@@ -12573,16 +12903,18 @@ function renderTable() {
     const origemDescricao = getRouteDescription(m, 'origem') || 'Sem descricao vinculada';
     const destinoDescricao = getRouteDescription(m, 'destino') || 'Sem descricao vinculada';
     const signedQty = getSignedQuantityDisplay(m);
+    const sapQtyLabel = formatOptionalNumber(m.sapQuantidadeConfirmada);
     const debitoEm = m.debitoEm || '-';
     const debitoScope = m._debitoScopeLabel || 'Debito';
     const debitoTitle = m._debitoTitle || debitoEm;
+    const rowBorderColor = isPendente ? '#ff8800' : (hasSapInferior ? '#facc15' : '');
     const statusHtml = isCancelled
       ? `<span class="badge badge-other" style="background:rgba(148,163,184,0.12);color:#cbd5e1;border-color:rgba(148,163,184,0.2)">SEM IMPACTO</span>`
       : isPendente
       ? `<span class="status-pendente"><svg style="width:10px;height:10px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>PENDENTE</span>`
-      : `<span class="status-finalizado"><svg style="width:10px;height:10px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>FINALIZADO</span>`;
+      : `<span class="status-finalizado"><svg style="width:10px;height:10px" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><polyline points="20 6 9 17 4 12"/></svg>FINALIZADO</span>${hasSapInferior ? `<span class="badge badge-other" style="margin-left:6px;background:rgba(250,204,21,0.12);color:#fde68a;border-color:rgba(250,204,21,0.35)">SAP INFERIOR</span>` : ''}`;
     return `
-    <tr onclick="showDetail(${m.id})"${isPendente ? ' style="border-left:3px solid #ff8800"' : ''}>
+    <tr onclick="showDetail(${m.id})"${rowBorderColor ? ` style="border-left:3px solid ${rowBorderColor}"` : ''}>
       <td style="color:var(--text-dim);font-family:'JetBrains Mono',monospace;font-size:0.75rem">${start + i + 1}</td>
       <td>${formatDate(m.dataFisico)}</td>
       <td><span class="badge ${getBadgeClass(m.tipo)}">${m.tipo}</span></td>
@@ -12590,7 +12922,7 @@ function renderTable() {
       <td style="font-family:'JetBrains Mono',monospace">${escapeHtml(m.nf || '-')}</td>
       <td title="${escapeHtml(origemResumo)}"><div class="route-summary"><strong>${escapeHtml(origemDeposito)}</strong><span>${escapeHtml(origemDescricao)}</span></div></td>
       <td title="${escapeHtml(destinoResumo)}"><div class="route-summary"><strong>${escapeHtml(destinoDeposito)}</strong><span>${escapeHtml(destinoDescricao)}</span></div></td>
-      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis" title="${escapeHtml(m.material || '-')}">${escapeHtml(m.material || '-')}</td>
+      <td style="max-width:220px;overflow:hidden;text-overflow:ellipsis" title="${escapeHtml(m.material || '-')}"><div>${escapeHtml(m.material || '-')}</div>${hasSapInferior ? `<div class="table-alert-note">SAP: ${escapeHtml(sapQtyLabel)} ${escapeHtml(m.unidade || '')}</div>` : ''}</td>
       <td title="${escapeHtml(signedQty.title)}" style="font-family:'JetBrains Mono',monospace;font-weight:700;color:${signedQty.color}">${escapeHtml(signedQty.text)}</td>
       <td title="${escapeHtml(debitoTitle)}"><div class="route-summary"><strong>${escapeHtml(debitoScope)}</strong><span>${escapeHtml(debitoEm)}</span></div></td>
       <td>${escapeHtml(m.unidade || '-')}</td>
@@ -18625,15 +18957,15 @@ function exportCSV() {
   if (sourceData.length === 0) { showToast('Nenhum registro para exportar.', true); return; }
   const data = expandMovimentosForExport(sourceData);
 
-  const headers = ['Data Mov. Físico','Tipo','Status','Fluxo Estoque','Depósito Origem','Origem','Centro Origem','Fazenda Origem','Depósito Destino','Destino','Centro Destino','Fazenda Destino','Supervisor / Solicitante','Pedido','Motivo','Remessa','NF','Data Mov. Sistêmico','MIGO','Cód. Produto','Material','Quantidade','Unidade','Lote','Data Dev. Emb.','Emb. Devolver','Cont. Embalagem','Inserido por','Inserido em','Finalizado por','Finalizado em'];
-  const keys = ['dataFisico','tipo','status','fluxoEstoque','depositoOrigem','origem','centroOrigem','fazendaOrigem','depositoDestino','destino','centroDestino','fazendaDestino','supervisor','pedido','motivo','remessa','nf','dataSistemico','migo','codProduto','material','quantidade','unidade','lote','dataDevEmb','embDevolver','contEmb','inseridoPor','inseridoEm','finalizadoPor','finalizadoEm'];
+  const headers = ['Data Mov. Físico','Tipo','Status','Fluxo Estoque','Depósito Origem','Origem','Centro Origem','Fazenda Origem','Depósito Destino','Destino','Centro Destino','Fazenda Destino','Supervisor / Solicitante','Pedido','Motivo','Remessa','NF','Data Mov. Sistêmico','MIGO','Cód. Produto','Material','Quantidade','Qtd. Confirmada SAP','SAP Inferior','Motivo Divergência SAP','Unidade','Lote','Data Dev. Emb.','Emb. Devolver','Cont. Embalagem','Inserido por','Inserido em','Finalizado por','Finalizado em'];
+  const keys = ['dataFisico','tipo','status','fluxoEstoque','depositoOrigem','origem','centroOrigem','fazendaOrigem','depositoDestino','destino','centroDestino','fazendaDestino','supervisor','pedido','motivo','remessa','nf','dataSistemico','migo','codProduto','material','quantidade','sapQuantidadeConfirmada','sapQuantidadeInferior','sapQuantidadeMotivo','unidade','lote','dataDevEmb','embDevolver','contEmb','inseridoPor','inseridoEm','finalizadoPor','finalizadoEm'];
 
   const bodyRows = data.map((m, idx) => {
     const cells = keys.map((k) => {
       let value = (m[k] === null || m[k] === undefined) ? '' : m[k];
       if (k === 'dataFisico' || k === 'dataSistemico' || k === 'dataDevEmb') value = formatDate(value);
       if ((k === 'inseridoEm' || k === 'finalizadoEm') && value) value = new Date(value).toLocaleString('pt-BR');
-      if (k === 'quantidade' && value !== '') value = Number(value).toLocaleString('pt-BR');
+      if ((k === 'quantidade' || k === 'sapQuantidadeConfirmada') && value !== '') value = Number(value).toLocaleString('pt-BR');
       return `<td>${escapeHtml(value)}</td>`;
     }).join('');
     return `<tr class="${idx % 2 === 0 ? 'even' : 'odd'}">${cells}</tr>`;
@@ -18690,12 +19022,14 @@ function showDetail(id) {
   if (!m) return;
 
   const isPendente = m.status === 'pendente';
-  const materialItems = getMovementMaterials(m);
+  const sapMeta = getWriterSapConfirmationMeta(m);
+  const materialItems = sapMeta.items;
   const packagingItems = getPackagingItems(m);
   const firstMaterial = materialItems[0] || {};
-  const statusBadge = isPendente
+  const statusBadge = (isPendente
     ? `<span class="status-pendente" style="font-size:0.7rem">PENDENTE</span>`
-    : `<span class="status-finalizado" style="font-size:0.7rem">FINALIZADO</span>`;
+    : `<span class="status-finalizado" style="font-size:0.7rem">FINALIZADO</span>`)
+    + (sapMeta.inferiorItems.length ? `<span class="badge badge-other" style="margin-left:8px;background:rgba(250,204,21,0.12);color:#fde68a;border-color:rgba(250,204,21,0.35)">SAP INFERIOR</span>` : '');
 
   function field(label, value, isMono) {
     const val = repairMojibake(value || '');
@@ -18749,6 +19083,17 @@ function showDetail(id) {
           </div>
         </div>
 
+        ${sapMeta.hasAnyConfirmation ? `
+        <div class="detail-section">
+          <div class="detail-section-title">Confirmação SAP</div>
+          <div class="detail-grid">
+            ${field('Qtd. Prevista no WRITER', formatNumber(sapMeta.totalPlanejado), true)}
+            ${field('Qtd. Confirmada no SAP', formatNumber(sapMeta.totalConfirmado), true)}
+            ${field('Itens com divergência', formatNumber(sapMeta.inferiorItems.length), true)}
+            ${sapMeta.inferiorItems.length ? field('Motivo da divergência SAP', sapMeta.reason || '-') : ''}
+          </div>
+        </div>` : ''}
+
         <div class="detail-section">
           <div class="detail-section-title">Material</div>
           <div class="detail-grid">
@@ -18758,8 +19103,11 @@ function showDetail(id) {
             </div>
             ${field('Código Produto', m.codProduto, true)}
             ${field('Quantidade', formatNumber(m.quantidade), true)}
+            ${sapMeta.hasAnyConfirmation ? field('Qtd. Confirmada SAP', formatOptionalNumber(firstMaterial.quantidadeSapConfirmada), true) : ''}
             ${field('Unidade', m.unidade)}
             ${field('Lote', m.lote, true)}
+            ${firstMaterial.sapQuantidadeInferior ? field('Status SAP', 'Inferior ao previsto no WRITER') : ''}
+            ${firstMaterial.sapQuantidadeInferior ? field('Motivo SAP', firstMaterial.sapQuantidadeMotivo || sapMeta.reason || '-') : ''}
             ${firstMaterial.controlaEmbalagem === 'S' ? field('Data Devolução Embalagens', formatDate(firstMaterial.dataDevEmb)) : ''}
             ${firstMaterial.controlaEmbalagem === 'S' ? field('Embalagens a Devolver', formatNumber(firstMaterial.embDevolver), true) : ''}
           </div>
@@ -18770,12 +19118,14 @@ function showDetail(id) {
           <div class="detail-section-title">Todos os Materiais</div>
           <div class="material-summary-list">
             ${materialItems.map(item => `
-              <div class="material-summary-card">
+              <div class="material-summary-card ${item.sapQuantidadeInferior ? 'sap-warning-card' : ''}">
                 <div class="material-summary-name">${escapeHtml(item.material || '-')}</div>
                 <div class="material-summary-meta">
                   Código: ${escapeHtml(item.codProduto || '-')}<br>
-                  Quantidade: ${escapeHtml(formatNumber(item.quantidade))} ${escapeHtml(item.unidade || '')}<br>
+                  Quantidade prevista: ${escapeHtml(formatNumber(item.quantidade))} ${escapeHtml(item.unidade || '')}<br>
+                  Qtd. confirmada SAP: ${escapeHtml(formatOptionalNumber(item.quantidadeSapConfirmada))} ${escapeHtml(item.unidade || '')}<br>
                   Lote: ${escapeHtml(item.lote || '-')}
+                  ${item.sapQuantidadeInferior ? `<br><span style="color:#fde68a;font-weight:700">SAP inferior ao WRITER</span><br>Motivo: ${escapeHtml(item.sapQuantidadeMotivo || sapMeta.reason || '-')}` : ''}
                   ${item.controlaEmbalagem === 'S' ? `<br>Data Dev. Emb.: ${escapeHtml(formatDate(item.dataDevEmb) || '-')}<br>Emb. a Devolver: ${escapeHtml(formatNumber(item.embDevolver))}${item.embalagemManual === 'S' ? ' (manual)' : ''}` : ''}
                 </div>
               </div>
