@@ -3597,6 +3597,7 @@ button:focus-visible, input:focus-visible, select:focus-visible {
           </div>
           <div style="display:grid;gap:16px;">
             <div id="cfgAutoBackupCard" style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;"></div>
+            <div id="cfgRegistrosToolsCard" style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;"></div>
             <div style="background:var(--bg3);border:1px solid var(--border);border-radius:12px;padding:20px;">
               <div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:4px;">Base MM60</div>
               <div class="hint-line" id="dashboardMm60Hint" style="margin-top:0;">Os preços MM60 são carregados automaticamente do banco para habilitar os gráficos financeiros, ignorando materiais zerados e consolidando repetidos pela média.</div>
@@ -3813,6 +3814,7 @@ const STORAGE_KEYS = {
   legacyOverlay: 'cti_movimentos_legacy_overlay_v1',
   embalagens: 'cti_embalagens_v1',
   analise: 'cti_analise_embalagens_v1',
+  registrosMode: 'cti_registros_mode_v1',
   users: 'cti_users_v2',
   master: 'cti_master_data_v4',
   accessRequests: 'cti_access_requests_v1',
@@ -3859,12 +3861,51 @@ const AUTO_BACKUP_KEYS = {
   reason: 'cti_auto_backup_reason'
 };
 const AUTO_BACKUP_COLLECTION = 'cti_daily_backups';
+const REGISTROS_MODE = {
+  seed: 'seed',
+  manualOnly: 'manual-only'
+};
+const REGISTROS_IMPORT_TEMPLATE_FILE = 'Modelo_Importacao_Registros.xlsx';
+const REGISTROS_IMPORT_TEMPLATE_COLUMNS = [
+  { key: 'dataFisico', header: 'Data Físico', aliases: ['Data Fisico', 'Data'] },
+  { key: 'tipo', header: 'Tipo', aliases: ['Tipo de Movimentação', 'Tipo de Movimentacao'] },
+  { key: 'nf', header: 'NF', aliases: ['Nota Fiscal'] },
+  { key: 'nfTipo', header: 'Tipo NF', aliases: ['Via NF'] },
+  { key: 'depositoOrigem', header: 'Depósito Origem', aliases: ['Deposito Origem'] },
+  { key: 'origem', header: 'Origem' },
+  { key: 'depositoDestino', header: 'Depósito Destino', aliases: ['Deposito Destino'] },
+  { key: 'destino', header: 'Destino' },
+  { key: 'epsDestino', header: 'EPS Destino' },
+  { key: 'supervisor', header: 'Supervisor' },
+  { key: 'centro', header: 'Centro' },
+  { key: 'deposito', header: 'Depósito', aliases: ['Deposito'] },
+  { key: 'pedido', header: 'Pedido' },
+  { key: 'motivo', header: 'Motivo' },
+  { key: 'remessa', header: 'Remessa' },
+  { key: 'dataSistemico', header: 'Data Sistêmico', aliases: ['Data Sistemico'] },
+  { key: 'migo', header: 'MIGO' },
+  { key: 'codProduto', header: 'Código Produto', aliases: ['Codigo Produto', 'Cod Produto'] },
+  { key: 'material', header: 'Material', aliases: ['Texto Breve Material'] },
+  { key: 'quantidade', header: 'Quantidade' },
+  { key: 'unidade', header: 'Unidade' },
+  { key: 'lote', header: 'Lote' },
+  { key: 'dataDevEmb', header: 'Data Dev Emb', aliases: ['Data Dev. Emb', 'Data Devolução Embalagem', 'Data Devolucao Embalagem'] },
+  { key: 'embDevolver', header: 'Emb Devolver', aliases: ['Embalagens Devolver'] },
+  { key: 'caixasDevolver', header: 'Caixas Devolver' },
+  { key: 'contEmb', header: 'Controla Embalagem', aliases: ['Cont Emb'] },
+  { key: 'inseridoPor', header: 'Inserido Por' },
+  { key: 'inseridoEm', header: 'Inserido Em' },
+  { key: 'status', header: 'Status' },
+  { key: 'finalizadoPor', header: 'Finalizado Por' },
+  { key: 'finalizadoEm', header: 'Finalizado Em' }
+];
 let autoBackupState = {
   lastMeta: null,
   loading: false,
   timer: null,
   running: null
 };
+let registrosMode = REGISTROS_MODE.seed;
 
 function getCloudSyncableStorageKeys() {
   return [...new Set([...Object.values(STORAGE_KEYS), ...CLOUD_SYNC_EXTRA_KEYS])];
@@ -3879,13 +3920,33 @@ function getCloudSyncKeysForReason(reason = 'auto') {
   if (reason === 'movimentos') return [STORAGE_KEYS.movimentos];
   if (reason === 'legacy-overlay') return [STORAGE_KEYS.legacyOverlay];
   if (reason === 'embalagens') return [STORAGE_KEYS.embalagens];
-  if (reason === 'storage') return [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise];
+  if (reason === 'storage') return [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise, STORAGE_KEYS.registrosMode];
   if (reason === 'analysis') return [STORAGE_KEYS.analise];
   if (reason === 'blocked-eps') return ['cti_blockedEps'];
   if (reason === 'desbloqueio-requests') return ['cti_desbloqueio_requests'];
   if (reason === 'desbloqueio-history') return ['cti_desbloqueio_history'];
   if (reason === 'backup-export') return ['cti_lastBackup'];
   return getCloudSyncableStorageKeys();
+}
+
+function normalizeRegistrosMode(value) {
+  return normalizeText(value).toLowerCase() === REGISTROS_MODE.manualOnly
+    ? REGISTROS_MODE.manualOnly
+    : REGISTROS_MODE.seed;
+}
+
+function setRegistrosMode(value, { persist = true } = {}) {
+  registrosMode = normalizeRegistrosMode(value);
+  if (persist) localStorage.setItem(STORAGE_KEYS.registrosMode, registrosMode);
+  return registrosMode;
+}
+
+function loadRegistrosMode() {
+  return setRegistrosMode(localStorage.getItem(STORAGE_KEYS.registrosMode), { persist: false });
+}
+
+function isRegistrosManualMode() {
+  return normalizeRegistrosMode(registrosMode) === REGISTROS_MODE.manualOnly;
 }
 
 function normalizeAuditDetails(details) {
@@ -3937,6 +3998,8 @@ function getAuditEventLabel(action) {
     movement_delete: 'Exclusão de movimentação',
     writer_finalize: 'Finalização de writer',
     baldeio_register: 'Registro de baldeio',
+    registros_import: 'Importação de registros',
+    registros_clear: 'Limpeza de registros',
     mm60_refresh: 'Atualização da base MM60',
     mm60_apply: 'Aplicação da base MM60',
     password_change: 'Alteração de senha',
@@ -4252,11 +4315,11 @@ function refreshVisibleAppState(changedKeys = null) {
   const activeTab = getActiveTabName();
   const normalizedChangedKeys = normalizeCloudChangedKeys(changedKeys);
   const badgeKeys = [STORAGE_KEYS.accessRequests, 'cti_desbloqueio_requests'];
-  const dashboardKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise, STORAGE_KEYS.saldoDevolucao, 'cti_blockedEps', 'cti_desbloqueio_requests', 'cti_desbloqueio_history'];
-  const movementKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay];
-  const packagingKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.embalagens];
-  const saldoKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.embalagens, STORAGE_KEYS.saldoDevolucao, 'cti_blockedEps', 'cti_desbloqueio_requests', 'cti_desbloqueio_history'];
-  const analysisKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.analise];
+  const dashboardKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise, STORAGE_KEYS.registrosMode, STORAGE_KEYS.saldoDevolucao, 'cti_blockedEps', 'cti_desbloqueio_requests', 'cti_desbloqueio_history'];
+  const movementKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.registrosMode];
+  const packagingKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.embalagens, STORAGE_KEYS.registrosMode];
+  const saldoKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.embalagens, STORAGE_KEYS.registrosMode, STORAGE_KEYS.saldoDevolucao, 'cti_blockedEps', 'cti_desbloqueio_requests', 'cti_desbloqueio_history'];
+  const analysisKeys = [STORAGE_KEYS.master, STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.analise, STORAGE_KEYS.registrosMode];
   const controlKeys = [STORAGE_KEYS.users, STORAGE_KEYS.accessRequests];
 
   if (cloudKeysChanged(normalizedChangedKeys, badgeKeys)) {
@@ -4287,7 +4350,7 @@ function applyLoadedApplicationState({ visibleOnly = false, changedKeys = null }
   const normalizedChangedKeys = normalizeCloudChangedKeys(changedKeys);
   const masterChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.master]);
   const userChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.users]);
-  const movementChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay]);
+  const movementChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.registrosMode]);
   const analysisChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.analise]);
   const accessOrUnlockChanged = cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.accessRequests, 'cti_desbloqueio_requests']);
 
@@ -4357,10 +4420,10 @@ async function reloadApplicationState({
     if (!normalizedChangedKeys || normalizedChangedKeys.includes(STORAGE_KEYS.users)) {
       loadUsers();
     }
-    if (!normalizedChangedKeys || cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise])) {
+    if (!normalizedChangedKeys || cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.embalagens, STORAGE_KEYS.analise, STORAGE_KEYS.registrosMode])) {
       loadFromStorage(normalizedChangedKeys);
     }
-    if (!normalizedChangedKeys || cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay])) {
+    if (!normalizedChangedKeys || cloudKeysChanged(normalizedChangedKeys, [STORAGE_KEYS.movimentos, STORAGE_KEYS.legacyOverlay, STORAGE_KEYS.registrosMode])) {
       await syncHistoricalSeedData();
     }
   });
@@ -4920,7 +4983,7 @@ function loadFromStorage(targetKeys = null) {
       const saved = localStorage.getItem(STORAGE_KEYS.movimentos);
       if (saved) {
         const parsed = JSON.parse(saved);
-        if (Array.isArray(parsed)) movimentos = parsed.map((item) => normalizeImportedMovement(item, 'storage'));
+        if (Array.isArray(parsed)) movimentos = parsed.map((item) => normalizeImportedMovement(item));
       }
     } catch(e) { console.error('Erro ao carregar movimentos:', e); corruptedKeys.push('Movimentacoes'); }
   }
@@ -4954,6 +5017,15 @@ function loadFromStorage(targetKeys = null) {
       }
     } catch(e) { console.error('Erro ao carregar analise:', e); corruptedKeys.push('Analise'); }
   }
+  if (shouldLoadKey(STORAGE_KEYS.registrosMode)) {
+    try {
+      loadRegistrosMode();
+    } catch (error) {
+      console.error('Erro ao carregar modo da aba Registros:', error);
+      registrosMode = REGISTROS_MODE.seed;
+      corruptedKeys.push('Modo Registros');
+    }
+  }
   if (shouldLoadKey(STORAGE_KEYS.auditTrail)) {
     loadAuditTrail();
   }
@@ -4985,6 +5057,7 @@ function saveToStorage(reason = 'storage') {
   localStorage.setItem(STORAGE_KEYS.legacyOverlay, JSON.stringify(parsed.legacyOverlay));
   localStorage.setItem(STORAGE_KEYS.embalagens, JSON.stringify(parsed.embalagens));
   localStorage.setItem(STORAGE_KEYS.analise, JSON.stringify(parsed.analise));
+  localStorage.setItem(STORAGE_KEYS.registrosMode, normalizeRegistrosMode(registrosMode));
   scheduleCloudSync(reason);
   queueDailyBackupRun();
 }
@@ -5201,6 +5274,7 @@ async function getHistoricalSeedRows() {
 }
 
 async function syncHistoricalSeedData() {
+  loadRegistrosMode();
   const storedRows = Array.isArray(movimentos) ? movimentos.map(row => normalizeImportedMovement(row)) : [];
   const storedSeedRows = storedRows.filter(isSeedManagedMovement);
   const storedManualRows = storedRows.filter(row => !isSeedManagedMovement(row));
@@ -5212,8 +5286,11 @@ async function syncHistoricalSeedData() {
       .map(row => normalizeImportedMovement(row, 'legado-2025-2026'))
   );
 
+  const currentSeedSource = isRegistrosManualMode()
+    ? []
+    : (currentSeedRaw && currentSeedRaw.length ? currentSeedRaw : storedSeedRows.filter(row => !isLegacyMovementDate(row.dataFisico)));
   const currentSeedRows = dedupeMovementsByImportKey(
-    (currentSeedRaw && currentSeedRaw.length ? currentSeedRaw : storedSeedRows.filter(row => !isLegacyMovementDate(row.dataFisico)))
+    currentSeedSource
       .map(row => normalizeImportedMovement(row, 'registros-marco-2026'))
   );
 
@@ -5249,6 +5326,7 @@ function buildFullBackupPayload() {
     legacyOverlay: legacyOverlay,
     embalagens: embalagemDevolucoes,
     analise: analysisState,
+    registrosMode: normalizeRegistrosMode(registrosMode),
     users: users,
     auditTrail: auditTrail,
     master: localStorage.getItem(STORAGE_KEYS.master)
@@ -5487,6 +5565,7 @@ function clearAllData() {
   legacyMovements = [];
   embalagemDevolucoes = [];
   analysisState = createEmptyAnalysisState();
+  setRegistrosMode(REGISTROS_MODE.seed);
   invalidateMm60PriceCache();
   saveToStorage('storage');
   showToast('Todos os dados de movimentações foram removidos. Recarregando...');
@@ -5578,6 +5657,7 @@ function importFullBackup() {
           analysisState = hydrateAnalysisState(backup.analise);
           invalidateMm60PriceCache();
         }
+        setRegistrosMode(backup.registrosMode || REGISTROS_MODE.seed);
         if (Array.isArray(backup.auditTrail)) {
           auditTrail = backup.auditTrail.map(normalizeAuditRecord).slice(0, AUDIT_LOG_LIMIT);
           saveAuditTrail('audit', { render: false });
@@ -5603,6 +5683,241 @@ function importFullBackup() {
     reader.readAsText(file);
   };
   input.click();
+}
+
+function renderRegistrosToolsCard() {
+  const card = document.getElementById('cfgRegistrosToolsCard');
+  if (!card) return;
+
+  const modeLabel = isRegistrosManualMode() ? 'Base personalizada ativa' : 'Base padrão ativa';
+  const modeColor = isRegistrosManualMode() ? 'var(--yellow)' : 'var(--blue)';
+  const hintText = isRegistrosManualMode()
+    ? 'A aba Registros está usando somente os dados locais/importados. A base padrão pré-carregada fica desativada até novo carregamento manual.'
+    : 'Baixe o modelo, preencha no Excel e use a importação abaixo quando quiser substituir apenas a aba Registros.';
+
+  card.innerHTML = `
+    <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;flex-wrap:wrap;">
+      <div>
+        <div style="font-size:0.95rem;font-weight:700;color:var(--text);margin-bottom:4px;">Registros</div>
+        <div style="font-size:0.75rem;color:var(--text-dim);line-height:1.6;">Ferramentas exclusivas para a aba Registros, sem alterar legado, embalagens, análise, usuários ou MM60.</div>
+      </div>
+      <span style="font-size:0.72rem;font-weight:800;padding:6px 10px;border-radius:999px;background:${isRegistrosManualMode() ? 'rgba(255,211,42,0.12)' : 'rgba(24,220,255,0.08)'};color:${modeColor};border:1px solid ${isRegistrosManualMode() ? 'rgba(255,211,42,0.24)' : 'rgba(24,220,255,0.18)'};">${escapeHtml(modeLabel)}</span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px;margin-top:16px;">
+      <div style="background:var(--bg4);border-radius:10px;padding:12px;">
+        <div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Registros atuais</div>
+        <div style="font-size:0.95rem;font-weight:700;color:var(--text);">${escapeHtml(String(movimentos.length))}</div>
+      </div>
+      <div style="background:var(--bg4);border-radius:10px;padding:12px;">
+        <div style="font-size:0.68rem;color:var(--text-dim);text-transform:uppercase;letter-spacing:0.5px;margin-bottom:4px;">Modelo aceito</div>
+        <div style="font-size:0.82rem;font-weight:600;color:var(--neon);">${escapeHtml(REGISTROS_IMPORT_TEMPLATE_FILE)}</div>
+      </div>
+    </div>
+    <div class="hint-line" style="margin-top:14px;">${escapeHtml(hintText)}</div>
+    <div style="display:flex;gap:10px;flex-wrap:wrap;margin-top:16px;">
+      <button type="button" class="btn btn-secondary" onclick="downloadRegistrosImportTemplate()" style="flex:1 1 180px;justify-content:center;">Baixar Modelo Excel</button>
+      <button type="button" class="btn btn-primary" onclick="importRegistrosOnly()" style="flex:1 1 180px;justify-content:center;">Importar só Registros</button>
+      <button type="button" class="btn" onclick="clearRegistrosOnly()" style="flex:1 1 180px;justify-content:center;background:rgba(255,71,87,0.12);color:var(--red);border:1px solid rgba(255,71,87,0.3);">Limpar só Registros</button>
+    </div>
+  `;
+}
+
+function downloadRegistrosImportTemplate() {
+  if (!window.XLSX || !XLSX.utils || typeof XLSX.utils.book_new !== 'function') {
+    showToast('Biblioteca XLSX indisponível para gerar o modelo.', true);
+    return;
+  }
+
+  const workbook = XLSX.utils.book_new();
+  const headers = REGISTROS_IMPORT_TEMPLATE_COLUMNS.map((column) => column.header);
+  const sheet = XLSX.utils.aoa_to_sheet([headers]);
+  sheet['!cols'] = headers.map((header) => ({ wch: Math.max(16, header.length + 4) }));
+  sheet['!autofilter'] = {
+    ref: `A1:${XLSX.utils.encode_col(headers.length - 1)}1`
+  };
+  XLSX.utils.book_append_sheet(workbook, sheet, 'Registros');
+
+  const writeFile = XLSX.writeFileXLSX || XLSX.writeFile;
+  if (typeof writeFile !== 'function') {
+    showToast('Função de exportação XLSX indisponível.', true);
+    return;
+  }
+  writeFile(workbook, REGISTROS_IMPORT_TEMPLATE_FILE);
+  showToast('Modelo Excel da aba Registros gerado com sucesso.');
+}
+
+function isRegistrosImportRowEmpty(row) {
+  if (!row || typeof row !== 'object') return true;
+  return Object.values(row).every((value) => normalizeText(value) === '');
+}
+
+function normalizeRegistrosImportDateCell(value) {
+  const parsed = parseSpreadsheetDate(value);
+  return parsed || normalizeText(value);
+}
+
+function getRegistrosImportValue(row, column) {
+  return getObjectValueByKeys(row, [column.header, ...(column.aliases || [])]);
+}
+
+function mapRegistrosImportRow(rawRow, rowNumber) {
+  const mapped = {};
+  REGISTROS_IMPORT_TEMPLATE_COLUMNS.forEach((column) => {
+    const rawValue = getRegistrosImportValue(rawRow, column);
+    if (['quantidade', 'embDevolver', 'caixasDevolver'].includes(column.key)) {
+      const parsedNumber = parseLocaleNumber(rawValue);
+      mapped[column.key] = Number.isFinite(parsedNumber) ? parsedNumber : 0;
+      return;
+    }
+    if (['dataFisico', 'dataSistemico', 'dataDevEmb', 'inseridoEm', 'finalizadoEm'].includes(column.key)) {
+      mapped[column.key] = normalizeRegistrosImportDateCell(rawValue);
+      return;
+    }
+    mapped[column.key] = normalizeText(rawValue);
+  });
+
+  const materialMetaByCode = mapped.codProduto ? getMaterialMetaByCode(mapped.codProduto) : null;
+  const materialMetaByName = mapped.material ? getMaterialMetaByName(mapped.material) : null;
+  const materialMeta = materialMetaByCode || materialMetaByName;
+
+  if (!mapped.material && materialMeta) mapped.material = normalizeText(materialMeta.d || '');
+  if (!mapped.codProduto && materialMeta) mapped.codProduto = normalizeText(materialMeta.c || '');
+  if (!mapped.unidade && materialMeta) mapped.unidade = normalizeText(materialMeta.u || '');
+  if (!mapped.inseridoPor || normalizeText(mapped.inseridoPor).toLowerCase() === 'importado') {
+    mapped.inseridoPor = getCurrentUserName() || 'Importação Registros';
+  }
+  if (!mapped.inseridoEm) mapped.inseridoEm = new Date().toISOString();
+  if (!mapped.finalizadoPor && mapped.finalizadoEm) mapped.finalizadoPor = mapped.inseridoPor;
+  if (!mapped.contEmb) mapped.contEmb = (mapped.embDevolver > 0 || mapped.caixasDevolver > 0) ? 'SIM' : 'NAO';
+  if (!mapped.epsDestino && mapped.depositoDestino) mapped.epsDestino = mapped.depositoDestino;
+  if (!mapped.depositoDestino && mapped.epsDestino) mapped.depositoDestino = mapped.epsDestino;
+
+  const errors = [];
+  if (!normalizeText(mapped.dataFisico)) errors.push(`Linha ${rowNumber}: "Data Físico" é obrigatória.`);
+  if (!normalizeText(mapped.tipo)) errors.push(`Linha ${rowNumber}: "Tipo" é obrigatório.`);
+  if (!(Number(mapped.quantidade) > 0)) errors.push(`Linha ${rowNumber}: "Quantidade" deve ser maior que zero.`);
+  if (!normalizeText(mapped.material) && !normalizeText(mapped.codProduto)) {
+    errors.push(`Linha ${rowNumber}: informe "Material" ou "Código Produto".`);
+  }
+
+  return { mapped, errors };
+}
+
+function showRegistrosImportErrors(errors) {
+  const preview = errors.slice(0, 8);
+  alert(
+    'Não foi possível importar a planilha.\n\n' +
+    preview.join('\n') +
+    (errors.length > preview.length ? `\n... e mais ${errors.length - preview.length} problema(s).` : '')
+  );
+}
+
+async function importRegistrosOnly() {
+  const input = document.createElement('input');
+  input.type = 'file';
+  input.accept = '.xlsx,.xls,.xlsb,.xlsm';
+  input.onchange = async function(event) {
+    const file = event.target.files && event.target.files[0];
+    if (!file) return;
+
+    try {
+      const workbook = await readWorkbookFromFile(file);
+      const sheet = findWorkbookSheet(workbook, 'registro', 0);
+      if (!sheet) throw new Error('Não encontrei uma aba válida para Registros.');
+
+      const rawRows = XLSX.utils.sheet_to_json(sheet, { defval: '', raw: true });
+      const validRows = [];
+      const rowErrors = [];
+
+      rawRows.forEach((rawRow, index) => {
+        if (isRegistrosImportRowEmpty(rawRow)) return;
+        const parsed = mapRegistrosImportRow(rawRow, index + 2);
+        if (parsed.errors.length) {
+          rowErrors.push(...parsed.errors);
+          return;
+        }
+        validRows.push(parsed.mapped);
+      });
+
+      if (rowErrors.length) {
+        showRegistrosImportErrors(rowErrors);
+        return;
+      }
+      if (!validRows.length) {
+        showToast('A planilha não possui linhas válidas para importar na aba Registros.', true);
+        return;
+      }
+
+      const uniqueRows = assignCurrentMovementIds(dedupeMovementsByImportKey(validRows)).map((row) => ({
+        ...row,
+        seedManaged: false,
+        seedSource: ''
+      }));
+      const duplicatesIgnored = Math.max(0, validRows.length - uniqueRows.length);
+      const confirmMessage =
+        `A planilha "${file.name}" possui ${validRows.length} linha(s) válida(s).\n\n` +
+        `A importação substituirá apenas a aba Registros por ${uniqueRows.length} registro(s), sem alterar legado, embalagens, análise ou MM60.\n\n` +
+        `A base padrão pré-carregada ficará desativada para usar somente estes dados importados.\n\n` +
+        (duplicatesIgnored ? `${duplicatesIgnored} duplicidade(s) serão ignoradas.\n\n` : '') +
+        'Deseja continuar?';
+      if (!confirm(confirmMessage)) return;
+
+      movimentos = uniqueRows;
+      setRegistrosMode(REGISTROS_MODE.manualOnly);
+      saveToStorage('storage');
+      applyLoadedApplicationState();
+      recordAuditEvent('registros_import', {
+        entityType: 'registros',
+        entityId: file.name,
+        reason: 'Importação exclusiva da aba Registros via Configurações.',
+        summary: `${uniqueRows.length} registro(s) aplicados a partir de ${file.name}.`,
+        details: [
+          `Linhas válidas: ${validRows.length}`,
+          `Duplicidades ignoradas: ${duplicatesIgnored}`,
+          `Modo da aba Registros: ${normalizeRegistrosMode(registrosMode)}`
+        ]
+      });
+      showToast(`Importação concluída: ${uniqueRows.length} registro(s) aplicados na aba Registros.`);
+    } catch (error) {
+      console.error('Erro ao importar registros:', error);
+      showToast('Erro ao importar a planilha de Registros: ' + (error && error.message ? error.message : error), true);
+    }
+  };
+  input.click();
+}
+
+function clearRegistrosOnly() {
+  if (!movimentos.length && isRegistrosManualMode()) {
+    showToast('A aba Registros já está vazia no modo manual.', true);
+    return;
+  }
+
+  const previousCount = movimentos.length;
+  const message =
+    'ATENÇÃO: esta ação limpará somente a aba Registros atual.\n\n' +
+    `• ${previousCount} registro(s) serão removidos\n` +
+    '• Legado, embalagens, análise, MM60, usuários e cadastros serão preservados\n\n' +
+    'A base padrão pré-carregada ficará desativada até uma nova importação ou restauração de backup.\n\n' +
+    'Deseja continuar?';
+  if (!confirm(message)) return;
+  if (!confirm('Confirme novamente: somente a aba Registros será esvaziada.')) return;
+
+  movimentos = [];
+  setRegistrosMode(REGISTROS_MODE.manualOnly);
+  saveToStorage('storage');
+  applyLoadedApplicationState();
+  recordAuditEvent('registros_clear', {
+    entityType: 'registros',
+    entityId: 'tab-registros',
+    reason: 'Limpeza exclusiva da aba Registros via Configurações.',
+    summary: `${previousCount} registro(s) removidos da aba Registros.`,
+    details: [
+      'Legado preservado',
+      'Análise preservada',
+      `Modo da aba Registros: ${normalizeRegistrosMode(registrosMode)}`
+    ]
+  });
+  showToast('A aba Registros foi limpa sem alterar as demais áreas.');
 }
 
 function setSelectOptions(selectEl, options, placeholderLabel = 'Selecione...', placeholderValue = '') {
@@ -7085,7 +7400,7 @@ function renderAuditTrailPanel() {
   if (!card) return;
 
   const recentItems = auditTrail.slice(0, 12);
-  const criticalCount = auditTrail.filter((item) => ['movement_delete', 'writer_finalize', 'baldeio_register', 'mm60_refresh'].includes(item.action)).length;
+  const criticalCount = auditTrail.filter((item) => ['movement_delete', 'writer_finalize', 'baldeio_register', 'mm60_refresh', 'registros_import', 'registros_clear'].includes(item.action)).length;
   const latestAt = auditTrail[0] ? getBackupTimestampLabel(auditTrail[0].at) : 'Sem eventos';
 
   card.innerHTML = `
@@ -7154,6 +7469,7 @@ function renderConfigTab() {
   renderCloudSyncCard();
   updateBackupPanel();
   renderAutoBackupCard();
+  renderRegistrosToolsCard();
   renderAuditTrailPanel();
   refreshAutoBackupMetaFromCloud();
 }
